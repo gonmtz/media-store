@@ -242,6 +242,176 @@ def subtitulos(frases):
 
 
 
+# ---------- Aerodinámica: perfil alar y flujo ----------
+class Perfil:
+    """Perfil de Joukowski en flujo potencial 2D con condición de Kutta (flujo ideal:
+    sin viscosidad ni estela). Es una simplificación, pero da campos de velocidad y presión
+    físicamente coherentes: el aire de arriba llega antes al borde de salida, hay
+    deflexión hacia abajo detrás del ala y la presión es menor arriba que abajo.
+
+    El viento llega horizontal desde la izquierda (velocidad U = 1 en unidades del
+    perfil); el ala aparece con la nariz levantada `alfa` grados. Cuerda ≈ 4·escala.
+    Todas las salidas están en coordenadas de pantalla."""
+
+    def __init__(self, alfa=7.0, mu=complex(-0.09, 0.11), escala=1.45, centro=(0.0, 0.5)):
+        self.alfa = np.radians(alfa)
+        self.mu = mu
+        self.R = abs(1 - mu)
+        beta = -np.angle(1 - mu)
+        self.gamma = 4 * np.pi * self.R * np.sin(self.alfa + beta)   # Kutta
+        self.escala = escala
+        self.c = complex(*centro)
+        self._rot = np.exp(-1j * self.alfa)
+
+    # --- transformaciones ---
+    def _pant(self, z):
+        w = self.c + self.escala * self._rot * np.asarray(z)
+        return np.stack([w.real, w.imag, np.zeros_like(w.real)], axis=-1)
+
+    def _desde_pant(self, x, y):
+        return (complex(x, y) - self.c) / (self.escala * self._rot)
+
+    def _zeta(self, z):
+        r = np.sqrt(z * z - 4)
+        a, b = (z + r) / 2, (z - r) / 2
+        return a if abs(a - self.mu) >= abs(b - self.mu) else b
+
+    def _dw(self, zeta):
+        """Derivada del potencial complejo respecto a zeta (flujo alrededor del círculo)."""
+        zp = zeta - self.mu
+        a = self.alfa
+        return (np.exp(-1j * a) - self.R ** 2 * np.exp(1j * a) / zp ** 2
+                + 1j * self.gamma / (2 * np.pi * zp))
+
+    def velocidad(self, zeta):
+        """Velocidad física (vector complejo en ejes del perfil) en el punto zeta."""
+        return np.conj(self._dw(zeta) / (1 - 1 / zeta ** 2))
+
+    # --- geometría ---
+    def puntos_contorno(self, n=240):
+        th = np.linspace(0, 2 * np.pi, n, endpoint=False)
+        zeta = self.mu + self.R * np.exp(1j * th)
+        return self._pant(zeta + 1 / zeta)
+
+    def borde_ataque(self):
+        p = self.puntos_contorno(720)
+        return p[np.argmin(p[:, 0])]
+
+    def borde_salida(self):
+        return self._pant(np.array([2.0 + 0j]))[0]
+
+    def contorno(self, color_borde=BORDE):
+        v = VMobject()
+        pts = list(self.puntos_contorno())
+        v.set_points_as_corners(pts + [pts[0]])
+        v.make_smooth()
+        v.set_fill(color=[FUS_A, "#94A3B8"], opacity=1).set_sheen_direction(DOWN)
+        return v.set_stroke(color_borde, width=2)
+
+    # --- líneas de corriente con tiempo de paso ---
+    def linea(self, y, x_ini=-6.5, x_fin=6.5, paso=0.015):
+        """Línea de corriente que entra a altura de pantalla `y` por x_ini.
+        Devuelve (puntos Nx3 en pantalla, tiempos N): el tiempo que tarda una partícula en
+        llegar a cada punto (unidades del perfil, U = 1)."""
+        zeta = self._zeta(self._desde_pant(x_ini, y))
+
+        def dir_(q):
+            v = np.conj(self._dw(q))
+            return v / (abs(v) + 1e-12)
+
+        zs = [zeta]
+        for _ in range(20000):
+            k1 = dir_(zeta)
+            k2 = dir_(zeta + paso / 2 * k1)
+            k3 = dir_(zeta + paso / 2 * k2)
+            k4 = dir_(zeta + paso * k3)
+            zeta = zeta + paso / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+            zs.append(zeta)
+            if self._pant(zeta + 1 / zeta)[0] > x_fin:
+                break
+        zs = np.array(zs)
+        pts = self._pant(zs + 1 / zs)
+        mid = (zs[1:] + zs[:-1]) / 2
+        rapidez = np.abs(self.velocidad(mid)) * self.escala   # en unidades de pantalla
+        ds = np.linalg.norm(np.diff(pts, axis=0), axis=1)
+        t = np.concatenate([[0.0], np.cumsum(ds / np.maximum(rapidez, 1e-3))])
+        return pts, t
+
+    def cp_contorno(self, n=160, margen=0.03):
+        """Puntos del contorno (sin el borde de salida), normal exterior y Cp = 1 − (V/U)²."""
+        th = np.linspace(margen, 2 * np.pi - margen, n)
+        zeta = self.mu + self.R * np.exp(1j * th)
+        pts = self._pant(zeta + 1 / zeta)
+        cp = 1 - np.abs(self.velocidad(zeta)) ** 2
+        tang = np.gradient(pts, axis=0)
+        nrm = np.stack([tang[:, 1], -tang[:, 0], np.zeros(n)], axis=1)  # contorno antihorario
+        nrm /= np.linalg.norm(nrm, axis=1, keepdims=True)
+        return pts, nrm, cp
+
+
+def en_tiempo(pts, tiempos, t):
+    """Posición sobre una línea de corriente en el instante t (interpolación lineal)."""
+    if t <= tiempos[0]:
+        return pts[0]
+    if t >= tiempos[-1]:
+        return pts[-1]
+    i = np.searchsorted(tiempos, t)
+    f = (t - tiempos[i - 1]) / (tiempos[i] - tiempos[i - 1])
+    return pts[i - 1] + f * (pts[i] - pts[i - 1])
+
+
+def trazo(pts, color="#475569", ancho=2.5, opacidad=0.9):
+    v = VMobject().set_points_smoothly(list(pts[::4]) + [pts[-1]])
+    return v.set_stroke(color, width=ancho, opacity=opacidad)
+
+
+def trazadores(lineas, reloj, color, cada=0.6, radio=0.045, velocidad=1.0):
+    """Puntos que avanzan por cada línea de corriente a su velocidad real
+    (más rápido donde el aire va más rápido). `reloj` es un ValueTracker en segundos."""
+    grupo = VGroup()
+    for pts, tt in lineas:
+        n = int(tt[-1] / cada) + 1
+        for k in range(n):
+            d = Dot(radius=radio, color=color)
+            d.datos = (pts, tt, k * cada)
+            grupo.add(d)
+
+    def mover(g):
+        tr = reloj.get_value() * velocidad
+        for d in g:
+            pts, tt, fase = d.datos
+            t = (tr + fase) % (tt[-1])
+            d.move_to(en_tiempo(pts, tt, t))
+    grupo.add_updater(mover)
+    mover(grupo)
+    return grupo
+
+
+def vector(inicio, fin, color, ancho=10, punta=0.32):
+    """Flecha de fuerza o de flujo con proporciones constantes."""
+    inicio, fin = np.array(inicio, dtype=float), np.array(fin, dtype=float)
+    return Arrow(inicio, fin, buff=0, color=color, stroke_width=ancho,
+                 max_tip_length_to_length_ratio=punta / max(np.linalg.norm(fin - inicio), 1e-3),
+                 max_stroke_width_to_length_ratio=100)
+
+
+def flechas_presion(perfil, color_menos, color_mas, k=0.55, lmax=1.0, cada=6):
+    """Flechas de la fuerza de presión sobre el contorno: donde la presión es menor que la
+    del aire libre (Cp < 0) tiran hacia fuera; donde es mayor (Cp > 0) empujan hacia dentro.
+    Devuelve (flechas de succión, flechas de empuje)."""
+    pts, nrm, cp = perfil.cp_contorno()
+    menos, mas = VGroup(), VGroup()
+    for p, n_, c in list(zip(pts, nrm, cp))[::cada]:
+        L = min(abs(c) * k, lmax)
+        if L < 0.12:
+            continue
+        if c < 0:
+            menos.add(vector(p + n_ * 0.05, p + n_ * (0.05 + L), color_menos, ancho=5, punta=0.16))
+        else:
+            mas.add(vector(p + n_ * (0.05 + L), p + n_ * 0.05, color_mas, ancho=5, punta=0.16))
+    return menos, mas
+
+
 # ---------- Clase base para cada short ----------
 class ShortBase(Scene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,
@@ -250,6 +420,7 @@ class ShortBase(Scene):
                "frases": [[inicio, fin, texto], ...]}  (rutas relativas a voz.json)."""
     VOZ_JSON = None          # la subclase define Path(__file__).parent / "voz.json"
     SIN_SUBS_DESDE = None    # clave de segmento a partir de la cual no hay subtítulos
+    SUBS_DESDE = None        # clave de segmento antes de la cual no hay subtítulos (gancho)
 
     def setup(self):
         p = Path(self.VOZ_JSON) if self.VOZ_JSON else None
@@ -263,15 +434,18 @@ class ShortBase(Scene):
             self.add_sound(V["completo"])
         self.add(rejilla())
         if "frases" in V:
-            fin = V.get("segmentos", {}).get(self.SIN_SUBS_DESDE, {}).get("inicio", 1e9)
-            items = subtitulos([f for f in V["frases"] if f[0] < fin - 0.05])
+            seg = V.get("segmentos", {})
+            fin = seg.get(self.SIN_SUBS_DESDE, {}).get("inicio", 1e9)
+            ini = seg.get(self.SUBS_DESDE, {}).get("inicio", -1.0)
+            items = subtitulos([f for f in V["frases"] if ini - 0.05 <= f[0] < fin - 0.05])
             capa = VGroup(*[m for _, _, m in items]).set_z_index(50)
-            capa.reloj = 0.0
+            escena = self
 
-            def actualizar(grupo, dt):
-                grupo.reloj += dt
+            def actualizar(grupo):
+                # reloj de la escena (no sumar dt: cada play pierde un fotograma y se desfasa)
+                t = escena.renderer.time
                 for (a, b, m) in items:
-                    m.set_opacity(1.0 if a <= grupo.reloj < b else 0.0)
+                    m.set_opacity(1.0 if a <= t < b else 0.0)
 
             capa.add_updater(actualizar)
             self.add(capa)

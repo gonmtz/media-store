@@ -31,7 +31,8 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
 ## Estructura
 
 ```
-lib/porquevuela.py      estilo, aviones (lateral, trasero, superior), subtítulos, ShortBase
+lib/porquevuela.py      estilo, aviones (lateral, trasero, superior), subtítulos, ShortBase,
+                        perfil alar con flujo calculado (Perfil), líneas de corriente, vectores
 shorts/NN_tema/         escena.py, guion.md, voz.mp3, voz.json, final.mp4
 tools/pausas.py         tramos de habla de la narración (para fijar tiempos)
 tools/postpro.py        música con ducking + normalización a -14 LUFS
@@ -89,17 +90,20 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis.
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That.
+Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
+volver a descargar la pista correcta antes de usarla.
 
 ## Registro de shorts
 
 | # | Tema | Música | Estado |
 |---|------|--------|--------|
 | 01 | Los 3 giros (ejes de referencia) | Hypnothis | programado 2026-10-21 19:00 (CDMX) en YT, IG y TikTok |
+| 02 | Sustentación: el mito del tiempo de tránsito igual | Down With That | renderizado; pendiente de aprobación |
 
 ## Banco de ideas (siguientes, en orden)
 
-1. Sustentación: el mito del "tiempo de tránsito igual"
+1. ~~Sustentación: el mito del "tiempo de tránsito igual"~~ (hecho: short 02)
 2. Pérdida (stall): caer con los motores funcionando
 3. Winglets y vórtices de punta
 4. ¿Por qué las hélices están torcidas?
@@ -109,6 +113,10 @@ Rotar las pistas entre shorts. Usadas: 01 → Hypnothis.
 8. ¿Por qué el Concorde bajaba la nariz?
 9. Diedro: por qué las alas forman una V
 10. Flaps y slats: volar lento sin caer
+
+Piezas aerodinámicas ya disponibles: `Perfil` (Joukowski + flujo potencial 2D con Kutta:
+contorno, `linea` con tiempos de paso, `cp_contorno`), `en_tiempo`, `trazo`, `trazadores`,
+`vector`, `flechas_presion`. `ShortBase.SUBS_DESDE` omite los subtítulos del gancho.
 
 Estos temas reutilizan las piezas que ya hay en la biblioteca (perfil, vectores y flujo):
 construir y añadir a `lib/porquevuela.py` lo que pueda volver a usarse.
