@@ -1,0 +1,112 @@
+{
+ "completo": "voz.mp3",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 4.56
+  },
+  "cabeceo": {
+   "inicio": 4.56,
+   "duracion": 9.4
+  },
+  "alabeo": {
+   "inicio": 13.96,
+   "duracion": 11.45
+  },
+  "guinada": {
+   "inicio": 25.41,
+   "duracion": 7.84
+  },
+  "cierre": {
+   "inicio": 33.25,
+   "duracion": 4.706
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.26,
+   "Un avión solo puede girar de tres formas."
+  ],
+  [
+   2.74,
+   4.19,
+   "Y cada una tiene nombre."
+  ],
+  [
+   4.93,
+   6.22,
+   "Primero, el cabeceo:"
+  ],
+  [
+   6.69,
+   8.11,
+   "subir o bajar la nariz."
+  ],
+  [
+   8.68,
+   10.83,
+   "Lo controla el elevador, en la cola."
+  ],
+  [
+   11.38,
+   13.65,
+   "Si su borde sube, la nariz sube."
+  ],
+  [
+   14.26,
+   15.75,
+   "Segundo, el alabeo:"
+  ],
+  [
+   16.12,
+   17.27,
+   "inclinar las alas."
+  ],
+  [
+   17.86,
+   19.18,
+   "Lo hacen los alerones."
+  ],
+  [
+   19.82,
+   20.55,
+   "Uno sube,"
+  ],
+  [
+   20.95,
+   25.08,
+   "el otro baja, y el avión se inclina hacia el lado del alerón que subió."
+  ],
+  [
+   25.74,
+   27.44,
+   "Y tercero, la guiñada:"
+  ],
+  [
+   28.13,
+   29.71,
+   "mover la nariz a los lados."
+  ],
+  [
+   30.2,
+   31.31,
+   "Para eso está el timón,"
+  ],
+  [
+   31.66,
+   32.84,
+   "en la aleta vertical."
+  ],
+  [
+   33.66,
+   35.72,
+   "Pilotar es combinar estos tres giros."
+  ],
+  [
+   36.41,
+   37.95,
+   "¿Cuál de los tres no conocías?"
+  ]
+ ]
+}

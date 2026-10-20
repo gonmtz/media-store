@@ -1,0 +1,3 @@
+manim==0.22.0
+# Sistema: ffmpeg, LaTeX opcional, libpango1.0-dev y libcairo2-dev (para compilar manimpango).
+# Fuente: Inter / Inter Display.
