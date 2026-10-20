@@ -95,7 +95,7 @@ Rotar las pistas entre shorts. Usadas: 01 → Hypnothis.
 
 | # | Tema | Música | Estado |
 |---|------|--------|--------|
-| 01 | Los 3 giros (ejes de referencia) | Hypnothis | programado |
+| 01 | Los 3 giros (ejes de referencia) | Hypnothis | programado 2026-10-21 19:00 (CDMX) en YT, IG y TikTok |
 
 ## Banco de ideas (siguientes, en orden)
 
