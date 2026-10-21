@@ -98,8 +98,8 @@ volver a descargar la pista correcta antes de usarla.
 
 | # | Tema | Música | Estado |
 |---|------|--------|--------|
-| 01 | Los 3 giros (ejes de referencia) | Hypnothis | programado 2026-10-21 19:00 (CDMX) en YT, IG y TikTok |
-| 02 | Sustentación: el mito del tiempo de tránsito igual | Down With That | renderizado; pendiente de aprobación |
+| 01 | Los 3 giros (ejes de referencia) | Hypnothis | publicado 2026-10-20 23:05 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
+| 02 | Sustentación: el mito del tiempo de tránsito igual | Down With That | aprobado; programado 2026-10-21 12:00 (CDMX) en YT, IG y TikTok |
 
 ## Banco de ideas (siguientes, en orden)
 
