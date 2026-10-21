@@ -412,6 +412,218 @@ def flechas_presion(perfil, color_menos, color_mas, k=0.55, lmax=1.0, cada=6):
     return menos, mas
 
 
+# ---------- Pérdida: curvas típicas, familias de líneas y flujo separado ----------
+ALFA_CRIT = 15.0   # orden de magnitud del ángulo crítico de un perfil típico (grados)
+
+
+def cl_tipico(alfa, pendiente=0.1, cl0=0.2, alfa_crit=ALFA_CRIT, caida=0.55, escala_caida=1.2):
+    """Coeficiente de sustentación de una curva TÍPICA (forma genérica, no datos de un perfil
+    concreto): lineal (≈ 0,1/grado), redondeo hasta el máximo en `alfa_crit` y caída brusca
+    después (pérdida). `alfa` en grados; acepta escalar o array."""
+    a = np.asarray(alfa, dtype=float)
+    k = pendiente / 8.0
+    a1 = alfa_crit - 4.0
+    clmax = pendiente * a1 + cl0 + 2 * pendiente
+    lin = cl0 + pendiente * a
+    red = clmax - k * (a - alfa_crit) ** 2
+    post = clmax - caida * (1 - np.exp(-(a - alfa_crit) / escala_caida))
+    return np.where(a <= a1, lin, np.where(a <= alfa_crit, red, post))
+
+
+def cd_tipico(alfa, alfa_crit=ALFA_CRIT):
+    """Coeficiente de resistencia típico (forma genérica): crece suave con el ángulo y se
+    dispara al separarse el flujo."""
+    a = np.asarray(alfa, dtype=float)
+    salto = np.where(a > alfa_crit, 0.18 * (1 - np.exp(-(a - alfa_crit) / 1.5)), 0.0)
+    return 0.012 + 0.0006 * a ** 2 + salto
+
+
+class GraficaCl(VGroup):
+    """Gráfica de coeficiente de sustentación frente a ángulo de ataque con la curva típica
+    (`cl_tipico`), rotulada como tal. `self.punto(alfa)` da la posición en pantalla;
+    `self.curva_hasta(alfa)` devuelve el trazo de la curva desde 0 hasta `alfa`."""
+
+    def __init__(self, ancho=6.4, alto=2.3, alfa_max=21, cl_max=1.7, color=C_CABECEO,
+                 nota="curva típica, no de un perfil concreto", **kw):
+        super().__init__(**kw)
+        self.color = color
+        self.alfa_max = alfa_max
+        self.ejes = Axes(x_range=[0, alfa_max, 5], y_range=[0, cl_max, 0.5], x_length=ancho,
+                         y_length=alto, tips=False,
+                         axis_config={"color": BORDE, "stroke_width": 3, "include_ticks": False})
+        marcas = VGroup()
+        for a in range(0, alfa_max, 5):
+            p = self.ejes.c2p(a, 0)
+            marcas.add(Line(p, p + DOWN * 0.1, color=BORDE, stroke_width=3))
+            marcas.add(T(f"{a}°", size=20, color=TEXTO_SEC, weight=MEDIUM)
+                       .next_to(p, DOWN, buff=0.14))
+        self.x_txt = T("α", size=30, color=TEXTO_SEC, weight=BOLD)
+        self.x_txt.next_to(self.ejes.c2p(alfa_max, 0), RIGHT, buff=0.15)
+        self.y_txt = T("sustentación", size=22, color=TEXTO_SEC, weight=SEMIBOLD).rotate(PI / 2)
+        self.y_txt.next_to(self.ejes.c2p(0, cl_max / 2), LEFT, buff=0.15)
+        self.nota = T(nota, size=19, color=TEXTO_SEC, weight=MEDIUM)
+        self.nota.next_to(self.ejes.c2p(alfa_max, cl_max), UP, buff=0.12).align_to(
+            self.ejes.c2p(alfa_max, 0), RIGHT)
+        self.guia = self.ejes.plot(lambda a: float(cl_tipico(a)), x_range=[0, alfa_max - 0.5],
+                                   color=color, stroke_width=3).set_stroke(opacity=0.22)
+        self.add(self.ejes, marcas, self.x_txt, self.y_txt, self.nota, self.guia)
+
+    def punto(self, alfa):
+        return self.ejes.c2p(alfa, float(cl_tipico(alfa)))
+
+    def curva_hasta(self, alfa, ancho=7):
+        a = np.linspace(0, max(alfa, 0.05), 120)
+        v = VMobject().set_points_smoothly([self.punto(x) for x in a])
+        return v.set_stroke(self.color, width=ancho)
+
+    def marca_critico(self, alfa=ALFA_CRIT, texto="≈ 15°", color=TEXTO):
+        p = self.punto(alfa)
+        lin = DashedLine(self.ejes.c2p(alfa, 0), p, color=color, stroke_width=3,
+                         dash_length=0.08)
+        txt = T(texto, size=24, color=color, weight=BOLD)
+        txt.next_to(self.ejes.c2p(alfa, 0.3 * float(cl_tipico(alfa))), LEFT, buff=0.12)
+        return VGroup(lin, txt)
+
+
+def remuestrear(pts, tiempos, n=220):
+    """Remuestrea una línea de corriente a n puntos equiespaciados en longitud."""
+    s = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))])
+    u = np.linspace(0, s[-1], n)
+    nuevo = np.stack([np.interp(u, s, pts[:, i]) for i in range(3)], axis=1)
+    return nuevo, np.interp(u, s, tiempos)
+
+
+class LineasPorAlfa:
+    """Familia de líneas de corriente (flujo ideal, `Perfil`) precalculadas para varios
+    ángulos de ataque e interpoladas entre ellos, para animar el ala girando con el flujo
+    pegado. `perfil(alfa)` construye el Perfil; `en(alfa)` → [(pts, tiempos), ...]."""
+
+    def __init__(self, perfil, alfas, ys, x_ini=-4.6, x_fin=4.6, n=220, paso=0.02):
+        self.alfas = np.array(alfas, dtype=float)
+        self.datos = []
+        for a in self.alfas:
+            P = perfil(a)
+            self.datos.append([remuestrear(*P.linea(y, x_ini=x_ini, x_fin=x_fin, paso=paso), n=n)
+                               for y in ys])
+
+    def en(self, alfa):
+        a = float(np.clip(alfa, self.alfas[0], self.alfas[-1]))
+        i = int(np.clip(np.searchsorted(self.alfas, a) - 1, 0, len(self.alfas) - 2))
+        f = (a - self.alfas[i]) / (self.alfas[i + 1] - self.alfas[i])
+        return [((1 - f) * p0 + f * p1, (1 - f) * t0 + f * t1)
+                for (p0, t0), (p1, t1) in zip(self.datos[i], self.datos[i + 1])]
+
+
+def trazadores_variables(fuente, reloj, color, cada=0.6, radio=0.045, velocidad=1.0):
+    """Como `trazadores`, pero las líneas cambian con el tiempo: `fuente()` devuelve la
+    lista [(pts, tiempos), ...] actual (por ejemplo, LineasPorAlfa.en(alfa))."""
+    lineas = fuente()
+    grupo = VGroup()
+    for j, (_, tt) in enumerate(lineas):
+        for k in range(int(tt[-1] / cada) + 1):
+            d = Dot(radius=radio, color=color)
+            d.datos = (j, k * cada)
+            grupo.add(d)
+
+    def mover(g):
+        ls = fuente()
+        tr = reloj.get_value() * velocidad
+        for d in g:
+            j, fase = d.datos
+            pts, tt = ls[j]
+            d.move_to(en_tiempo(pts, tt, (tr + fase) % tt[-1]))
+    grupo.add_updater(mover)
+    mover(grupo)
+    return grupo
+
+
+def flujo_separado(perfil, ys, x_ini=-4.6, x_fin=4.6, sep=0.12, relajacion=1.6, rapidez=0.9,
+                   paso=0.02):
+    """ILUSTRACIÓN CUALITATIVA del flujo separado (el flujo potencial no puede separarse).
+    Las líneas de debajo del ala siguen el modelo ideal; las de encima lo siguen hasta la
+    vertical del punto de separación (fracción `sep` de la cuerda desde el borde de ataque)
+    y desde ahí siguen casi rectas, girando poco a poco hacia la horizontal: dejan entre
+    ellas y el extradós una zona de aire revuelto. Devuelve (líneas [(pts, t)], capa límite
+    [(pts)], punto de separación)."""
+    le, te = perfil.borde_ataque(), perfil.borde_salida()
+    cont = perfil.puntos_contorno(720)
+    x_s = le[0] + sep * (te[0] - le[0])
+    arriba = cont[(np.abs(cont[:, 0] - x_s) < 0.05)]
+    p_sep = arriba[np.argmax(arriba[:, 1])]
+    lineas = []
+    for y in ys:
+        pts, tt = perfil.linea(y, x_ini=x_ini, x_fin=x_fin, paso=paso)
+        i = np.argmax(pts[:, 0] >= x_s)
+        if pts[i, 1] < p_sep[1] - 0.02:          # pasa por debajo: flujo pegado
+            lineas.append((pts, tt))
+            continue
+        d0 = pts[i] - pts[max(i - 6, 0)]
+        th0 = np.arctan2(d0[1], d0[0])
+        if pts[i, 1] - p_sep[1] < 0.25:          # la más cercana sale del punto de separación
+            th0 = max(th0, np.radians(-4))
+        nuevo, t_n = [pts[i]], [tt[i]]
+        s, ds = 0.0, 0.03
+        while nuevo[-1][0] < x_fin:
+            s += ds
+            th = th0 * np.exp(-s / relajacion)
+            nuevo.append(nuevo[-1] + ds * np.array([np.cos(th), np.sin(th), 0.0]))
+            t_n.append(t_n[-1] + ds / (rapidez * perfil.escala))
+        lineas.append((np.vstack([pts[:i], np.array(nuevo)]),
+                       np.concatenate([tt[:i], np.array(t_n)])))
+    return lineas, p_sep
+
+
+def remolinos(perfil, p_sep, techo, reloj, color="#CBD5E1", n=7, largo=None, vel=0.55,
+              radio=(0.1, 0.22), giro=-3.0, visible=None):
+    """Remolinos (sentido horario: arriba el aire sigue, junto al ala vuelve) que nacen tras el
+    punto de separación y se van con la estela. `techo(x)` da la altura de la línea separada
+    más baja. Ilustración cualitativa. `reloj`: ValueTracker en segundos; `visible`:
+    ValueTracker opcional (0–1) para hacerlos aparecer sin animar el grupo (que se redibuja
+    entero en cada fotograma)."""
+    te = perfil.borde_salida()
+    le = perfil.borde_ataque()
+    cont = perfil.puntos_contorno(720)
+    sup = cont[cont[:, 1] >= np.interp(cont[:, 0], [le[0], te[0]], [le[1], te[1]])]
+    sup = sup[np.argsort(sup[:, 0])]
+    x0 = p_sep[0] + 0.35
+    x1 = te[0] + (largo if largo is not None else 2.6)
+    xs = np.linspace(x0, x1, 200)
+    suelo = np.where(xs <= te[0], np.interp(xs, sup[:, 0], sup[:, 1]),
+                     te[1] - 0.12 * (xs - te[0]))
+    cielo = np.array([techo(x) for x in xs])
+    medio = (suelo + cielo) / 2
+    hueco = np.clip(cielo - suelo, 0.1, None)
+    L = x1 - x0
+    grupo = VGroup(*[VMobject() for _ in range(n)])
+    for k, e in enumerate(grupo):
+        e.fase = k * L / n
+
+    def mover(g):
+        t = reloj.get_value()
+        vis = visible.get_value() if visible is not None else 1.0
+        for e in g:
+            s = (t * vel + e.fase) % L
+            x = x0 + s
+            y = np.interp(x, xs, medio)
+            r = np.clip(0.38 * np.interp(x, xs, hueco), *radio) * (0.6 + 0.4 * min(s / 0.6, 1))
+            arco = Arc(radius=r, start_angle=giro * t + e.fase * 2.0, angle=-1.6 * PI,
+                       arc_center=[x, y, 0], color=color, stroke_width=4)
+            arco.add_tip(tip_length=0.12, tip_width=0.12)
+            op = 0.8 * vis * max(min(1.0, s / 0.5, (L - s) / 0.8), 0)
+            arco.set_stroke(opacity=op)
+            arco.tip.set_fill(opacity=op).set_stroke(opacity=op)
+            e.become(arco)
+    grupo.add_updater(mover)
+    mover(grupo)
+    return grupo
+
+
+def angulo_entre(vertice, ang_ref, ang, radio, color, ancho=5):
+    """Arco entre dos direcciones (en radianes) desde `vertice`."""
+    return Arc(radius=radio, start_angle=ang_ref, angle=ang - ang_ref, arc_center=vertice,
+               color=color, stroke_width=ancho)
+
+
 # ---------- Clase base para cada short ----------
 class ShortBase(Scene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,

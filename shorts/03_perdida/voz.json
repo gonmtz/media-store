@@ -1,0 +1,132 @@
+{
+ "completo": "voz.mp3",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 5.89
+  },
+  "angulo": {
+   "inicio": 5.89,
+   "duracion": 9.23
+  },
+  "separacion": {
+   "inicio": 15.12,
+   "duracion": 7.42
+  },
+  "motor": {
+   "inicio": 22.54,
+   "duracion": 10.01
+  },
+  "cierre": {
+   "inicio": 32.55,
+   "duracion": 4.86
+  }
+ },
+ "frases": [
+  [
+   0,
+   2.97,
+   "¿Un avión puede caer con los motores a toda potencia?"
+  ],
+  [
+   3.64,
+   4.0,
+   "Sí:"
+  ],
+  [
+   4.44,
+   5.38,
+   "es la pérdida."
+  ],
+  [
+   5.89,
+   7.72,
+   "Todo depende del ángulo de ataque:"
+  ],
+  [
+   8.16,
+   10.21,
+   "cuánto se inclina el ala frente al aire."
+  ],
+  [
+   10.7,
+   11.47,
+   "Más ángulo,"
+  ],
+  [
+   11.74,
+   12.91,
+   "más sustentación,"
+  ],
+  [
+   13.21,
+   14.64,
+   "hasta unos quince grados."
+  ],
+  [
+   15.12,
+   15.81,
+   "Más allá,"
+  ],
+  [
+   16.15,
+   18.26,
+   "el aire se despega de la parte de arriba."
+  ],
+  [
+   18.73,
+   20.49,
+   "La sustentación cae de golpe"
+  ],
+  [
+   20.68,
+   21.94,
+   "y la resistencia sube."
+  ],
+  [
+   22.54,
+   23.74,
+   "No es cosa del motor:"
+  ],
+  [
+   24.14,
+   25.87,
+   "puede ocurrir a cualquier velocidad"
+  ],
+  [
+   26.09,
+   28.09,
+   "y con cualquier inclinación de la nariz."
+  ],
+  [
+   28.62,
+   29.25,
+   "Para salir,"
+  ],
+  [
+   29.56,
+   30.41,
+   "hay que bajarla,"
+  ],
+  [
+   30.74,
+   32.09,
+   "aunque parezca al revés."
+  ],
+  [
+   32.55,
+   33.87,
+   "La pérdida es del ala,"
+  ],
+  [
+   34.14,
+   34.99,
+   "no del motor."
+  ],
+  [
+   35.25,
+   37.41,
+   "¿Sabías que se sale bajando la nariz?"
+  ]
+ ]
+}
