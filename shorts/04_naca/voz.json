@@ -1,0 +1,127 @@
+{
+ "completo": "voz.mp3",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 5.8
+  },
+  "curvatura": {
+   "inicio": 5.8,
+   "duracion": 13.81
+  },
+  "espesor": {
+   "inicio": 19.61,
+   "duracion": 7.35
+  },
+  "cinco": {
+   "inicio": 26.96,
+   "duracion": 8.6
+  },
+  "cierre": {
+   "inicio": 35.56,
+   "duracion": 4.41
+  }
+ },
+ "frases": [
+  [
+   0,
+   2.35,
+   "NACA 2412:"
+  ],
+  [
+   2.9,
+   4.2,
+   "parece una contraseña,"
+  ],
+  [
+   4.43,
+   5.22,
+   "pero es un ala."
+  ],
+  [
+   5.8,
+   8.64,
+   "NACA, la antecesora de la NASA,"
+  ],
+  [
+   8.96,
+   10.49,
+   "numeró así sus perfiles."
+  ],
+  [
+   11.05,
+   13.22,
+   "La primera cifra es la curvatura máxima:"
+  ],
+  [
+   13.57,
+   15.07,
+   "2 % de la cuerda."
+  ],
+  [
+   15.6,
+   17.49,
+   "La segunda dice dónde está:"
+  ],
+  [
+   17.91,
+   19.06,
+   "al 40 %."
+  ],
+  [
+   19.61,
+   21.22,
+   "Las dos últimas son el espesor:"
+  ],
+  [
+   21.59,
+   22.58,
+   "12 %."
+  ],
+  [
+   23.15,
+   24.67,
+   "Si empieza por 00,"
+  ],
+  [
+   24.98,
+   26.33,
+   "el perfil es simétrico."
+  ],
+  [
+   26.96,
+   28.32,
+   "La serie de cinco cifras,"
+  ],
+  [
+   28.65,
+   30.49,
+   "como el 23012,"
+  ],
+  [
+   30.87,
+   33.39,
+   "lleva la curvatura máxima más adelante:"
+  ],
+  [
+   33.83,
+   34.94,
+   "al 15 %."
+  ],
+  [
+   35.56,
+   36.41,
+   "Cuatro cifras,"
+  ],
+  [
+   36.71,
+   37.45,
+   "un ala entera."
+  ],
+  [
+   38.1,
+   39.97,
+   "¿Qué perfil quieres que descifremos?"
+  ]
+ ]
+}

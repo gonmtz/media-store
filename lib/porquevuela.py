@@ -624,6 +624,99 @@ def angulo_entre(vertice, ang_ref, ang, radio, color, ancho=5):
                color=color, stroke_width=ancho)
 
 
+# ---------- Perfiles NACA (geometría exacta de las ecuaciones publicadas) ----------
+_NACA5 = {1: (0.05, 0.0580, 361.40), 2: (0.10, 0.1260, 51.640), 3: (0.15, 0.2025, 15.957),
+          4: (0.20, 0.2900, 6.643), 5: (0.25, 0.3910, 3.230)}   # p, r, k1 (Cl de diseño 0,3)
+
+
+def naca_espesor(x, t, cerrado=True):
+    """Semiespesor de la familia NACA (x y resultado en fracción de cuerda)."""
+    a4 = -0.1036 if cerrado else -0.1015
+    return 5 * t * (0.2969 * np.sqrt(x) - 0.1260 * x - 0.3516 * x ** 2 + 0.2843 * x ** 3
+                    + a4 * x ** 4)
+
+
+def naca_linea_media(codigo, x):
+    """Línea media (yc, dyc/dx) de un perfil NACA de 4 cifras ('2412') o de 5 cifras con
+    línea media normal ('23012'). Acepta también parámetros continuos para animar:
+    codigo = ('4', m, p) o ('5', cl_diseno, digito_p)."""
+    x = np.asarray(x, dtype=float)
+    if isinstance(codigo, str):
+        if len(codigo) == 4:
+            codigo = ("4", int(codigo[0]) / 100, int(codigo[1]) / 10)
+        elif len(codigo) == 5:
+            if codigo[2] != "0":
+                raise ValueError("solo línea media normal (tercera cifra 0)")
+            codigo = ("5", int(codigo[0]) * 0.15, int(codigo[1]))
+    if codigo[0] == "4":
+        _, m, p = codigo
+        if m == 0 or p == 0:
+            return np.zeros_like(x), np.zeros_like(x)
+        yc = np.where(x < p, m / p ** 2 * (2 * p * x - x ** 2),
+                      m / (1 - p) ** 2 * ((1 - 2 * p) + 2 * p * x - x ** 2))
+        dy = np.where(x < p, 2 * m / p ** 2 * (p - x), 2 * m / (1 - p) ** 2 * (p - x))
+        return yc, dy
+    _, cl, dp = codigo
+    _, r, k1 = _NACA5[int(dp)]
+    f = cl / 0.3
+    yc = np.where(x < r, k1 / 6 * (x ** 3 - 3 * r * x ** 2 + r ** 2 * (3 - r) * x),
+                  k1 * r ** 3 / 6 * (1 - x))
+    dy = np.where(x < r, k1 / 6 * (3 * x ** 2 - 6 * r * x + r ** 2 * (3 - r)), -k1 * r ** 3 / 6)
+    return f * yc, f * dy
+
+
+def naca_puntos(codigo, t, n=160):
+    """Contorno (extradós e intradós) de un perfil NACA con espesor t (fracción de cuerda).
+    Devuelve (x_sup, y_sup, x_inf, y_inf, x, yc) en fracción de cuerda."""
+    beta = np.linspace(0, np.pi, n)
+    x = (1 - np.cos(beta)) / 2          # más puntos cerca de los bordes
+    yt = naca_espesor(x, t)
+    yc, dy = naca_linea_media(codigo, x)
+    th = np.arctan(dy)
+    return (x - yt * np.sin(th), yc + yt * np.cos(th), x + yt * np.sin(th),
+            yc - yt * np.cos(th), x, yc)
+
+
+class PerfilNACA:
+    """Perfil NACA dibujado a escala real (sin exagerar) entre `inicio` y `inicio + cuerda`
+    en pantalla. `codigo`: '2412', '0012', '23012' o tupla de parámetros continuos (ver
+    naca_linea_media); `t`: espesor (fracción de cuerda), por defecto el del código."""
+
+    def __init__(self, codigo, t=None, cuerda=7.0, inicio=(-3.5, 0.0)):
+        if t is None:
+            t = int(codigo[-2:]) / 100
+        self.codigo, self.t, self.cuerda = codigo, t, cuerda
+        self.o = np.array([inicio[0], inicio[1], 0.0])
+        self.xs, self.ys, self.xi, self.yi, self.x, self.yc = naca_puntos(codigo, t)
+
+    def p(self, x, y):
+        return self.o + self.cuerda * np.array([x, y, 0.0])
+
+    def contorno(self, color_borde=BORDE):
+        sup = [self.p(a, b) for a, b in zip(self.xs, self.ys)]
+        inf = [self.p(a, b) for a, b in zip(self.xi, self.yi)]
+        v = VMobject().set_points_as_corners(sup[::-1] + inf[1:] + [sup[-1]])
+        v.set_fill(color=[FUS_A, "#94A3B8"], opacity=1).set_sheen_direction(DOWN)
+        return v.set_stroke(color_borde, width=2)
+
+    def linea_media(self, color, ancho=4):
+        v = VMobject().set_points_as_corners([self.p(a, b) for a, b in zip(self.x, self.yc)])
+        return v.set_stroke(color, width=ancho)
+
+    def cuerda_linea(self, color=TEXTO_SEC):
+        return DashedLine(self.p(0, 0), self.p(1, 0), color=color, stroke_width=3,
+                          dash_length=0.1)
+
+    def max_curvatura(self):
+        i = int(np.argmax(self.yc))
+        return self.x[i], self.yc[i]
+
+    def max_espesor(self):
+        e = self.ys - np.interp(self.xs, self.xi, self.yi)
+        i = int(np.argmax(e))
+        return self.xs[i], np.interp(self.xs[i], self.xi, self.yi), self.ys[i]
+
+
 # ---------- Clase base para cada short ----------
 class ShortBase(Scene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,
