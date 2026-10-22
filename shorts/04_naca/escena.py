@@ -156,7 +156,7 @@ class Naca(ShortBase):
         self.play(FadeIn(nasa, shift=UP * 0.2), run_time=0.4)
 
         # "La primera cifra es la curvatura máxima"
-        self.hasta(t0, 5.15)
+        self.hasta(t0, 4.4)
         self.resalte = {0: C_CURV}
 
         def media():
@@ -180,7 +180,7 @@ class Naca(ShortBase):
         self.play(self.m.animate.set_value(2), rate_func=smooth, run_time=0.9)
 
         # "La segunda dice dónde está: al 40 %"
-        self.hasta(t0, 9.8)
+        self.hasta(t0, 9.6)
         self.resalte = {1: C_CURV}
 
         def marca_pos():
@@ -277,18 +277,18 @@ class Naca(ShortBase):
         leyenda.move_to([0, 1.3, 0])
 
         # "como el 23012"
-        self.hasta(t0, 1.75)
+        self.hasta(t0, 1.95)
         self.add(fantasma, m4)
         self.play(FadeIn(fantasma), FadeIn(m4), FadeIn(m5), FadeIn(leyenda), FadeOut(self.regla),
                   run_time=0.5)
         # "lleva la curvatura máxima más adelante: al 15 %"
-        self.hasta(t0, 3.95)
+        self.hasta(t0, 5.0)
         self.play(Create(lin4), FadeIn(lab4), run_time=0.4)
         flecha = Arrow([ref.p(x4, 0)[0], Y_CUERDA - 1.35, 0],
                        [nuevo.p(x5, 0)[0], Y_CUERDA - 1.35, 0], buff=0, color=C_CINCO,
                        stroke_width=7, max_tip_length_to_length_ratio=0.18).set_z_index(21)
         self.play(GrowArrow(flecha), run_time=0.6)
-        self.hasta(t0, 6.8)
+        self.hasta(t0, 7.95)
         self.play(Create(lin5), FadeIn(lab5, scale=1.3), FadeIn(dot5), run_time=0.4)
         self.play(FadeIn(etq), FadeIn(ctl, scale=0.8), run_time=0.4)
         self.rellenar(t0, d)
@@ -330,7 +330,7 @@ class Naca(ShortBase):
         self.play(LaggedStart(*[FadeIn(t, shift=RIGHT * 0.5) for t in tarjetas], lag_ratio=0.25),
                   run_time=1.0)
         self.play(FadeIn(lema, shift=UP * 0.2), run_time=0.4)
-        self.hasta(t0, 2.45)
+        self.hasta(t0, 2.5)
         self.play(FadeIn(preg, shift=UP * 0.3, scale=1.1), run_time=0.5)
         self.play(FadeIn(com), run_time=0.3)
         self.rellenar(t0, d, margen=1.5)

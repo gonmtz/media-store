@@ -2,9 +2,9 @@
 
 ## Guion (voz: Brian)
 
-NACA dos cuatro uno dos: parece una contraseña, pero es un ala.
+Naca dos cuatro uno dos: parece una contraseña, pero es un ala.
 
-NACA, la antecesora de la NASA, numeró así sus perfiles. La primera cifra es la curvatura máxima: dos por ciento de la cuerda. La segunda dice dónde está: al cuarenta por ciento.
+Naca, la antecesora de la Nasa, numeró así sus perfiles. La primera cifra es la curvatura máxima: dos por ciento de la cuerda. La segunda dice dónde está: al cuarenta por ciento.
 
 Las dos últimas son el espesor: doce por ciento. Si empieza por cero cero, el perfil es simétrico.
 
@@ -12,7 +12,8 @@ La serie de cinco cifras, como el dos tres cero uno dos, lleva la curvatura máx
 
 Cuatro cifras, un ala entera. ¿Qué perfil quieres que descifremos?
 
-(Las cifras se escriben con palabras para que la voz las lea una a una.)
+(Las cifras se escriben con palabras para que la voz las lea una a una, y "Naca" / "Nasa" en
+minúsculas para que las lea como palabra y no las deletree.)
 
 ## Revisión técnica
 
@@ -38,10 +39,10 @@ Cuatro cifras, un ala entera. ¿Qué perfil quieres que descifremos?
 
 ## Producción
 
-- Voz: Brian (vidIQ), una sola llamada, 531 caracteres, 40,0 s. Cortes fijados con
+- Voz: Brian (vidIQ), una sola llamada, 531 caracteres, 40,7 s (segunda toma: la primera deletreaba N-A-C-A). Cortes fijados con
   `tools/pausas.py` y recuento de sílabas por tramo de habla.
 - Música: "Hypnothis" de Kevin MacLeod (reutilizada: no queda ninguna pista sin usar en
-  `musica/` y no se pudo descargar una nueva). Mezcla: -14,4 LUFS. Duración 41,5 s.
+  `musica/` y no se pudo descargar una nueva). Mezcla: -14,5 LUFS. Duración 42,2 s.
 
 ## Publicación
 

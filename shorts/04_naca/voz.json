@@ -3,124 +3,119 @@
  "segmentos": {
   "gancho": {
    "inicio": 0.0,
-   "duracion": 5.8
+   "duracion": 5.73
   },
   "curvatura": {
-   "inicio": 5.8,
-   "duracion": 13.81
+   "inicio": 5.73,
+   "duracion": 13.65
   },
   "espesor": {
-   "inicio": 19.61,
-   "duracion": 7.35
+   "inicio": 19.38,
+   "duracion": 7.27
   },
   "cinco": {
-   "inicio": 26.96,
-   "duracion": 8.6
+   "inicio": 26.65,
+   "duracion": 9.75
   },
   "cierre": {
-   "inicio": 35.56,
-   "duracion": 4.41
+   "inicio": 36.4,
+   "duracion": 4.27
   }
  },
  "frases": [
   [
    0,
-   2.35,
-   "NACA 2412:"
+   2.23,
+   "Naca 2412:"
   ],
   [
-   2.9,
-   4.2,
+   2.71,
+   4.05,
    "parece una contraseña,"
   ],
   [
-   4.43,
-   5.22,
+   4.36,
+   5.15,
    "pero es un ala."
   ],
   [
-   5.8,
-   8.64,
+   5.73,
+   7.89,
    "NACA, la antecesora de la NASA,"
   ],
   [
-   8.96,
-   10.49,
+   8.21,
+   9.6,
    "numeró así sus perfiles."
   ],
   [
-   11.05,
-   13.22,
+   10.12,
+   12.82,
    "La primera cifra es la curvatura máxima:"
   ],
   [
-   13.57,
-   15.07,
+   13.25,
+   14.85,
    "2 % de la cuerda."
   ],
   [
-   15.6,
-   17.49,
+   15.38,
+   17.13,
    "La segunda dice dónde está:"
   ],
   [
-   17.91,
-   19.06,
+   17.58,
+   18.76,
    "al 40 %."
   ],
   [
-   19.61,
-   21.22,
+   19.38,
+   21.03,
    "Las dos últimas son el espesor:"
   ],
   [
-   21.59,
-   22.58,
+   21.33,
+   22.37,
    "12 %."
   ],
   [
-   23.15,
-   24.67,
+   22.78,
+   24.48,
    "Si empieza por 00,"
   ],
   [
-   24.98,
-   26.33,
+   24.78,
+   26.07,
    "el perfil es simétrico."
   ],
   [
-   26.96,
-   28.32,
+   26.65,
+   28.25,
    "La serie de cinco cifras,"
   ],
   [
-   28.65,
-   30.49,
+   28.6,
+   31.13,
    "como el 23012,"
   ],
   [
-   30.87,
-   33.39,
+   31.66,
+   34.08,
    "lleva la curvatura máxima más adelante:"
   ],
   [
-   33.83,
-   34.94,
+   34.61,
+   35.76,
    "al 15 %."
   ],
   [
-   35.56,
-   36.41,
-   "Cuatro cifras,"
+   36.4,
+   38.31,
+   "Cuatro cifras, un ala entera."
   ],
   [
-   36.71,
-   37.45,
-   "un ala entera."
-  ],
-  [
-   38.1,
-   39.97,
+   38.9,
+   40.67,
    "¿Qué perfil quieres que descifremos?"
   ]
  ]
