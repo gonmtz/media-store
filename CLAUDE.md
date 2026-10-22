@@ -90,7 +90,9 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback.
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis (repetida:
+no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
+añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
 volver a descargar la pista correcta antes de usarla.
 
@@ -101,6 +103,7 @@ volver a descargar la pista correcta antes de usarla.
 | 01 | Los 3 giros (ejes de referencia) | Hypnothis | publicado 2026-10-20 23:05 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
 | 02 | Sustentación: el mito del tiempo de tránsito igual | Down With That | publicado 2026-10-21 12:00 (CDMX) en YT, IG y TikTok |
 | 03 | Pérdida (stall): caer con los motores funcionando | Dreamy Flashback | publicado 2026-10-21 19:08 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
+| 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | producido 2026-10-22; pendiente de aprobación (propuesta: 2026-10-23 12:00 CDMX) |
 
 ## Banco de ideas (siguientes, en orden)
 
@@ -115,6 +118,8 @@ volver a descargar la pista correcta antes de usarla.
 9. Diedro: por qué las alas forman una V
 10. Flaps y slats: volar lento sin caer
 
+Hecho fuera del banco: perfiles NACA (short 04, a petición del dueño).
+
 Piezas aerodinámicas ya disponibles: `Perfil` (Joukowski + flujo potencial 2D con Kutta:
 contorno, `linea` con tiempos de paso, `cp_contorno`), `en_tiempo`, `trazo`, `trazadores`,
 `vector`, `flechas_presion`. Para la pérdida (short 03): `cl_tipico` / `cd_tipico` (curvas
@@ -124,7 +129,10 @@ pegado mientras gira el ala), `flujo_separado` y `remolinos` (ilustración cuali
 flujo potencial no se separa; rotularla en pantalla) y `angulo_entre`.
 Ojo: los grupos con updater que guardan estado (rotación acumulada) se descuadran si se
 animan con FadeIn; redibujar desde cero en cada fotograma o usar un ValueTracker de
-visibilidad. `ShortBase.SUBS_DESDE` omite los subtítulos del gancho.
+visibilidad. Perfiles NACA (short 04): `PerfilNACA` (4 cifras y 5 cifras con línea media
+normal, geometría exacta a escala real; acepta parámetros continuos para animar),
+`naca_espesor`, `naca_linea_media`, `naca_puntos`. `ShortBase.SUBS_DESDE` omite los
+subtítulos del gancho.
 
 Estos temas reutilizan las piezas que ya hay en la biblioteca (perfil, vectores y flujo):
 construir y añadir a `lib/porquevuela.py` lo que pueda volver a usarse.
