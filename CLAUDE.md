@@ -74,6 +74,8 @@ marca/                  avatar, banner y branding.py
    - Texto: descripción breve + pregunta + hashtags + atribución de la música.
    - No enviar `videoCoverMilliseconds`: el canal de YouTube no está verificado y Metricool
      rechazaría la publicación.
+   - Comprobar la hora devuelta: el 2026-10-24 Metricool guardó 20:00 al pedir 18:00 (CDMX) y
+     `updateScheduledPost` no cambió la hora. Si vuelve a pasar, corregirla en la web de Metricool.
 
 ## Entorno (sesión nueva)
 
@@ -103,8 +105,8 @@ volver a descargar la pista correcta antes de usarla.
 | 01 | Los 3 giros (ejes de referencia) | Hypnothis | publicado 2026-10-20 23:05 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
 | 02 | Sustentación: el mito del tiempo de tránsito igual | Down With That | publicado 2026-10-21 12:00 (CDMX) en YT, IG y TikTok |
 | 03 | Pérdida (stall): caer con los motores funcionando | Dreamy Flashback | publicado 2026-10-21 19:08 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
-| 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | programado 2026-10-23 12:00 (CDMX) en YT, IG y TikTok |
-| 05 | Winglets y vórtices de punta | Down With That | producido 2026-10-24; pendiente de aprobación |
+| 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | publicado 2026-10-23 12:00 (CDMX) en YT, IG y TikTok |
+| 05 | Winglets y vórtices de punta | Down With That | aprobado; programado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok |
 
 ## Banco de ideas (siguientes, en orden)
 
