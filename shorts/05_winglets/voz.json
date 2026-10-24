@@ -1,0 +1,97 @@
+{
+ "completo": "voz.mp3",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 5.5
+  },
+  "presion": {
+   "inicio": 5.5,
+   "duracion": 9.18
+  },
+  "estela": {
+   "inicio": 14.68,
+   "duracion": 6.58
+  },
+  "winglet": {
+   "inicio": 21.26,
+   "duracion": 9.19
+  },
+  "cierre": {
+   "inicio": 30.45,
+   "duracion": 3.82
+  }
+ },
+ "frases": [
+  [
+   0,
+   2.94,
+   "Cada avión deja detrás dos remolinos,"
+  ],
+  [
+   3.35,
+   4.72,
+   "como pequeños tornados."
+  ],
+  [
+   5.5,
+   8.05,
+   "Debajo del ala la presión es mayor que encima."
+  ],
+  [
+   8.46,
+   9.36,
+   "En la punta,"
+  ],
+  [
+   9.54,
+   11.09,
+   "el aire se escapa hacia arriba"
+  ],
+  [
+   11.47,
+   12.32,
+   "y, al avanzar,"
+  ],
+  [
+   12.5,
+   13.89,
+   "se enrolla en un remolino."
+  ],
+  [
+   14.68,
+   17.34,
+   "Pueden durar de 1 a 3 minutos y van bajando."
+  ],
+  [
+   17.62,
+   20.79,
+   "Por eso hay una distancia mínima entre aviones que aterrizan."
+  ],
+  [
+   21.26,
+   23.14,
+   "El winglet no los elimina,"
+  ],
+  [
+   23.61,
+   25.8,
+   "pero reduce la resistencia que generan:"
+  ],
+  [
+   26.12,
+   29.82,
+   "ahorra entre un 4 y un 6 % de combustible."
+  ],
+  [
+   30.45,
+   32.21,
+   "Dos remolinos en cada vuelo."
+  ],
+  [
+   32.81,
+   34.24,
+   "¿Los habías visto alguna vez?"
+  ]
+ ]
+}

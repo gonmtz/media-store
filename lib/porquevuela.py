@@ -130,8 +130,9 @@ def avion_lateral():
     return grupo, elevador, bisagra
 
 
-def avion_trasero():
-    """Vista desde atrás. Devuelve (grupo, alerón izq., alerón der.)."""
+def avion_trasero(winglets=True):
+    """Vista desde atrás. Devuelve (grupo, alerón izq., alerón der.).
+    La punta del ala derecha (a la derecha de la pantalla) está en PUNTA_TRASERO."""
     pend = np.tan(6.5 * DEGREES)
 
     def ala(s):
@@ -169,8 +170,9 @@ def avion_trasero():
     fus.set_sheen_direction(DOWN).set_stroke(BORDE, width=1.5)
     cono = Circle(radius=0.16, fill_color="#CBD5E1", fill_opacity=1, stroke_width=0)
     a_i, a_d = aleron(-1), aleron(1)
-    grupo = VGroup(estab, aleta, ala(-1), ala(1), winglet(-1), winglet(1), motor(-1), motor(1),
-                   fus, cono, a_i, a_d)
+    grupo = VGroup(estab, aleta, ala(-1), ala(1), motor(-1), motor(1), fus, cono, a_i, a_d)
+    if winglets:
+        grupo.add(winglet(-1), winglet(1))
     return grupo, a_i, a_d
 
 
@@ -202,6 +204,17 @@ def avion_superior():
     grupo = VGroup(motor(-1), motor(1), ala(-1), ala(1), estab(-1), estab(1), fus, cabina,
                    aleta, timon)
     return grupo, timon, bisagra
+
+
+PUNTA_TRASERO = np.array([3.75, -0.14 + 3.35 * np.tan(6.5 * DEGREES), 0.0])
+
+
+def winglet_trasero(s=1):
+    """Winglet suelto (vista desde atrás) para hacerlo aparecer sobre avion_trasero(False)."""
+    pend = np.tan(6.5 * DEGREES)
+    x, y = s * 3.75, -0.08 + 3.35 * pend
+    return poli([(x - s * 0.06, y), (x + s * 0.06, y + 0.55), (x + s * 0.13, y + 0.55),
+                 (x + s * 0.06, y - 0.08)], radio=0.03, fill=(FUS_A, "#CBD5E1"))
 
 
 # ---------- Subtítulos ----------
@@ -715,6 +728,83 @@ class PerfilNACA:
         e = self.ys - np.interp(self.xs, self.xi, self.yi)
         i = int(np.argmax(e))
         return self.xs[i], np.interp(self.xs[i], self.xi, self.yi), self.ys[i]
+
+
+# ---------- Vórtices de punta ----------
+def espiral(centro, radio, fase=0.0, sentido=1, vueltas=1.6, color=TEXTO, ancho=4, opacidad=1.0,
+            punta=True):
+    """Brazo de espiral que se enrolla hacia el centro. sentido=+1: giro antihorario (en el
+    plano de la pantalla), −1: horario. La punta de flecha indica el sentido del giro."""
+    th = np.linspace(0, vueltas * TAU, 90)
+    r = radio * (0.12 + 0.88 * th / th[-1])
+    ang = fase + sentido * th
+    pts = [np.array(centro) + np.array([ri * np.cos(a), ri * np.sin(a), 0]) for ri, a in zip(r, ang)]
+    v = VMobject().set_points_smoothly(pts)
+    v.set_stroke(color, width=ancho, opacity=opacidad)
+    if punta:
+        # el aire avanza en el sentido del giro: punta al final exterior
+        a = ang[-1]
+        t = sentido * np.array([-np.sin(a), np.cos(a), 0])
+        tri = Triangle(fill_color=color, fill_opacity=opacidad, stroke_width=0).scale(0.09 * ancho / 4)
+        tri.rotate(np.arctan2(t[1], t[0]) - PI / 2).move_to(pts[-1] + t * 0.05)
+        return VGroup(v, tri)
+    return VGroup(v)
+
+
+def vortice(centro, reloj, radio=0.6, sentido=1, color=TEXTO, brazos=2, vel=2.5, ancho=4,
+            visible=None, escala=None):
+    """Vórtice visto de frente (eje perpendicular a la pantalla) que gira con `reloj`.
+    sentido=+1 antihorario, −1 horario. Visto desde atrás de un avión, el vórtice de la punta
+    derecha gira en sentido antihorario y el de la izquierda en horario. `centro` puede ser un
+    callable (para que se mueva); `visible` y `escala`, ValueTracker opcionales."""
+    g = VGroup()
+
+    def dib(m):
+        c = centro() if callable(centro) else centro
+        op = visible.get_value() if visible is not None else 1.0
+        r = radio * (escala.get_value() if escala is not None else 1.0)
+        nuevo = VGroup(*[espiral(c, r, fase=sentido * vel * reloj.get_value() + k * TAU / brazos,
+                                 sentido=sentido, color=color, ancho=ancho, opacidad=op)
+                         for k in range(brazos)])
+        m.become(nuevo)
+    g.add_updater(dib)
+    dib(g)
+    return g
+
+
+def rodeo_punta(punta, sentido=1, color=TEXTO, ancho=6):
+    """Flecha curva que sube por fuera de la punta del ala: del intradós (abajo) al extradós
+    (arriba). sentido=+1 para la punta derecha, −1 para la izquierda."""
+    p = np.array(punta)
+    a = p + np.array([-sentido * 0.45, -0.45, 0])
+    b = p + np.array([-sentido * 0.45, 0.5, 0])
+    arco = ArcBetweenPoints(a, b, angle=sentido * 1.15 * PI, color=color, stroke_width=ancho)
+    arco.add_tip(tip_length=0.22, tip_width=0.22)
+    return arco
+
+
+def estela_superior(p_izq, p_der, largo, reloj, color=TEXTO, amplitud=0.12, onda=0.9, vel=1.5,
+                    ancho=4, visible=None):
+    """Vista desde arriba: dos estelas helicoidales (vórtices) que salen de las puntas hacia
+    atrás (hacia abajo en pantalla). Ilustración: la hélice representa el giro del vórtice."""
+    g = VGroup()
+
+    def dib(m):
+        op = visible.get_value() if visible is not None else 1.0
+        lineas = VGroup()
+        for p, s in ((np.array(p_izq), -1), (np.array(p_der), 1)):
+            ys = np.linspace(0, largo, 160)
+            for fase in (0, PI):
+                xs = s * amplitud * np.sin(TAU * ys / onda + s * vel * reloj.get_value() + fase)
+                fade = np.clip(1 - ys / largo, 0, 1)
+                pts = [p + np.array([x, -y, 0]) for x, y in zip(xs, ys)]
+                v = VMobject().set_points_smoothly(pts)
+                v.set_stroke(color, width=ancho, opacity=op * (0.9 if fase == 0 else 0.45))
+                lineas.add(v)
+        m.become(lineas)
+    g.add_updater(dib)
+    dib(g)
+    return g
 
 
 # ---------- Clase base para cada short ----------
