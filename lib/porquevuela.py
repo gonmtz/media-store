@@ -901,6 +901,39 @@ def pala_torcida(centro, betas, cuerda=1.5, colores=None, codigo="4412", opacida
     return g
 
 
+# ---------- Ala volante (sin cola) ----------
+def ala_volante_superior():
+    """Ala volante genérica vista desde arriba, morro hacia arriba (no reproduce ningún avión
+    concreto). Devuelve (grupo, punta izq., punta der.): las puntas son el extremo del borde de
+    salida de cada ala, donde van los frenos partidos (`freno_partido`)."""
+    def semi(s):
+        return [(0.0, 1.75), (s * 0.55, 1.35), (s * 3.75, -0.95), (s * 3.62, -1.3),
+                (s * 2.3, -0.62), (s * 0.45, -0.3), (0.0, -0.55)]
+    d = semi(1)
+    pts = d + [(x * -1, y) for x, y in d[::-1]][1:-1]
+    cuerpo = poli(pts, radio=0.08, fill=(FUS_A, "#CBD5E1"), sheen=DOWN)
+    lomo = curva([(0, 1.45), (0.3, 1.0), (0.38, 0.1), (0.25, -0.45), (0, -0.55), (-0.25, -0.45),
+                  (-0.38, 0.1), (-0.3, 1.0)], fill=("#E2E8F0", "#B9C4D6"), sheen=RIGHT)
+    cabina = poli([(-0.2, 1.2), (0.2, 1.2), (0.12, 1.36), (-0.12, 1.36)], radio=0.03,
+                  fill=(OSCURO, OSCURO))
+    grupo = VGroup(cuerpo, lomo, cabina)
+    return grupo, np.array([-3.66, -1.2, 0.0]), np.array([3.66, -1.2, 0.0])
+
+
+def freno_partido(punta, s=1, color=C_GUINADA, apertura=1.0):
+    """Freno partido de punta (vista desde arriba): dos placas que se abren hacia arriba y
+    hacia abajo del ala; desde arriba se ve como una superficie que asoma por detrás del borde de
+    salida. `apertura` 0–1. s=+1 punta derecha, −1 izquierda."""
+    p = np.array(punta, dtype=float)
+    largo = 0.75 * max(apertura, 0.02)
+    a = p + np.array([-s * 0.85, 0.32, 0])
+    b = p + np.array([-s * 0.05, 0.0, 0])
+    atras = np.array([0, -largo * 0.55, 0])
+    placa = Polygon(a, b, b + atras, a + atras * 0.7, fill_color=color, fill_opacity=0.9,
+                    stroke_color=color, stroke_width=2)
+    return placa
+
+
 # ---------- Clase base para cada short ----------
 class ShortBase(Scene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,

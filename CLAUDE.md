@@ -108,6 +108,7 @@ volver a descargar la pista correcta antes de usarla.
 | 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | publicado 2026-10-23 12:00 (CDMX) en YT, IG y TikTok |
 | 05 | Winglets y vórtices de punta | Down With That | aprobado; programado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok |
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | aprobado; programado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok |
+| 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
 
 ## Banco de ideas (siguientes, en orden)
 
@@ -141,7 +142,9 @@ normal, geometría exacta a escala real; acepta parámetros continuos para anima
 `angulo_flujo` (tan φ = V/ω·r, sin velocidad inducida), `pala_frontal`, `HeliceFrontal` (vista de
 frente, `angulo` ValueTracker, `punto(r)`), `seccion_pala` (perfil NACA visto desde la punta con
 ángulo de pala β; el trozo va hacia la izquierda y el avión avanza hacia arriba),
-`triangulo_velocidades` (giro, avance, aire que llega y φ) y `pala_torcida` (secciones superpuestas). Voz: escribir las
+`triangulo_velocidades` (giro, avance, aire que llega y φ) y `pala_torcida` (secciones superpuestas).
+Alas volantes (boceto 07): `ala_volante_superior` (silueta genérica, devuelve las puntas) y
+`freno_partido` (freno de punta visto desde arriba, `apertura` 0–1). Voz: escribir las
 siglas en minúsculas ("Naca", "Nasa") o la voz las deletrea. `ShortBase.SUBS_DESDE` omite los
 subtítulos del gancho.
 

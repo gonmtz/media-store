@@ -1,0 +1,102 @@
+{
+ "segmentos": {
+  "gancho": {
+   "inicio": 0,
+   "duracion": 4.35
+  },
+  "cola": {
+   "inicio": 4.35,
+   "duracion": 8.07
+  },
+  "ala": {
+   "inicio": 12.43,
+   "duracion": 11.18
+  },
+  "giro": {
+   "inicio": 23.61,
+   "duracion": 8.27
+  },
+  "cierre": {
+   "inicio": 31.88,
+   "duracion": 5.22
+  }
+ },
+ "frases": [
+  [
+   0,
+   1.77,
+   "Este avión no tiene cola."
+  ],
+  [
+   2.07,
+   3.7,
+   "¿Por qué no da vueltas?"
+  ],
+  [
+   4.35,
+   5.7,
+   "En un avión normal,"
+  ],
+  [
+   6.0,
+   7.77,
+   "la cola equilibra el ala:"
+  ],
+  [
+   8.07,
+   9.28,
+   "si la nariz sube,"
+  ],
+  [
+   9.58,
+   11.78,
+   "la cola la devuelve a su sitio."
+  ],
+  [
+   12.43,
+   14.41,
+   "Un ala volante lo hace sola:"
+  ],
+  [
+   14.71,
+   19.68,
+   "las puntas quedan detrás del centro de gravedad y llevan menos ángulo,"
+  ],
+  [
+   19.98,
+   22.96,
+   "así que funcionan como una cola repartida."
+  ],
+  [
+   23.61,
+   24.46,
+   "Y sin timón,"
+  ],
+  [
+   24.76,
+   28.31,
+   "para girar abre unos frenos partidos en una punta:"
+  ],
+  [
+   28.61,
+   31.23,
+   "esa punta se retrasa y el avión gira."
+  ],
+  [
+   31.88,
+   33.16,
+   "Menos resistencia,"
+  ],
+  [
+   33.46,
+   34.95,
+   "pero muy poco margen."
+  ],
+  [
+   35.25,
+   36.45,
+   "¿Volarías en uno?"
+  ]
+ ],
+ "nota": "BOCETO sin voz: tiempos estimados a 14,1 caracteres/s"
+}
