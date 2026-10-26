@@ -807,6 +807,100 @@ def estela_superior(p_izq, p_der, largo, reloj, color=TEXTO, amplitud=0.12, onda
     return g
 
 
+# ---------- Hélices: velocidad por sección, triángulo de velocidades y torsión ----------
+def angulo_flujo(v_avance, omega, r):
+    """Ángulo φ (grados) entre el viento relativo de una sección de pala y el plano de giro:
+    tan φ = V / (ω·r). Simplificación: sin la velocidad inducida por la propia hélice
+    (que aumenta un poco φ) ni la rotación de la estela."""
+    return float(np.degrees(np.arctan2(v_avance, omega * r)))
+
+
+def pala_frontal(radio, raiz=0.32, cuerda=(0.2, 0.34, 0.16), color=(FUS_A, "#94A3B8")):
+    """Silueta de una pala vista de frente, desde el centro (origen) hacia +Y hasta `radio`:
+    estrecha en la raíz, más ancha hacia el medio y redondeada en la punta."""
+    c0, c1, c2 = cuerda
+    der = [(c0 / 2, raiz), (c1 / 2, 0.45 * radio), (c1 / 2 * 0.92, 0.75 * radio),
+           (c2 / 2, 0.97 * radio)]
+    izq = [(-x * 0.85, y) for x, y in der[::-1]]
+    pts = der + [(0.0, radio)] + izq
+    return curva(pts, fill=color, sheen=RIGHT)
+
+
+class HeliceFrontal(VGroup):
+    """Hélice vista de frente (desde delante del avión), con `palas` palas y buje.
+    `self.angulo` (ValueTracker, radianes) gira el conjunto con un updater: ángulo positivo,
+    sentido antihorario en pantalla. La pala 0 apunta hacia arriba con ángulo 0.
+    `self.punto(r)` da la posición en pantalla del punto a distancia r sobre la pala 0."""
+
+    def __init__(self, centro=(0.0, 0.0), radio=2.8, palas=2, **kw):
+        super().__init__(**kw)
+        self.c = np.array([centro[0], centro[1], 0.0])
+        self.radio = radio
+        self.angulo = ValueTracker(0.0)
+        self.palas = VGroup(*[pala_frontal(radio).rotate(k * TAU / palas, about_point=ORIGIN)
+                              for k in range(palas)])
+        buje = Circle(radius=0.36).set_fill(color=["#E2E8F0", "#64748B"], opacity=1)
+        buje.set_sheen_direction(DR).set_stroke(BORDE, width=2)
+        self.add(self.palas, buje)
+        self.shift(self.c)
+        self._ang = 0.0
+
+        def girar(m):
+            a = self.angulo.get_value()
+            m.palas.rotate(a - m._ang, about_point=m.c)
+            m._ang = a
+        self.add_updater(girar)
+
+    def punto(self, r):
+        a = self.angulo.get_value()
+        return self.c + r * np.array([-np.sin(a), np.cos(a), 0.0])
+
+    def tangente(self, signo=1):
+        """Dirección del movimiento de la pala 0 (signo=+1 si gira antihorario)."""
+        a = self.angulo.get_value()
+        return signo * np.array([-np.cos(a), -np.sin(a), 0.0])
+
+
+def seccion_pala(le, beta, cuerda=1.3, codigo="4412", color_borde=BORDE):
+    """Sección de pala (perfil NACA a escala) vista desde la punta: el borde de ataque en `le`,
+    el trozo se mueve hacia la izquierda y el avión avanza hacia arriba de la pantalla. La
+    cuerda baja hacia la derecha formando el ángulo de pala `beta` (grados) con el plano de
+    giro (horizontal); el extradós mira hacia delante (arriba)."""
+    p = PerfilNACA(codigo, cuerda=cuerda, inicio=(0.0, 0.0))
+    v = p.contorno(color_borde)
+    v.rotate(-beta * DEGREES, about_point=ORIGIN).shift(np.array(le, dtype=float))
+    return v
+
+
+def triangulo_velocidades(punto, u, v, escala, c_giro, c_avance, c_rel, ancho=8, punta=0.24):
+    """Viento relativo que recibe una sección de pala (vista desde la punta, como
+    `seccion_pala`): componente por el giro `u` = ω·r (hacia la derecha), por el avance `v`
+    (hacia abajo) y su suma, que llega a `punto` (el borde de ataque). Devuelve un dict con
+    las flechas 'giro', 'avance', 'relativo', el 'origen' y el ángulo 'phi' (radianes)."""
+    p = np.array(punto, dtype=float)
+    s = p + np.array([-u, v, 0.0]) * escala
+    esq = s + np.array([u, 0.0, 0.0]) * escala
+    return {"giro": vector(s, esq, c_giro, ancho=ancho * 0.7, punta=punta),
+            "avance": vector(esq, p, c_avance, ancho=ancho * 0.7, punta=punta),
+            "relativo": vector(s, p, c_rel, ancho=ancho, punta=punta),
+            "origen": s, "phi": float(np.arctan2(v, u))}
+
+
+def pala_torcida(centro, betas, cuerda=1.5, colores=None, codigo="4412", opacidad=1.0):
+    """Varias secciones de una pala superpuestas tal como se ven desde la punta, todas con el
+    mismo punto de referencia (25 % de la cuerda) en `centro` y girada cada una su ángulo de
+    pala: muestra la torsión de un vistazo."""
+    g = VGroup()
+    c = np.array([centro[0], centro[1], 0.0])
+    colores = colores or [TEXTO] * len(betas)
+    for b, col in zip(betas, colores):
+        ref = 0.25 * cuerda * np.array([np.cos(-b * DEGREES), np.sin(-b * DEGREES), 0])
+        s = seccion_pala(c - ref, b, cuerda=cuerda, codigo=codigo, color_borde=col)
+        s.set_fill(opacity=0.0).set_stroke(col, width=5, opacity=opacidad)
+        g.add(s)
+    return g
+
+
 # ---------- Clase base para cada short ----------
 class ShortBase(Scene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,

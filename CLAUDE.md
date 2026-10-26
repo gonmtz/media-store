@@ -92,7 +92,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -107,13 +107,14 @@ volver a descargar la pista correcta antes de usarla.
 | 03 | Pérdida (stall): caer con los motores funcionando | Dreamy Flashback | publicado 2026-10-21 19:08 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
 | 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | publicado 2026-10-23 12:00 (CDMX) en YT, IG y TikTok |
 | 05 | Winglets y vórtices de punta | Down With That | aprobado; programado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok |
+| 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | producido; pendiente de aprobación |
 
 ## Banco de ideas (siguientes, en orden)
 
 1. ~~Sustentación: el mito del "tiempo de tránsito igual"~~ (hecho: short 02)
 2. ~~Pérdida (stall): caer con los motores funcionando~~ (hecho: short 03)
 3. ~~Winglets y vórtices de punta~~ (hecho: short 05)
-4. ¿Por qué las hélices están torcidas?
+4. ~~¿Por qué las hélices están torcidas?~~ (hecho: short 06)
 5. Mach y el estampido sónico que se arrastra
 6. Reynolds: por qué un insecto no vuela con un ala de avión
 7. Motor a reacción: el motor que se traga la lluvia
@@ -136,7 +137,11 @@ visibilidad. Perfiles NACA (short 04): `PerfilNACA` (4 cifras y 5 cifras con lí
 normal, geometría exacta a escala real; acepta parámetros continuos para animar),
 `naca_espesor`, `naca_linea_media`, `naca_puntos`. Vórtices (short 05): `avion_trasero(winglets=False)`,
 `PUNTA_TRASERO`, `winglet_trasero`, `espiral`, `vortice` (visto de frente, con sentido de giro y
-`visible`/`escala`), `rodeo_punta`, `estela_superior` (vista desde arriba). Voz: escribir las
+`visible`/`escala`), `rodeo_punta`, `estela_superior` (vista desde arriba). Hélices (short 06):
+`angulo_flujo` (tan φ = V/ω·r, sin velocidad inducida), `pala_frontal`, `HeliceFrontal` (vista de
+frente, `angulo` ValueTracker, `punto(r)`), `seccion_pala` (perfil NACA visto desde la punta con
+ángulo de pala β; el trozo va hacia la izquierda y el avión avanza hacia arriba),
+`triangulo_velocidades` (giro, avance, aire que llega y φ) y `pala_torcida` (secciones superpuestas). Voz: escribir las
 siglas en minúsculas ("Naca", "Nasa") o la voz las deletrea. `ShortBase.SUBS_DESDE` omite los
 subtítulos del gancho.
 
