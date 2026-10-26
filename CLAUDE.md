@@ -70,7 +70,7 @@ marca/                  avatar, banner y branding.py
    - youtubeData: type `short`, `madeForKids` false, category `EDUCATION`,
      `isAiGeneratedContent` false (animación no realista).
    - instagramData: type `REEL`, `isAiGenerated` true (voz sintética).
-   - tiktokData: `isAigc` true.
+   - tiktokData: `isAigc` true y `title` (obligatorio; si falta, Metricool rechaza la publicación).
    - Texto: descripción breve + pregunta + hashtags + atribución de la música.
    - No enviar `videoCoverMilliseconds`: el canal de YouTube no está verificado y Metricool
      rechazaría la publicación.
@@ -107,7 +107,7 @@ volver a descargar la pista correcta antes de usarla.
 | 03 | Pérdida (stall): caer con los motores funcionando | Dreamy Flashback | publicado 2026-10-21 19:08 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
 | 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | publicado 2026-10-23 12:00 (CDMX) en YT, IG y TikTok |
 | 05 | Winglets y vórtices de punta | Down With That | aprobado; programado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok |
-| 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | producido; pendiente de aprobación |
+| 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | aprobado; programado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok |
 
 ## Banco de ideas (siguientes, en orden)
 
