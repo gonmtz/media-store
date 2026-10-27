@@ -970,6 +970,7 @@ class ShortBase(Scene):
                     m.set_opacity(1.0 if a <= t < b else 0.0)
 
             capa.add_updater(actualizar)
+            actualizar(capa)   # sin esto, el primer fotograma (la portada) muestra todos
             self.add(capa)
 
     def voz(self, clave):

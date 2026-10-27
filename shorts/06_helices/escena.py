@@ -111,11 +111,13 @@ class Helices(ShortBase):
         sello = VGroup(marco, txt.move_to(marco)).rotate(5 * DEGREES).move_to(DOWN * 2.6)
 
         t0, d = self.voz("gancho")
-        self.play(FadeIn(l1, shift=UP * 0.3), FadeIn(pala), run_time=0.35)
-        self.play(FadeIn(l2, shift=UP * 0.3), run_time=0.3)
-        self.play(GrowFromCenter(caja), FadeIn(pal, scale=1.6), f.animate.set_value(1.0),
-                  rate_func=rate_functions.ease_out_back, run_time=0.6)
-        self.play(FadeIn(nota), run_time=0.3)
+        # portada: el gancho completo desde el primer fotograma (Instagram y TikTok lo usan
+        # como miniatura del perfil)
+        f.set_value(1.0)
+        pala.update()
+        self.add(bloque, pala, nota)
+        self.wait(0.9)
+        self.play(destacado.animate.scale(1.12), rate_func=there_and_back, run_time=0.6)
         self.hasta(0, 2.65)
         self.play(FadeIn(sello, scale=2.2), rate_func=rate_functions.ease_out_back, run_time=0.35)
         self.rellenar(t0, d, margen=-0.5)
