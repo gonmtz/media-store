@@ -58,14 +58,21 @@ marca/                  avatar, banner y branding.py
    (ver `shorts/01_ejes`). En cada bloque: `t0, d = self.voz("clave")`; usar
    `self.hasta(t0, d*f)` para sincronizar las animaciones con lo que se narra y cerrar
    con `self.rellenar(t0, d)`.
-5. **Render**: `manim -qh --fps 30 shorts/NN_tema/escena.py Clase`
+5. **Portada**: Instagram y TikTok usan el **primer fotograma** como miniatura del perfil. El
+   gancho tiene que estar completo en pantalla desde t = 0 (añadirlo con `self.add`, sin
+   fundido, llamando a `.update()` en los `always_redraw` antes) y dentro del recorte 3:4 de la
+   cuadrícula de Instagram (sin texto en los 240 px de arriba y de abajo). Comprobar con
+   `ffmpeg -ss 0 -i final.mp4 -frames:v 1 portada.png`. Las portadas de los shorts 01–06 están
+   en `marca/portadas/` (para cambiarlas a mano en Instagram: Editar → portada; en TikTok, solo
+   en los 7 días siguientes a la publicación).
+6. **Render**: `manim -qh --fps 30 shorts/NN_tema/escena.py Clase`
    (para iterar, `-ql`). Revisar fotogramas: texto dentro del ancho seguro (7,4 unidades),
    sin solapes y con el sentido físico de cada giro correcto.
-6. **Mezcla**: `python tools/postpro.py <render.mp4> musica/<pista>.mp3 shorts/NN_tema/final.mp4`.
+7. **Mezcla**: `python tools/postpro.py <render.mp4> musica/<pista>.mp3 shorts/NN_tema/final.mp4`.
    Comprobar que la sonoridad integrada quede en -14 ± 1 LUFS.
-7. Commit y push. URL pública del video:
+8. Commit y push. URL pública del video:
    `https://raw.githubusercontent.com/gonmtz/media-store/main/shorts/NN_tema/final.mp4`
-8. **Publicar con Metricool** (marca `blogId` 7528654, zona horaria America/Mexico_City)
+9. **Publicar con Metricool** (marca `blogId` 7528654, zona horaria America/Mexico_City)
    en youtube, instagram y tiktok, solo tras aprobación:
    - youtubeData: type `short`, `madeForKids` false, category `EDUCATION`,
      `isAiGeneratedContent` false (animación no realista).
