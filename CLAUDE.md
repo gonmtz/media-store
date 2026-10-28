@@ -28,6 +28,14 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
   de la cuadrícula (nada en los 240 px de arriba y de abajo). La animación del gancho empieza
   después (un pulso, un giro, el sello), no antes. Comprobar con `python tools/portada.py
   shorts/NN_tema/final.mp4` (falla si la portada está vacía o recortada).
+- **Retención (desde el 28-oct-2026):** gancho hablado de 3 s como máximo (los shorts 01–06 iban
+  de 4,4 a 6,3 s) y algún cambio en pantalla antes de 1 s; bloques de 10 s como máximo; nunca más
+  de 3 s sin que algo se mueva (`self.pulso(...)`). **Sin pantalla vacía entre bloques:** al acabar
+  un bloque, `self.dejar(...)` en vez de `salir`, y el siguiente entra con `self.cambio(...)`
+  (fundido cruzado). Los shorts 01–06 tenían de 3 a 5 huecos de 0,4–0,8 s con solo el fondo.
+  Cerrar con una imagen parecida a la del gancho, para que el bucle enlace.
+- Plantilla en `ShortBase`: `poner_cabecera`, `textos_bloque`, `entrar_textos`, `etiqueta`,
+  `dejar`/`cambio`, `pulso`. No volver a copiarlas en cada escena.
 - Subtítulos en la franja `SUB_Y`, entre la ilustración y la pastilla. Se omiten donde
   el texto ya está en pantalla (gancho y cierre).
 - Estilo: fondo `#0B1220` con rejilla de puntos, aviones con degradado, un color por
@@ -43,6 +51,7 @@ shorts/NN_tema/         escena.py, guion.md, voz.mp3, voz.json, final.mp4
 tools/pausas.py         tramos de habla de la narración (para fijar tiempos)
 tools/postpro.py        música con ducking + normalización a -14 LUFS
 tools/portada.py        comprueba el primer fotograma (portada del perfil)
+tools/revisar.py        revisión completa antes de publicar (formato, LUFS, portada, ritmo, texto)
 musica/                 pistas con licencia (ver "Música")
 marca/                  avatar, banner y branding.py
 ```
@@ -57,6 +66,9 @@ marca/                  avatar, banner y branding.py
    párrafos separados por línea en blanco. Cuesta 14 créditos por cada 1000 caracteres;
    el plan da 150 al mes. Descargar el MP3 de `ai-voiceovers.s3.us-east-1.amazonaws.com`
    (dominio ya permitido) a `shorts/NN_tema/voz.mp3`.
+   **En revisión (28-oct-2026):** al dueño no le gusta Brian en español; está escuchando voces
+   nativas (Azure es-MX, ElevenLabs con cuenta propia, Google). vidIQ solo tiene voces inglesas.
+   No producir voz nueva hasta que elija.
 3. **Tiempos**: `python tools/pausas.py shorts/NN_tema/voz.mp3`. Las pausas largas
    (> 0,6 s aprox.) separan párrafos; las cortas, frases. Escribir `voz.json`:
    `{"completo": "voz.mp3", "segmentos": {clave: {"inicio", "duracion"}}, "frases": [[ini, fin, texto], ...]}`.
@@ -74,9 +86,13 @@ marca/                  avatar, banner y branding.py
    sin solapes y con el sentido físico de cada giro correcto.
 7. **Mezcla**: `python tools/postpro.py <render.mp4> musica/<pista>.mp3 shorts/NN_tema/final.mp4`.
    Comprobar que la sonoridad integrada quede en -14 ± 1 LUFS.
-8. Commit y push. URL pública del video:
+8. **Texto y revisión**: escribir `shorts/NN_tema/publicacion.json` con
+   `{"titulo_tiktok", "texto", "musica"}` (texto = descripción + pregunta + hashtags + atribución) y
+   ejecutar `python tools/revisar.py shorts/NN_tema`. Con un ERROR no se publica; los AVISOS se
+   comentan con el dueño.
+9. Commit y push. URL pública del video:
    `https://raw.githubusercontent.com/gonmtz/media-store/main/shorts/NN_tema/final.mp4`
-9. **Publicar con Metricool** (marca `blogId` 7528654, zona horaria America/Mexico_City)
+10. **Publicar con Metricool** (marca `blogId` 7528654, zona horaria America/Mexico_City)
    en youtube, instagram y tiktok, solo tras aprobación:
    - youtubeData: type `short`, `madeForKids` false, category `EDUCATION`,
      `isAiGeneratedContent` false (animación no realista).

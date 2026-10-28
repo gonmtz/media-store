@@ -998,3 +998,73 @@ class ShortBase(Scene):
         """Espera hasta el final del segmento; por defecto deja 0.4 s para la transición."""
         resto = t0 + dur + margen - self.renderer.time
         self.wait(max(minimo, resto))
+
+    # ---------- Plantilla de bloque (común a los shorts 02–07) ----------
+    # Uso típico de un bloque, sin pantalla vacía entre bloques:
+    #     t0, d = self.voz("clave")
+    #     barra, tit, fr, dt, etq, ctl = self.textos_bloque(0, "Título", "Frase", "dato",
+    #                                                       "SE CONTROLA CON", "ELEVADOR", color)
+    #     self.cambio(FadeIn(ilustracion))          # sale lo del bloque anterior a la vez
+    #     self.entrar_textos(barra, color, tit, fr, dt)
+    #     ...
+    #     self.rellenar(t0, d, margen=-0.05)
+    #     self.dejar(tit, fr, dt, etq, ctl, ilustracion)   # saldrán al entrar el siguiente
+    def poner_cabecera(self, tema, n_bloques=3):
+        """Tema arriba y barras de progreso (una por bloque). Devuelve la animación de entrada."""
+        self.tema = T(tema, size=28, color=TEXTO_SEC, weight=SEMIBOLD).move_to(UP * 6.85)
+        self.barras = VGroup(*[RoundedRectangle(width=0.7, height=0.12, corner_radius=0.06,
+                                                fill_color="#334155", fill_opacity=1,
+                                                stroke_width=0) for _ in range(n_bloques)])
+        self.barras.arrange(RIGHT, buff=0.15).move_to(UP * 6.4)
+        return AnimationGroup(FadeIn(self.tema, shift=DOWN * 0.2), FadeIn(self.barras))
+
+    def textos_bloque(self, idx, nombre, frase, dato, etiqueta, clave, color):
+        """Título grande, frase intuitiva, dato técnico y pastilla «etiqueta / clave»."""
+        tit = T(nombre, size=116, color=color, weight=HEAVY, font=F_TIT).move_to(UP * 5.3)
+        if tit.width > ANCHO_MAX:
+            tit.scale_to_fit_width(ANCHO_MAX)
+        fr = T(frase, size=48, weight=BOLD).next_to(tit, DOWN, buff=0.28)
+        dt = T(dato, size=28, color=TEXTO_SEC, weight=MEDIUM).next_to(fr, DOWN, buff=0.16)
+        etq = T(etiqueta, size=28, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 3.6)
+        ctl = pastilla(T(clave, size=52, color=color, weight=HEAVY, font=F_TIT), color)
+        ctl.next_to(etq, DOWN, buff=0.2)
+        return self.barras[idx], tit, fr, dt, etq, ctl
+
+    def entrar_textos(self, barra, color, tit, fr, dt, *extra):
+        self.play(barra.animate.set_fill(color), FadeIn(tit, shift=DOWN * 0.3, scale=1.15),
+                  *extra, run_time=0.6)
+        self.play(FadeIn(fr, shift=UP * 0.2), FadeIn(dt), run_time=0.45)
+
+    def etiqueta(self, texto, color, pos, size=26):
+        """Rótulo con fondo semitransparente, legible sobre la ilustración."""
+        t = T(texto, size=size, color=color, weight=BOLD)
+        fondo = RoundedRectangle(width=t.width + 0.36, height=t.height + 0.24, corner_radius=0.14,
+                                 fill_color=BG, fill_opacity=0.85, stroke_width=0)
+        return VGroup(fondo, t).move_to(pos).set_z_index(30)
+
+    def salir(self, *mobs, run_time=0.4, **kw):
+        """Salida inmediata (deja la pantalla vacía si no entra nada: preferir dejar/cambio)."""
+        self.play(*[FadeOut(m, shift=LEFT * 0.6) for m in mobs], run_time=run_time, **kw)
+
+    # ---------- Transiciones sin pantalla vacía ----------
+    def dejar(self, *mobs):
+        """Marca objetos para que salgan en el próximo `cambio`, a la vez que entra lo nuevo.
+        Así nunca hay un fotograma con solo el fondo (tools/revisar.py lo comprueba)."""
+        if not hasattr(self, "_pendientes"):
+            self._pendientes = []
+        self._pendientes += [m for m in mobs if m is not None]
+
+    def cambio(self, *entradas, run_time=0.5, desplazar=LEFT * 0.8):
+        """Fundido cruzado: sale lo marcado con `dejar` y entran `entradas` en el mismo play.
+        Los objetos con updaters se congelan antes de salir (ver nota de FadeIn en CLAUDE.md)."""
+        salen = getattr(self, "_pendientes", [])
+        for m in salen:
+            m.clear_updaters()
+        anims = [FadeOut(m, shift=desplazar) for m in salen] + list(entradas)
+        self._pendientes = []
+        if anims:
+            self.play(*anims, run_time=run_time)
+
+    def pulso(self, mob, escala=1.1, run_time=0.5):
+        """Micro-cambio para tramos largos sin movimiento (≤ 3 s sin cambios)."""
+        self.play(mob.animate.scale(escala), rate_func=there_and_back, run_time=run_time)
