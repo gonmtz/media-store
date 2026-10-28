@@ -22,6 +22,12 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
   + mecanismo + animación) → **cierre** con resumen y una pregunta a la audiencia.
 - Título grande del bloque, frase intuitiva, dato técnico secundario y pastilla
   "SE CONTROLA CON / …" (o equivalente).
+- **Nunca empezar con el fondo vacío.** El primer fotograma es la portada en el perfil de
+  Instagram y TikTok: el gancho (texto grande + ilustración) tiene que estar completo desde
+  t = 0, sin fundidos de entrada (`self.portada(...)` en `ShortBase`), dentro del recorte 3:4
+  de la cuadrícula (nada en los 240 px de arriba y de abajo). La animación del gancho empieza
+  después (un pulso, un giro, el sello), no antes. Comprobar con `python tools/portada.py
+  shorts/NN_tema/final.mp4` (falla si la portada está vacía o recortada).
 - Subtítulos en la franja `SUB_Y`, entre la ilustración y la pastilla. Se omiten donde
   el texto ya está en pantalla (gancho y cierre).
 - Estilo: fondo `#0B1220` con rejilla de puntos, aviones con degradado, un color por
@@ -36,6 +42,7 @@ lib/porquevuela.py      estilo, aviones (lateral, trasero, superior), subtítulo
 shorts/NN_tema/         escena.py, guion.md, voz.mp3, voz.json, final.mp4
 tools/pausas.py         tramos de habla de la narración (para fijar tiempos)
 tools/postpro.py        música con ducking + normalización a -14 LUFS
+tools/portada.py        comprueba el primer fotograma (portada del perfil)
 musica/                 pistas con licencia (ver "Música")
 marca/                  avatar, banner y branding.py
 ```
@@ -58,11 +65,8 @@ marca/                  avatar, banner y branding.py
    (ver `shorts/01_ejes`). En cada bloque: `t0, d = self.voz("clave")`; usar
    `self.hasta(t0, d*f)` para sincronizar las animaciones con lo que se narra y cerrar
    con `self.rellenar(t0, d)`.
-5. **Portada**: Instagram y TikTok usan el **primer fotograma** como miniatura del perfil. El
-   gancho tiene que estar completo en pantalla desde t = 0 (añadirlo con `self.add`, sin
-   fundido, llamando a `.update()` en los `always_redraw` antes) y dentro del recorte 3:4 de la
-   cuadrícula de Instagram (sin texto en los 240 px de arriba y de abajo). Comprobar con
-   `ffmpeg -ss 0 -i final.mp4 -frames:v 1 portada.png`. Las portadas de los shorts 01–06 están
+5. **Portada**: ver "Nunca empezar con el fondo vacío" en Formato. Tras la mezcla, ejecutar
+   `python tools/portada.py shorts/NN_tema/final.mp4` y mirar `portada.png`. Las portadas de los shorts 01–06 están
    en `marca/portadas/` (para cambiarlas a mano en Instagram: Editar → portada; en TikTok, solo
    en los 7 días siguientes a la publicación).
 6. **Render**: `manim -qh --fps 30 shorts/NN_tema/escena.py Clase`
@@ -113,9 +117,12 @@ volver a descargar la pista correcta antes de usarla.
 | 02 | Sustentación: el mito del tiempo de tránsito igual | Down With That | publicado 2026-10-21 12:00 (CDMX) en YT, IG y TikTok |
 | 03 | Pérdida (stall): caer con los motores funcionando | Dreamy Flashback | publicado 2026-10-21 19:08 (CDMX) en YT, IG y TikTok (adelantado a petición del dueño) |
 | 04 | Perfiles NACA: qué significan sus cifras (4 y 5 cifras) | Hypnothis | publicado 2026-10-23 12:00 (CDMX) en YT, IG y TikTok |
-| 05 | Winglets y vórtices de punta | Down With That | aprobado; programado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok |
-| 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | aprobado; programado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok |
+| 05 | Winglets y vórtices de punta | Down With That | publicado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok (portada vacía: cambiarla a mano) |
+| 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
+
+Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
+en `marca/portadas/` para cambiarlas a mano.
 
 ## Banco de ideas (siguientes, en orden)
 

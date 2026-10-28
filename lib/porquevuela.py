@@ -973,6 +973,14 @@ class ShortBase(Scene):
             actualizar(capa)   # sin esto, el primer fotograma (la portada) muestra todos
             self.add(capa)
 
+    def portada(self, *mobs):
+        """Pone el gancho en pantalla desde el primer fotograma, sin fundido: Instagram y
+        TikTok usan ese fotograma como miniatura del perfil. Actualiza antes los
+        `always_redraw` para que no salgan con su estado inicial."""
+        for m in mobs:
+            m.update()
+        self.add(*mobs)
+
     def voz(self, clave):
         """Espera al inicio del segmento y devuelve (inicio, duración)."""
         seg = self.VOZ.get("segmentos", {}).get(clave)

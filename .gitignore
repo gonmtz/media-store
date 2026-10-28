@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 shorts/*/render.mp4
 mvenv/
+shorts/*/portada.png
