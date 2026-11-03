@@ -119,7 +119,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -136,7 +136,7 @@ volver a descargar la pista correcta antes de usarla.
 | 05 | Winglets y vórtices de punta | Down With That | publicado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok (portada vacía: cambiarla a mano) |
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
-| 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | video de 3 s (a petición del dueño) listo para revisar; pendiente de aprobación |
+| 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | programado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
