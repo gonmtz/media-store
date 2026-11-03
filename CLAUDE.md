@@ -136,7 +136,7 @@ volver a descargar la pista correcta antes de usarla.
 | 05 | Winglets y vórtices de punta | Down With That | publicado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok (portada vacía: cambiarla a mano) |
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
-| 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | — | borrador de la imagen; pendiente de aprobación, video de 8–10 s y música |
+| 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | video de 3 s (a petición del dueño) listo para revisar; pendiente de aprobación |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.

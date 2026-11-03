@@ -14,7 +14,7 @@ from lib.porquevuela import *  # noqa: E402,F401,F403
 
 FICHAS = [
     ("SUSTENTACIÓN", r"L = \tfrac{1}{2}\,\rho\,V^2\,S\,C_L",
-     "El doble de velocidad da 4 veces la sustentación", C_CABECEO),
+     "El doble de velocidad da 4 veces la sustentación (mismo ángulo)", C_CABECEO),
     ("RESISTENCIA", r"D = \tfrac{1}{2}\,\rho\,V^2\,S\,C_D",
      "En crucero: sustentación = peso y empuje = resistencia", C_ALABEO),
     ("NÚMERO DE MACH", r"M = V/a\,,\quad a = \sqrt{\gamma R T}",
