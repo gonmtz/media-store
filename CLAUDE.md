@@ -58,9 +58,21 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
      renderiza a 60 fps (`manim -qh --fps 60`; sale a 30 fps).
   5. **Aviones con detalle**: luces de navegación (roja = ala izquierda, verde = derecha,
      blanca = cola), puertas, paneles, flaps, tomas y álabes del motor (`luz`, `LUZ_*`).
-  6. **Pseudo-3D** (ejemplo en `shorts/demo_3d`): `Avion3D(...).dibujar(alabeo, cabeceo,
-     guinada, aleron, elevador, timon, azimut, elevacion)` dentro de `always_redraw`. Caras
-     planas proyectadas en perspectiva con sombreado; render lento (~1 s por fotograma).
+  6. **Avión refinado (5-nov-2026, demo en `shorts/demo_avion`)**: una sola geometría
+     paramétrica en metros (`lib/avion.py`: fuselaje con morro y cono de cola, alas con perfil
+     NACA, flecha, diedro y torsión, winglets, motores con pilón, fan y cono, cabina, ventanillas,
+     puertas, línea azul, luces) de la que salen:
+     - **3D real** `Avion3DReal(ancho, alto, ss, campo).imagen(alabeo, cabeceo, guinada, aleron,
+       elevador, timon, azimut, elevacion, campo, mirar)`: pyrender + EGL por software, luz
+       clave/relleno/contraluz, supermuestreo, fondo transparente (~0,5 s por imagen). En Manim:
+       `capa_3d(render, ancho_pantalla, centro, **params)` de `lib/avion2d.py` (acepta
+       ValueTrackers o funciones; desactiva la caché de Manim y parchea un fallo de Manim 0.22 con
+       Pillow al dibujar imágenes). `mirar` + `campo` pequeño = primer plano (cabina, motor).
+     - **2D vectorial** `lateral_2d`, `superior_2d`, `frontal_2d` (`lib/avion2d.py`): las mismas
+       proporciones; `vista.partes[...]` y `vista.a_pantalla(X, Y, Z)` para colocar cosas encima.
+       `colores_mando=True` pinta alerones, elevador y timón con los colores de cada giro.
+     El `Avion3D` de caras planas queda obsoleto (su demo se borró). Los dibujos antiguos
+     (`avion_lateral`, `avion_superior`, `avion_frontal_flexible`) siguen para los shorts 01–11.
 - Subtítulos en la franja `SUB_Y`, entre la ilustración y la pastilla. Se omiten donde
   el texto ya está en pantalla (gancho y cierre).
 - Estilo: fondo `#0B1220` con rejilla de puntos, aviones con degradado, un color por
@@ -141,7 +153,9 @@ apt-get install -y libpango1.0-dev libcairo2-dev pkg-config ffmpeg
 python3 -m venv mvenv && . mvenv/bin/activate && pip install -U pip setuptools wheel && pip install -r requirements.txt
 ```
 
-Si pip falla compilando `srt` fuera de un venv, usar el venv.
+Si pip falla compilando `srt` fuera de un venv, usar el venv. Para el 3D real:
+`apt-get install -y libegl1 libegl-mesa0 libgl1-mesa-dri` (pyrender usa EGL por software;
+OSMesa no funciona con este PyOpenGL).
 
 ## Música
 

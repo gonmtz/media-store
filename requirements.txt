@@ -1,3 +1,7 @@
 manim==0.22.0
+trimesh
+pyrender
+PyOpenGL
 # Sistema: ffmpeg, LaTeX opcional, libpango1.0-dev y libcairo2-dev (para compilar manimpango).
 # Fuente: Inter / Inter Display.
+# 3D real (lib/avion.py): apt-get install -y libegl1 libegl-mesa0 libgl1-mesa-dri (render por software con EGL)
