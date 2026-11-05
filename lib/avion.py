@@ -83,9 +83,62 @@ def estaciones_fuselaje(n=140):
 
 
 # zonas pintadas (X0, X1, th0, th1 en grados; lado izquierdo; el derecho es el espejo)
-# parabrisas: (X0, X1, th0, th1, X0 arriba, X1 arriba): trapecios que comparten los postes
-PARABRISAS = [(2.98, 3.98, 38, 84, 3.5, 4.06), (4.06, 4.78, 33, 63, 4.12, 4.72),
-              (4.86, 5.46, 31, 55, 4.9, 5.3)]
+# parabrisas: cuatro esquinas por panel (lado izquierdo; el derecho es el espejo), en orden
+# abajo-delante, abajo-detrás, arriba-detrás, arriba-delante. Cada esquina es ("z", X, Z)
+# (altura en la piel del lado) o ("t", X, ángulo en grados; 86 = junto al poste central).
+# Los bordes comparten los postes: banda baja y estrecha, como en un avión de línea.
+PARABRISAS = [
+    [("t", 0.80, 86.0), ("z", 3.25, 0.48), ("z", 3.66, 1.25), ("t", 1.85, 86.0)],   # frontal
+    [("z", 3.42, 0.50), ("z", 4.22, 0.52), ("z", 4.18, 1.18), ("z", 3.82, 1.22)],   # lateral 1
+    [("z", 4.34, 0.52), ("z", 4.95, 0.55), ("z", 4.78, 1.08), ("z", 4.30, 1.17)],   # lateral 2
+]
+
+
+def _esquina(c):
+    """(X, ángulo en grados) de una esquina de parabrisas."""
+    tipo, X, v = c
+    if tipo == "t":
+        return X, v
+    ry, rz, zc = seccion(X)
+    return X, float(np.degrees(np.arcsin(np.clip((v - zc) / rz, -1, 1))))
+
+
+def _bilineal(esq, a, b):
+    (x0, t0), (x1, t1), (x2, t2), (x3, t3) = esq
+    x = (1 - a) * (1 - b) * x0 + a * (1 - b) * x1 + a * b * x2 + (1 - a) * b * x3
+    t = (1 - a) * (1 - b) * t0 + a * (1 - b) * t1 + a * b * t2 + (1 - a) * b * t3
+    return x, t
+
+
+def parche_cuad(esquinas, color, offset=0.03, n=12, mat="vidrio", espejo=False):
+    """Parche de cuatro esquinas (X, grados) que sigue la piel."""
+    esq = [_esquina(c) for c in esquinas]
+    v, f = [], []
+    for i in range(n):
+        for j in range(n):
+            X, t = _bilineal(esq, i / (n - 1), j / (n - 1))
+            th = np.radians(t)
+            v.append(punto_fuselaje(X, np.pi - th if espejo else th, offset))
+    for i in range(n - 1):
+        for j in range(n - 1):
+            a, b, c, d = i * n + j, i * n + j + 1, (i + 1) * n + j + 1, (i + 1) * n + j
+            f += [[a, b, c], [a, c, d]]
+    m = Malla(v, f, color, mat)
+    m.orient = "piel"
+    return m
+
+
+def contorno_parabrisas(esquinas, espejo=False, n=10, offset=0.03):
+    """Puntos 3D del borde de un panel (para las vistas 2D)."""
+    esq = [_esquina(c) for c in esquinas]
+    pts = []
+    for (a0, b0), (a1, b1) in (((0, 0), (1, 0)), ((1, 0), (1, 1)), ((1, 1), (0, 1)),
+                               ((0, 1), (0, 0))):
+        for u in np.linspace(0, 1, n, endpoint=False):
+            X, t = _bilineal(esq, a0 + (a1 - a0) * u, b0 + (b1 - b0) * u)
+            th = np.radians(t)
+            pts.append(punto_fuselaje(X, np.pi - th if espejo else th, offset))
+    return np.array(pts)
 
 
 def ventanillas_X():
@@ -473,9 +526,8 @@ def mallas_avion():
     piezas = [malla_fuselaje(), malla_carenado()]
     for s in (1, -1):
         piezas += mallas_ala(s) + mallas_estabilizador(s) + mallas_motor(s)
-        for (X0, X1, t0, t1, X0b, X1b) in PARABRISAS:
-            piezas.append(parche(X0, X1, t0, t1, OSCURO_VIDRIO, 0.03, 10, "vidrio", s < 0,
-                                 X0b=X0b, X1b=X1b))
+        for esq in PARABRISAS:
+            piezas.append(parche_cuad(esq, OSCURO_VIDRIO, 0.03, 12, "vidrio", s < 0))
         for X in ventanillas_X():
             piezas.append(parche(X - 0.1, X + 0.1, TH_VENTANILLA - 3.6, TH_VENTANILLA + 3.6,
                                  OSCURO_VIDRIO, 0.02, 3, "vidrio", s < 0))

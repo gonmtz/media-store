@@ -129,17 +129,9 @@ def lateral_2d(ancho=7.6, centro=(0, 0), colores_mando=False, lado=1):
     vista.pieza("puertas", puertas)
     # parabrisas (proyección exacta de los parches)
     cab = VGroup()
-    for (X0, X1, t0, t1, X0b, X1b) in A.PARABRISAS:
-        lado_pts = []
-        for b in np.linspace(0, 1, 8):
-            t = np.radians(t0 + (t1 - t0) * b)
-            X = X0 + (X0b - X0) * b
-            lado_pts.append(A.punto_fuselaje(X, t))
-        for b in np.linspace(1, 0, 8):
-            t = np.radians(t0 + (t1 - t0) * b)
-            X = X1 + (X1b - X1) * b
-            lado_pts.append(A.punto_fuselaje(X, t))
-        cab.add(_vm([P(p[0], p[2]) for p in lado_pts], A.OSCURO_VIDRIO, borde="#0B1220",
+    for esq in A.PARABRISAS:
+        pts = A.contorno_parabrisas(esq, espejo=lado < 0)
+        cab.add(_vm([P(p[0], p[2]) for p in pts], A.OSCURO_VIDRIO, borde="#0B1220",
                     ancho_borde=0.8))
     vista.pieza("cabina", cab)
     # ala cercana (una silueta), winglet y alerón
@@ -253,16 +245,8 @@ def superior_2d(ancho=7.6, centro=(0, 0), colores_mando=False):
     # parabrisas desde arriba
     cab = VGroup()
     for s in (1, -1):
-        for (X0, X1, t0, t1, X0b, X1b) in A.PARABRISAS:
-            pts = []
-            for b in np.linspace(0, 1, 8):
-                t = np.radians(t0 + (t1 - t0) * b)
-                t = t if s > 0 else np.pi - t
-                pts.append(A.punto_fuselaje(X0 + (X0b - X0) * b, t))
-            for b in np.linspace(1, 0, 8):
-                t = np.radians(t0 + (t1 - t0) * b)
-                t = t if s > 0 else np.pi - t
-                pts.append(A.punto_fuselaje(X1 + (X1b - X1) * b, t))
+        for esq in A.PARABRISAS:
+            pts = A.contorno_parabrisas(esq, espejo=s < 0)
             cab.add(_vm([P(p[0], p[1]) for p in pts], A.OSCURO_VIDRIO, borde="#0B1220",
                         ancho_borde=0.6))
     vista.pieza("cabina", cab)
@@ -306,16 +290,8 @@ def frontal_2d(ancho=7.6, centro=(0, 0), colores_mando=False):
     vista.pieza("morro", morro)
     cab = VGroup()
     for s in (1, -1):
-        for (X0, X1, t0, t1, X0b, X1b) in A.PARABRISAS[:2]:
-            pts = []
-            for b in np.linspace(0, 1, 10):
-                t = np.radians(t0 + (t1 - t0) * b)
-                t = t if s > 0 else np.pi - t
-                pts.append(A.punto_fuselaje(X0 + (X0b - X0) * b, t))
-            for b in np.linspace(1, 0, 10):
-                t = np.radians(t0 + (t1 - t0) * b)
-                t = t if s > 0 else np.pi - t
-                pts.append(A.punto_fuselaje(X1 + (X1b - X1) * b, t))
+        for esq in A.PARABRISAS[:2]:
+            pts = A.contorno_parabrisas(esq, espejo=s < 0)
             cab.add(_vm([P(p[1], p[2]) for p in pts], A.OSCURO_VIDRIO, borde="#0B1220",
                         ancho_borde=0.6))
     vista.pieza("cabina", cab)
