@@ -41,6 +41,26 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
   Cerrar con una imagen parecida a la del gancho, para que el bucle enlace.
 - Plantilla en `ShortBase`: `poner_cabecera`, `textos_bloque`, `entrar_textos`, `etiqueta`,
   `dejar`/`cambio`, `pulso`. No volver a copiarlas en cada escena.
+- **Calidad de animación (desde el 5-nov-2026; ver `shorts/09_matriculas`, `10`, `11`):**
+  1. **Cámara**: `ShortBase` es una `MovingCameraScene`. `self.enfocar(punto, zoom)` acerca la
+     cámara a un detalle (descargadores, matrícula, punta del ala) y `self.vista_general()`
+     vuelve. Los textos de pantalla van al HUD con `self.hud(...)` (lo hacen solos
+     `poner_cabecera`, `bloque`, `textos_bloque`, `sello`) y se quedan fijos. No mover la
+     cámara mientras entra o sale un texto. Un velo oscuro arriba mantiene legibles los títulos.
+  2. **Menos texto**: `self.bloque(idx, título, frase, color, dato=None, resaltar=[...])` +
+     `self.entrar_bloque(...)`: título y UNA frase (≤ 2 líneas) que entra palabra a palabra
+     (`frase_cinetica`, `entrar_palabras`). Pastilla solo si aporta; el remate va en `sello`.
+  3. **Efectos de sonido** propios, sintetizados (`python tools/sfx.py` → `sfx/*.wav`, sin
+     licencia): `cambio` → whoosh, `entrar_bloque` → pop, `enfocar` → whoosh suave,
+     `poner_sello` → golpe; a mano: `self.sonido("tic" | "chispa" | "subida", ganancia_dB)`.
+  4. **Acabado**: `brillo` (halo de color detrás de la ilustración), `sombra`, rebote al entrar
+     (ease_out_back) y, en `tools/postpro.py`, viñeta y desenfoque de movimiento si se
+     renderiza a 60 fps (`manim -qh --fps 60`; sale a 30 fps).
+  5. **Aviones con detalle**: luces de navegación (roja = ala izquierda, verde = derecha,
+     blanca = cola), puertas, paneles, flaps, tomas y álabes del motor (`luz`, `LUZ_*`).
+  6. **Pseudo-3D** (ejemplo en `shorts/demo_3d`): `Avion3D(...).dibujar(alabeo, cabeceo,
+     guinada, aleron, elevador, timon, azimut, elevacion)` dentro de `always_redraw`. Caras
+     planas proyectadas en perspectiva con sombreado; render lento (~1 s por fotograma).
 - Subtítulos en la franja `SUB_Y`, entre la ilustración y la pastilla. Se omiten donde
   el texto ya está en pantalla (gancho y cierre).
 - Estilo: fondo `#0B1220` con rejilla de puntos, aviones con degradado, un color por
@@ -54,9 +74,10 @@ lib/porquevuela.py      estilo, aviones (lateral, trasero, superior), subtítulo
                         perfil alar con flujo calculado (Perfil), líneas de corriente, vectores
 shorts/NN_tema/         escena.py, guion.md, voz.mp3, voz.json, final.mp4
 tools/pausas.py         tramos de habla de la narración (para fijar tiempos)
-tools/postpro.py        música con ducking + normalización a -14 LUFS
+tools/postpro.py        música (+ efectos o voz con ducking), viñeta, desenfoque de movimiento, -14 LUFS
 tools/portada.py        comprueba el primer fotograma (portada del perfil)
 tools/revisar.py        revisión completa antes de publicar (formato, LUFS, portada, ritmo, texto)
+tools/sfx.py            genera los efectos de sonido (sfx/*.wav, sintetizados, sin licencia)
 musica/                 pistas con licencia (ver "Música")
 marca/                  avatar, banner y branding.py
 ```
@@ -86,8 +107,9 @@ marca/                  avatar, banner y branding.py
    `python tools/portada.py shorts/NN_tema/final.mp4` y mirar `portada.png`. Las portadas de los shorts 01–06 están
    en `marca/portadas/` (para cambiarlas a mano en Instagram: Editar → portada; en TikTok, solo
    en los 7 días siguientes a la publicación).
-6. **Render**: `manim -qh --fps 30 shorts/NN_tema/escena.py Clase`
-   (para iterar, `-ql`). Revisar fotogramas: texto dentro del ancho seguro (7,4 unidades),
+6. **Render**: `manim -qh --fps 60 shorts/NN_tema/escena.py Clase` (60 fps para el desenfoque de
+   movimiento; tarda varios minutos, lanzarlo en segundo plano). Para iterar, `-ql` (15 fps).
+   `lib/porquevuela.py` ya no fija los fps: los decide la línea de comandos. Revisar fotogramas: texto dentro del ancho seguro (7,4 unidades),
    sin solapes y con el sentido físico de cada giro correcto.
 7. **Mezcla**: `python tools/postpro.py <render.mp4> musica/<pista>.mp3 shorts/NN_tema/final.mp4 [inicio_s]`.
    Si el render no tiene audio (texto y ficha), pone solo la música, sin fundido de entrada (para
@@ -145,9 +167,9 @@ volver a descargar la pista correcta antes de usarla.
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
 | 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | publicado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
-| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 23 s) | Down With That | listo; pendiente de aprobación |
-| 10 | ¿Por qué el ala se dobla en vuelo? (texto, 25 s) | Dreamy Flashback | listo; pendiente de aprobación |
-| 11 | Descargadores de estática: las «antenitas» del ala (texto, 25 s) | Hypnothis (desde 40 s) | listo; pendiente de aprobación |
+| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 24 s) | Down With That | rehecho con la animación nueva (5-nov); pendiente de aprobación |
+| 10 | ¿Por qué el ala se dobla en vuelo? (texto, 26 s) | Dreamy Flashback | rehecho con la animación nueva (5-nov); pendiente de aprobación |
+| 11 | Descargadores de estática: las «antenitas» del ala (texto, 27 s) | Hypnothis (desde 40 s) | rehecho con la animación nueva (5-nov); pendiente de aprobación |
 | 12 | Ficha: alfabeto aeronáutico (3 s) | Down With That (desde 30 s) | listo; pendiente de aprobación |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están

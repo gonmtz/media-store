@@ -13,7 +13,7 @@ config.pixel_width = 1080
 config.pixel_height = 1920
 config.frame_height = 16
 config.frame_width = 9
-config.frame_rate = 30
+# fps: lo fija la línea de comandos (--fps 30 narrado; --fps 60 para desenfoque de movimiento)
 
 # ---------- Estilo del canal ----------
 BG = "#0B1220"
@@ -92,10 +92,84 @@ def flecha_giro(centro, radio, inicio, angulo, color):
     return arco
 
 
-def rejilla():
+def rejilla(ancho=4.2, alto=7.8):
+    """Rejilla de puntos del fondo. Con cámara (zoom y paneo) conviene ampliarla, por ejemplo
+    `rejilla(6.6, 10.2)`, para que no se vean los bordes al moverse."""
     pts = VGroup(*[Dot([x, y, 0], radius=0.014, color="#334155")
-                   for x in np.arange(-4.2, 4.3, 0.6) for y in np.arange(-7.8, 7.9, 0.6)])
+                   for x in np.arange(-ancho, ancho + 0.1, 0.6)
+                   for y in np.arange(-alto, alto + 0.1, 0.6)])
     return pts.set_opacity(0.55)
+
+
+# ---------- Acabado (sombra, brillo, luces) ----------
+def sombra(centro, ancho, alto=None, opacidad=0.35, capas=8):
+    """Sombra suave (elipses concéntricas) bajo un objeto: lo despega del fondo."""
+    alto = alto if alto is not None else ancho * 0.18
+    return VGroup(*[Ellipse(width=ancho * f, height=alto * f, stroke_width=0,
+                            fill_color="#000000", fill_opacity=opacidad / capas)
+                    for f in np.linspace(1.0, 0.35, capas)]).move_to(centro)
+
+
+def brillo(centro, color=C_CABECEO, radio=3.2, intensidad=1.0):
+    """Halo de color muy suave detrás de la ilustración (profundidad sin distraer)."""
+    return VGroup(*[Circle(radius=r, stroke_width=0, fill_color=color,
+                           fill_opacity=0.018 * intensidad)
+                    for r in np.linspace(0.5, radio, 14)]).move_to(centro)
+
+
+LUZ_ROJA, LUZ_VERDE, LUZ_BLANCA = "#F43F5E", "#22C55E", "#F8FAFC"
+
+
+def luz(pos, color, radio=0.05):
+    """Luz de navegación con halo (roja = ala izquierda del avión, verde = derecha,
+    blanca = cola)."""
+    return VGroup(Dot(pos, radius=radio * 3.2, color=color).set_opacity(0.18),
+                  Dot(pos, radius=radio * 1.8, color=color).set_opacity(0.35),
+                  Dot(pos, radius=radio, color=color))
+
+
+# ---------- Tipografía cinética ----------
+def frase_cinetica(texto, size=56, color=TEXTO, weight=HEAVY, font=F_TIT, ancho=ANCHO_MAX,
+                   resaltar=(), color_resalte=C_GUINADA, interlinea=1.22):
+    """Frase con salto de línea automático, partida en palabras para que entren una a una
+    (`ShortBase.entrar_palabras`). Cada línea se compone como un solo Text, así se conservan
+    el interletraje y la línea base. `resaltar`: palabras (sin signos) en `color_resalte`."""
+    resaltar = {w.lower().strip("¿?¡!,.:;«»()") for w in resaltar}
+    lineas, actual = [], []
+    for w in texto.split():
+        cand = " ".join(actual + [w])
+        if actual and Text(cand, font=font, font_size=size, weight=weight).width > ancho:
+            lineas.append(actual)
+            actual = [w]
+        else:
+            actual.append(w)
+    lineas.append(actual)
+    g = VGroup()
+    for ln in lineas:
+        t = Text(" ".join(ln), font=font, font_size=size, weight=weight, color=color)
+        glifos = list(t.submobjects)
+        fila = VGroup()
+        if len(glifos) != sum(len(w) for w in ln):      # ligaduras: la línea va entera
+            fila.add(t)
+        else:
+            k = 0
+            for w in ln:
+                pal = VGroup(*glifos[k:k + len(w)])
+                k += len(w)
+                if w.lower().strip("¿?¡!,.:;«»()") in resaltar:
+                    pal.set_color(color_resalte)
+                fila.add(pal)
+        g.add(fila)
+    alto = Text("Hg", font=font, font_size=size, weight=weight).height
+    g.arrange(DOWN, buff=alto * (interlinea - 1) + 0.05)
+    if g.width > ancho:
+        g.scale_to_fit_width(ancho)
+    return g
+
+
+def palabras(frase):
+    """Lista plana de las palabras de una `frase_cinetica`."""
+    return [p for fila in frase for p in fila]
 
 
 # ---------- Aviones ----------
@@ -126,7 +200,17 @@ def avion_lateral():
     bisagra = np.array([-3.4, 0.32, 0])
     elevador = poli([(-3.4, 0.36), (-3.85, 0.33), (-3.85, 0.31), (-3.4, 0.27)], radio=0.02,
                     fill=(C_CABECEO, C_CABECEO))
-    grupo = VGroup(aleta, estab, elevador, fus, franja, ventanas, cabina, pilon, motor, toma, ala)
+    # detalles: puertas, línea de paneles, aspas del motor y luces (anticolisión y cola)
+    puertas = VGroup(*[RoundedRectangle(width=0.16, height=0.36, corner_radius=0.04,
+                                        stroke_color="#94A3B8", stroke_width=1.5, fill_opacity=0)
+                       .move_to([x, 0.13, 0]) for x in (2.62, -2.28)])
+    paneles = VGroup(*[Line([x, 0.48, 0], [x, -0.4, 0], color="#CBD5E1", stroke_width=0.8,
+                            stroke_opacity=0.7) for x in (-1.0, 0.9, 1.9)])
+    aspas = VGroup(*[Line([1.3, -0.55 + d, 0], [1.3, -0.55 - d * 0.2, 0], color="#475569",
+                          stroke_width=1.2) for d in (0.12, 0.06, -0.06)])
+    luces = VGroup(luz([0.2, 0.55, 0], LUZ_ROJA, 0.035), luz([-3.62, 0.27, 0], LUZ_BLANCA, 0.03))
+    grupo = VGroup(aleta, estab, elevador, fus, paneles, franja, ventanas, puertas, cabina,
+                   pilon, motor, toma, aspas, ala, luces)
     return grupo, elevador, bisagra
 
 
@@ -201,8 +285,23 @@ def avion_superior():
     bisagra = np.array([0, -3.4, 0])
     timon = RoundedRectangle(width=0.1, height=0.42, corner_radius=0.05, fill_color=C_GUINADA,
                              fill_opacity=1, stroke_width=0).move_to(bisagra + DOWN * 0.2)
-    grupo = VGroup(motor(-1), motor(1), ala(-1), ala(1), estab(-1), estab(1), fus, cabina,
-                   aleta, timon)
+    def detalles(s):
+        # flaps y alerón (líneas paralelas al borde de salida), toma del motor, luz de punta
+        a, b = np.array([s * 3.45, -1.22, 0]), np.array([s * 0.35, -0.55, 0])
+        sub = lambda f: a + (b - a) * f + UP * 0.2       # noqa: E731
+        flaps = VGroup(Line(sub(0.32), sub(0.95), color="#94A3B8", stroke_width=1.6),
+                       Line(sub(0.06), sub(0.3), color=C_ALABEO, stroke_width=1.6,
+                            stroke_opacity=0.6))
+        toma = Ellipse(width=0.3, height=0.1, fill_color=OSCURO, fill_opacity=1,
+                       stroke_width=0).move_to([s * 1.35, 0.9, 0])
+        color = LUZ_VERDE if s > 0 else LUZ_ROJA          # vista desde arriba, morro arriba
+        return VGroup(flaps, toma, luz([s * 3.74, -1.0, 0], color, 0.045))
+
+    paneles = VGroup(*[Line([-0.36, y, 0], [0.36, y, 0], color="#CBD5E1", stroke_width=0.8,
+                            stroke_opacity=0.8) for y in (2.2, 1.2, -0.9, -2.0)])
+    grupo = VGroup(motor(-1), motor(1), ala(-1), ala(1), estab(-1), estab(1), fus, paneles,
+                   cabina, aleta, timon, detalles(-1), detalles(1),
+                   luz([0, -3.45, 0], LUZ_BLANCA, 0.04))
     return grupo, timon, bisagra
 
 
@@ -969,9 +1068,14 @@ def avion_frontal_flexible(flex=0.0, diedro=0.18):
         anillo.set_fill(color=["#E2E8F0", "#94A3B8"], opacity=1).set_sheen_direction(DOWN)
         anillo.set_stroke(BORDE, width=1.5)
         toma = Circle(radius=0.2, fill_color=OSCURO, fill_opacity=1, stroke_width=0).move_to(c)
+        aspas = VGroup(*[Line(c, c + 0.19 * np.array([np.cos(a), np.sin(a), 0]),
+                              color="#64748B", stroke_width=1.4)
+                         for a in np.linspace(0, 2 * np.pi, 12, endpoint=False)])
+        cono = Circle(radius=0.055, fill_color="#CBD5E1", fill_opacity=1,
+                      stroke_width=0).move_to(c)
         pilon = Rectangle(width=0.12, height=0.2, fill_color="#94A3B8", fill_opacity=1,
                           stroke_width=0).move_to(c + UP * 0.32)
-        return VGroup(pilon, anillo, toma)
+        return VGroup(pilon, anillo, toma, aspas, cono)
 
     estab = poli([(-1.6, 0.5), (1.6, 0.5), (1.6, 0.42), (-1.6, 0.38)], radio=0.03,
                  fill=("#CBD5E1", "#94A3B8"))
@@ -982,7 +1086,12 @@ def avion_frontal_flexible(flex=0.0, diedro=0.18):
     cabina = VGroup(*[RoundedRectangle(width=0.2, height=0.12, corner_radius=0.04,
                                        fill_color=OSCURO, fill_opacity=1, stroke_width=0)
                       .move_to([s * 0.13, 0.22, 0]) for s in (-1, 1)])
-    grupo = VGroup(estab, aleta, ala(-1), ala(1), motor(-1), motor(1), fus, cabina)
+    # visto de frente: el ala izquierda del avión queda a la derecha de la pantalla (roja)
+    luces = VGroup(luz([PUNTA_FRONTAL, y_ala(PUNTA_FRONTAL), 0], LUZ_ROJA, 0.045),
+                   luz([-PUNTA_FRONTAL, y_ala(PUNTA_FRONTAL), 0], LUZ_VERDE, 0.045))
+    radomo = Circle(radius=0.2, fill_color="#E2E8F0", fill_opacity=0.6,
+                    stroke_width=0).move_to([0, -0.08, 0])
+    grupo = VGroup(estab, aleta, ala(-1), ala(1), motor(-1), motor(1), fus, radomo, cabina, luces)
     return grupo, y_ala
 
 
@@ -1020,15 +1129,216 @@ def carga(pos, signo="−", color=C_CABECEO, radio=0.13):
     return VGroup(c, t.move_to(c)).move_to(pos)
 
 
+# ---------- Pseudo-3D: avión con caras proyectadas y sombreado plano ----------
+def _norm(v):
+    n = np.linalg.norm(v)
+    return v / n if n > 1e-12 else v
+
+
+def _rot(eje, ang):
+    """Matriz de rotación (regla de la mano derecha) alrededor de 'x', 'y' o 'z'."""
+    c, s = np.cos(ang), np.sin(ang)
+    if eje == "x":
+        return np.array([[1, 0, 0], [0, c, -s], [0, s, c]])
+    if eje == "y":
+        return np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]])
+    return np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+
+
+class Avion3D:
+    """Avión de línea genérico en 3D (no reproduce ningún modelo) dibujado como caras
+    planas proyectadas en perspectiva, con sombreado según la luz y orden del pintor.
+    Ejes del avión: x hacia el morro, y hacia el ala izquierda, z hacia arriba.
+    Ángulos en grados: alabeo > 0 = ala derecha abajo; cabeceo > 0 = morro arriba;
+    guiñada > 0 = morro a la derecha. Deflexiones de mando (grados): `aleron` > 0 alabea a la
+    derecha (alerón derecho arriba, izquierdo abajo), `elevador` > 0 sube el morro (borde de
+    salida arriba), `timon` > 0 guiña a la derecha (borde de salida a la derecha).
+    Uso: `always_redraw(lambda: avion.dibujar(alabeo=a.get_value(), ...))`."""
+
+    LUZ = _norm(np.array([0.35, 0.45, 0.85]))
+
+    def __init__(self, escala=1.0, colores=None):
+        self.escala = escala
+        self.col = {"fus": ("#5B6B84", "#F8FAFC"), "ala": ("#55657E", "#E2E8F0"),
+                    "motor": ("#475569", "#CBD5E1"), "toma": ("#0F172A", "#1E293B"),
+                    "aleron": ("#9F1239", C_ALABEO), "elevador": ("#075985", C_CABECEO),
+                    "timon": ("#92400E", C_GUINADA), "cabina": ("#0F172A", "#334155")}
+        if colores:
+            self.col.update(colores)
+        self._caras = []          # (puntos 3D, clave de color, cerrada, centro de la pieza)
+        self._fuselaje()
+        for s in (1, -1):
+            self._ala(s)
+            self._motor(s)
+
+    # --- geometría (coordenadas del avión) ---
+    def _cara(self, pts, color, cerrada=False, centro=None, bisagra=None):
+        self._caras.append((np.array(pts, dtype=float), color, cerrada, centro, bisagra))
+
+    def _fuselaje(self, n=16):
+        xs = np.linspace(-3.6, 3.55, 26)
+
+        def perfil(x):
+            R = 0.42
+            if x > 2.55:
+                r = R * np.sqrt(max(0.0, 1 - ((x - 2.55) / 1.0) ** 2))
+                return max(r, 0.02), 0.0
+            if x < -1.7:
+                u = (-1.7 - x) / 1.9
+                return R * (1 - u) + 0.07 * u, 0.24 * u
+            return R, 0.0
+        anillos = []
+        for x in xs:
+            r, zc = perfil(x)
+            anillos.append([(x, r * np.cos(a), zc + r * np.sin(a) * 0.95)
+                            for a in np.linspace(0, 2 * np.pi, n, endpoint=False)])
+        for i in range(len(xs) - 1):
+            r0, zc0 = perfil(xs[i])
+            centro = (xs[i], 0, zc0)
+            for j in range(n):
+                k = (j + 1) % n
+                pts = [anillos[i][j], anillos[i][k], anillos[i + 1][k], anillos[i + 1][j]]
+                color = "fus"
+                if 2.75 < xs[i] < 3.1 and 1 <= j <= 3:
+                    color = "cabina"
+                if 2.75 < xs[i] < 3.1 and n - 4 <= j <= n - 2:
+                    color = "cabina"
+                self._cara(pts, color, True, centro)
+        # deriva y timón
+        self._superficie([(-2.55, 0, 0.36), (-3.45, 0, 0.36), (-3.62, 0, 1.75), (-3.3, 0, 1.75)],
+                         "ala", corte=0.62, color_mando="timon", eje="vertical")
+        # estabilizador horizontal y elevador
+        for s in (1, -1):
+            self._superficie([(-2.95, s * 0.12, 0.22), (-3.55, s * 0.12, 0.22),
+                              (-3.78, s * 1.55, 0.3), (-3.45, s * 1.55, 0.3)],
+                             "ala", corte=0.6, color_mando="elevador", eje="horizontal", lado=s)
+
+    def _superficie(self, pts, color, corte=None, color_mando=None, eje="horizontal", lado=1,
+                    esp=0.05):
+        """Superficie fina (cara de arriba y de abajo). `pts`: borde de ataque raíz, borde de
+        salida raíz, borde de salida punta, borde de ataque punta. Con `corte` (0–1 de la
+        cuerda) la parte de atrás es una superficie de mando que gira sobre la bisagra."""
+        le_r, te_r, te_p, le_p = [np.array(p, dtype=float) for p in pts]
+        n = np.array([0, 0, 1.0]) if eje == "horizontal" else np.array([0, 1.0, 0])
+        if corte is None:
+            partes = [((le_r, te_r, te_p, le_p), color, None)]
+        else:
+            h_r = le_r + (te_r - le_r) * corte
+            h_p = le_p + (te_p - le_p) * corte
+            partes = [((le_r, h_r, h_p, le_p), color, None),
+                      ((h_r, te_r, te_p, h_p), color_mando, (h_r, h_p, eje, lado))]
+        tramos = 4      # tiras a lo largo de la envergadura: el orden del pintor falla menos
+        for (a, b, c, d), col, bis in partes:
+            for i in range(tramos):
+                u0, u1 = i / tramos, (i + 1) / tramos
+                q = [a + (d - a) * u0, b + (c - b) * u0, b + (c - b) * u1, a + (d - a) * u1]
+                for sgn in (1, -1):
+                    off = n * esp / 2 * sgn
+                    self._cara([p + off for p in q], col, False, None, bis)
+
+    def _ala(self, s):
+        y0, y1 = 0.38, 3.85
+        diedro = np.tan(np.radians(6))
+
+        def z(y):
+            return -0.18 + (y - y0) * diedro
+        le_r, te_r = (0.95, s * y0, z(y0)), (-0.75, s * y0, z(y0))
+        le_m, te_m = (-0.6, s * 2.3, z(2.3)), (-1.45, s * 2.3, z(2.3))
+        le_p, te_p = (-1.45, s * y1, z(y1)), (-1.95, s * y1, z(y1))
+        self._superficie([le_r, te_r, te_m, le_m], "ala", esp=0.09)
+        self._superficie([le_m, te_m, te_p, le_p], "ala", corte=0.62, color_mando="aleron",
+                         lado=s, esp=0.06)
+
+    def _motor(self, s, n=12):
+        y, z, r = s * 1.45, -0.62, 0.24
+        x0, x1 = 0.55, 1.65
+        anillo = [(np.cos(a), np.sin(a)) for a in np.linspace(0, 2 * np.pi, n, endpoint=False)]
+        centro = (1.1, y, z)
+        for j in range(n):
+            k = (j + 1) % n
+            p = [(x0, y + r * anillo[j][0], z + r * anillo[j][1]),
+                 (x0, y + r * anillo[k][0], z + r * anillo[k][1]),
+                 (x1, y + r * anillo[k][0], z + r * anillo[k][1]),
+                 (x1, y + r * anillo[j][0], z + r * anillo[j][1])]
+            self._cara(p, "motor", True, centro)
+        self._cara([(x1, y + r * c, z + r * sn) for c, sn in anillo], "toma", True, centro)
+        self._cara([(x0, y + r * 0.8 * c, z + r * 0.8 * sn) for c, sn in anillo], "motor", True,
+                   centro)
+        # pilón
+        self._cara([(1.2, y, z + r), (0.6, y, z + r), (0.3, y, -0.2), (0.9, y, -0.2)], "ala")
+
+    # --- proyección ---
+    def dibujar(self, alabeo=0, cabeceo=0, guinada=0, aleron=0, elevador=0, timon=0,
+                azimut=-35, elevacion=18, distancia=14, centro=ORIGIN, contorno=False):
+        """VGroup con las caras visibles, ya proyectadas y ordenadas. `azimut`/`elevacion`
+        (grados) dicen desde dónde se mira: azimut 0 = de frente al morro, −90 = desde la
+        derecha del avión, 180 = desde atrás."""
+        R = (_rot("z", np.radians(-guinada)) @ _rot("y", np.radians(-cabeceo))
+             @ _rot("x", np.radians(alabeo)))
+        az, el = np.radians(azimut), np.radians(elevacion)
+        d = np.array([np.cos(el) * np.cos(az), np.cos(el) * np.sin(az), np.sin(el)])
+        f = -d
+        der = _norm(np.cross(f, [0, 0, 1.0]))
+        arr = np.cross(der, f)
+        defl = {"aleron": aleron, "elevador": elevador, "timon": timon}
+        caras = []
+        for pts, col, cerrada, cpieza, bis in self._caras:
+            P_ = pts.copy()
+            if bis is not None:
+                h0, h1, eje, lado = bis
+                ang = np.radians(defl[col])
+                u = _norm(h1 - h0)
+                if col == "aleron":
+                    ang, u = -ang * lado, u * lado   # derecho (lado −1) arriba con aleron > 0
+                elif col == "elevador":
+                    u = u * lado                     # los dos lados: borde de salida arriba
+                # timón: con ángulo > 0 el borde de salida va a la derecha
+                K = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
+                Rb = np.eye(3) + np.sin(ang) * K + (1 - np.cos(ang)) * K @ K
+                P_ = (P_ - h0) @ Rb.T + h0
+            W = P_ @ R.T * self.escala
+            n = _norm(np.cross(W[1] - W[0], W[2] - W[0]))
+            cen = W.mean(axis=0)
+            if cerrada and cpieza is not None:
+                cp = (R @ np.array(cpieza)) * self.escala
+                if np.dot(n, cen - cp) < 0:
+                    n = -n
+                if np.dot(n, d) <= 0:
+                    continue                    # cara de espaldas
+            elif np.dot(n, d) < 0:
+                n = -n                          # superficie fina: se ve la cara de este lado
+            luzv = 0.32 + 0.68 * max(0.0, float(np.dot(n, self.LUZ)))
+            oscuro, claro = self.col[col]
+            color = interpolate_color(ManimColor(oscuro), ManimColor(claro), min(1.0, luzv))
+            prof = W @ d
+            esc = distancia / (distancia - prof)
+            pant = [np.array([w @ der * e, w @ arr * e, 0]) + centro for w, e in zip(W, esc)]
+            caras.append((cen @ d, Polygon(*pant, fill_color=color, fill_opacity=1,
+                                           stroke_color=color if not contorno else BORDE,
+                                           stroke_width=0.8)))
+        caras.sort(key=lambda t: t[0])
+        return VGroup(*[p for _, p in caras])
+
+
 # ---------- Clase base para cada short ----------
-class ShortBase(Scene):
+SFX = Path(__file__).resolve().parents[1] / "sfx"     # tools/sfx.py los genera
+
+
+class ShortBase(MovingCameraScene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,
     añade la rejilla de fondo y la capa de subtítulos sincronizados.
     voz.json: {"completo": "voz.mp3", "segmentos": {clave: {inicio, duracion}},
-               "frases": [[inicio, fin, texto], ...]}  (rutas relativas a voz.json)."""
+               "frases": [[inicio, fin, texto], ...]}  (rutas relativas a voz.json).
+
+    Cámara: la ilustración vive en el «mundo» y la cámara puede acercarse (`enfocar`) y volver
+    (`vista_general`). Los textos de pantalla (cabecera, títulos, pastillas, subtítulos) se
+    registran con `hud(...)` y se quedan fijos en pantalla aunque la cámara se mueva.
+    Regla: no mover la cámara mientras entra o sale un texto del HUD (durante una animación
+    sus updaters se suspenden)."""
     VOZ_JSON = None          # la subclase define Path(__file__).parent / "voz.json"
     SIN_SUBS_DESDE = None    # clave de segmento a partir de la cual no hay subtítulos
     SUBS_DESDE = None        # clave de segmento antes de la cual no hay subtítulos (gancho)
+    EFECTOS = True           # efectos de sonido automáticos (cambio, bloques, cámara)
 
     def setup(self):
         p = Path(self.VOZ_JSON) if self.VOZ_JSON else None
@@ -1040,7 +1350,14 @@ class ShortBase(Scene):
         V = self.VOZ
         if "completo" in V:
             self.add_sound(V["completo"])
-        self.add(rejilla())
+        self.add(rejilla(6.6, 10.2))
+        # velo oscuro arriba (HUD): los textos se leen aunque la cámara acerque la ilustración
+        velo = VGroup(*[Rectangle(width=config.frame_width + 0.2, height=0.32, stroke_width=0,
+                                  fill_color=BG, fill_opacity=a).move_to([0, y, 0])
+                        for y, a in zip(np.arange(3.45, 8.2, 0.3),
+                                        np.clip(np.linspace(0.12, 1.6, 16), 0, 0.78))])
+        self.add(self.hud(velo))
+        velo.set_z_index(15)
         if "frases" in V:
             seg = V.get("segmentos", {})
             fin = seg.get(self.SIN_SUBS_DESDE, {}).get("inicio", 1e9)
@@ -1057,7 +1374,103 @@ class ShortBase(Scene):
 
             capa.add_updater(actualizar)
             actualizar(capa)   # sin esto, el primer fotograma (la portada) muestra todos
+            self.hud(capa)
             self.add(capa)
+
+    # ---------- Cámara y HUD ----------
+    def _mapa(self):
+        f = self.camera.frame
+        return f.get_center().copy(), f.width / config.frame_width
+
+    def hud(self, *mobs):
+        """Fija objetos a la pantalla (coordenadas de pantalla por defecto, aunque la cámara
+        esté acercada o desplazada). Devuelve el primero."""
+        escena = self
+
+        def seguir(m):
+            c2, s2 = escena._mapa()
+            c, s = m._mapa_hud
+            if abs(s2 - s) < 1e-9 and np.allclose(c, c2):
+                return
+            m.shift(-c).scale(s2 / s, about_point=ORIGIN).shift(c2)
+            m._mapa_hud = (c2, s2)
+
+        for m in mobs:
+            if getattr(m, "_mapa_hud", None) is not None:
+                continue
+            c, s = self._mapa()
+            m.scale(s, about_point=ORIGIN).shift(c)
+            m._mapa_hud = (c, s)
+            if m.z_index < 16:          # por encima del velo y de la ilustración
+                m.set_z_index(16)
+            m.add_updater(seguir)
+        return mobs[0] if mobs else None
+
+    def enfocar(self, punto, zoom=2.0, run_time=1.0, sonido=True, *extra):
+        """Acerca la cámara a `punto` (coordenadas del mundo). zoom 2 = todo el doble de grande."""
+        if sonido:
+            self.sonido("whoosh_suave", -10)
+        f = self.camera.frame
+        self.play(f.animate.move_to(punto).set(width=config.frame_width / zoom), *extra,
+                  run_time=run_time, rate_func=rate_functions.ease_in_out_cubic)
+
+    def vista_general(self, run_time=0.9, sonido=True, *extra):
+        self.enfocar(ORIGIN, 1.0, run_time, sonido, *extra)
+
+    # ---------- Efectos de sonido ----------
+    def sonido(self, nombre, ganancia=-6, retraso=0.0):
+        """Efecto de `sfx/` en el instante actual (+ retraso). Ganancia en dB."""
+        p = SFX / f"{nombre}.wav"
+        if self.EFECTOS and p.exists():
+            self.add_sound(str(p), time_offset=retraso, gain=ganancia)
+
+    # ---------- Bloque compacto (menos texto: título + una frase) ----------
+    def bloque(self, idx, titulo, frase, color, dato=None, resaltar=()):
+        """Título y UNA frase que entra palabra a palabra (`entrar_bloque`); dato opcional.
+        Todo va al HUD. Devuelve (barra, título, frase, dato o None)."""
+        tit = T(titulo, size=100, color=color, weight=HEAVY, font=F_TIT).move_to(UP * 5.35)
+        fr = frase_cinetica(frase, size=44, weight=BOLD, font=F_TXT, resaltar=resaltar, ancho=7.6,
+                            color_resalte=color)
+        fr.next_to(tit, DOWN, buff=0.3)
+        dt = None
+        if dato:
+            dt = T(dato, size=27, color=TEXTO_SEC, weight=MEDIUM).next_to(fr, DOWN, buff=0.2)
+            self.hud(dt)
+        self.hud(tit, fr)
+        return self.barras[idx], tit, fr, dt
+
+    def entrar_palabras(self, frase, run_time=None, lag=0.11):
+        ps = palabras(frase)
+        run_time = run_time or max(0.5, 0.25 + lag * len(ps))
+        # la frase entera tiene que estar en la escena: si solo entran las palabras, el
+        # updater del HUD (que vive en la frase) no se ejecuta y se quedan atrás al mover la cámara
+        self.add(frase)
+        self.play(LaggedStart(*[FadeIn(p, shift=UP * 0.18, scale=1.12) for p in ps],
+                              lag_ratio=lag * len(ps) / run_time if run_time else 0.1),
+                  run_time=run_time, rate_func=linear)
+
+    def entrar_bloque(self, barra, color, tit, fr, dt=None, *extra):
+        self.sonido("pop", -8)
+        self.play(barra.animate.set_fill(color),
+                  FadeIn(tit, shift=DOWN * 0.3, scale=1.2, rate_func=rate_functions.ease_out_back),
+                  *extra, run_time=0.5)
+        self.entrar_palabras(fr)
+        if dt is not None:
+            self.play(FadeIn(dt), run_time=0.3)
+
+    def sello(self, texto, color, pos, size=48, angulo=4):
+        """Sello con marco (golpe de sonido incluido en `poner_sello`). Va al HUD."""
+        txt = T(texto, size=size, color=color, weight=HEAVY, font=F_TIT)
+        marco = RoundedRectangle(width=txt.width + 0.6, height=txt.height + 0.5,
+                                 corner_radius=0.2, stroke_color=color, stroke_width=8,
+                                 fill_color=BG, fill_opacity=0.9)
+        s = VGroup(marco, txt.move_to(marco)).rotate(angulo * DEGREES).move_to(pos)
+        return self.hud(s.set_z_index(40))
+
+    def poner_sello(self, sello):
+        self.sonido("golpe", -4)
+        self.play(FadeIn(sello, scale=1.5), rate_func=rate_functions.ease_out_back,
+                  run_time=0.35)
 
     def portada(self, *mobs):
         """Pone el gancho en pantalla desde el primer fotograma, sin fundido: Instagram y
@@ -1102,6 +1515,7 @@ class ShortBase(Scene):
                                                 fill_color="#334155", fill_opacity=1,
                                                 stroke_width=0) for _ in range(n_bloques)])
         self.barras.arrange(RIGHT, buff=0.15).move_to(UP * 6.4)
+        self.hud(self.tema, self.barras)
         return AnimationGroup(FadeIn(self.tema, shift=DOWN * 0.2), FadeIn(self.barras))
 
     def textos_bloque(self, idx, nombre, frase, dato, etiqueta, clave, color):
@@ -1114,6 +1528,7 @@ class ShortBase(Scene):
         etq = T(etiqueta, size=28, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 3.6)
         ctl = pastilla(T(clave, size=52, color=color, weight=HEAVY, font=F_TIT), color)
         ctl.next_to(etq, DOWN, buff=0.2)
+        self.hud(tit, fr, dt, etq, ctl)
         return self.barras[idx], tit, fr, dt, etq, ctl
 
     def entrar_textos(self, barra, color, tit, fr, dt, *extra):
@@ -1149,6 +1564,8 @@ class ShortBase(Scene):
         anims = [FadeOut(m, shift=desplazar) for m in salen] + list(entradas)
         self._pendientes = []
         if anims:
+            if salen:
+                self.sonido("whoosh", -9)
             self.play(*anims, run_time=run_time)
 
     def pulso(self, mob, escala=1.1, run_time=0.5):

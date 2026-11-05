@@ -8,7 +8,7 @@ Descargadores de estática (static wicks):
 - No protegen contra rayos (el rayo recorre la piel conductora del avión de un extremo a otro).
 Fuentes: Aeromach, "What is an aircraft static wick…"; AviationPros, "Precipitation static".
 Número y posición de los descargadores del dibujo: ilustrativos.
-Render:  manim -qh --fps 30 shorts/11_descargadores/escena.py Descargadores
+Render:  manim -qh --fps 60 shorts/11_descargadores/escena.py Descargadores
 """
 import sys
 from pathlib import Path
@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 
 C_CARGA, C_DESC, C_RADIO = C_CABECEO, C_GUINADA, C_ALABEO
-ESC, Y_AV = 0.92, 0.1
+ESC, Y_AV = 0.92, -0.35
 rng = np.random.default_rng(7)
 PARTICULAS = [(rng.uniform(-4.2, 4.2), rng.uniform(0, 1), rng.uniform(0.7, 1.3)) for _ in range(46)]
 SITIOS = [(-2.6, -0.5), (-1.7, -0.1), (-0.9, 0.3), (0.9, 0.3), (1.7, -0.1), (2.6, -0.5),
@@ -99,56 +99,60 @@ class Descargadores(ShortBase):
         caja = RoundedRectangle(width=pal.width + 0.7, height=pal.height + 0.5, corner_radius=0.3,
                                 fill_color=C_DESC, fill_opacity=1, stroke_width=0).move_to(pal)
         destacado = VGroup(caja, pal).rotate(-3 * DEGREES)
-        preg = VGroup(l1, destacado).arrange(DOWN, buff=0.3).move_to(UP * 4.65)
-        anillo = Circle(radius=0.75, stroke_color=C_DESC, stroke_width=6)
-        anillo.move_to(en_pantalla((3.45, -1.3)))
-        self.portada(av, varillas, preg, anillo)
+        preg = self.hud(VGroup(l1, destacado).arrange(DOWN, buff=0.3).move_to(UP * 4.65))
+        punta_ala = en_pantalla((3.45, -1.3))
+        anillo = Circle(radius=0.75, stroke_color=C_DESC, stroke_width=6).move_to(punta_ala)
+        fondo = brillo(UP * Y_AV, C_CARGA, 4.0, 0.8)
+        self.portada(fondo, av, varillas, preg, anillo)
         self.wait(0.4)
-        self.play(anillo.animate.scale(1.25), rate_func=there_and_back, run_time=0.6)
+        self.sonido("pop", -8)
+        self.play(anillo.animate.scale(1.25), rate_func=there_and_back, run_time=0.5)
+        self.enfocar(punta_ala + LEFT * 0.35 + DOWN * 0.2, 2.8, run_time=1.0)
+        self.sonido("tic", -6)
         self.play(varillas.animate.set_color(WHITE), rate_func=there_and_back, run_time=0.5)
-        self.pulso(destacado, 1.08)
-        self.hasta(0, 3.4)
+        self.hasta(0, 3.0)
+        self.vista_general(run_time=0.7)
 
         # ---------- 1. El avión se carga ----------
         self.dejar(preg, anillo)
         self.play(self.poner_cabecera("DESCARGADORES DE ESTÁTICA", 3), run_time=0.01)
-        barra, tit, fr, dt, etq, ctl = self.textos_bloque(
-            0, "Carga", "El avión se electriza", "al chocar con lluvia, nieve, hielo y polvo",
-            "ELECTRICIDAD", "ESTÁTICA", C_CARGA)
-        for m in (etq, ctl):
-            m.shift(DOWN * 1.1)
+        barra, tit, fr, dt = self.bloque(0, "Carga", "La lluvia y el hielo lo electrizan", C_CARGA,
+                                         dato="electricidad estática", resaltar=["electrizan"])
         self.add(lluvia, capa_cargas)
         self.bring_to_back(lluvia)
-        self.cambio(viento.animate.set_value(1.0))
-        self.entrar_textos(barra, C_CARGA, tit, fr, dt)
-        self.play(n_cargas.animate.set_value(len(SITIOS)), run_time=2.2, rate_func=linear)
-        self.play(FadeIn(etq), FadeIn(ctl, scale=0.9), run_time=0.4)
+        self.cambio(viento.animate.set_value(1.0), FadeIn(tit, shift=DOWN * 0.3, scale=1.2),
+                    barra.animate.set_fill(C_CARGA))
+        self.entrar_palabras(fr)
+        self.play(FadeIn(dt), run_time=0.3)
+        for _ in range(4):
+            self.sonido("tic", -14)
+            self.play(n_cargas.animate.increment_value(len(SITIOS) / 4), run_time=0.55,
+                      rate_func=linear)
         self.wait(0.6)
-        self.pulso(ctl)
-        self.hasta(0, 9.2)
-        self.dejar(tit, fr, dt, etq, ctl)
+        self.hasta(0, 10.0)
 
         # ---------- 2. Descarga por las puntas ----------
-        barra, tit, fr, dt, etq, ctl = self.textos_bloque(
-            1, "Descarga", "Las puntas la sueltan poco a poco", "en los bordes de salida de alas y cola",
-            "SE LLAMAN", "DESCARGADORES", C_DESC)
-        for m in (etq, ctl):
-            m.shift(DOWN * 1.1)
+        self.dejar(tit, fr, dt)
+        barra, tit, fr, dt = self.bloque(1, "Descarga", "Sus puntas la sueltan poco a poco", C_DESC,
+                                         dato="se llaman descargadores de estática",
+                                         resaltar=["puntas"])
         self.add(capa_chispas)
-        self.cambio(FadeIn(tit, shift=DOWN * 0.3, scale=1.15), barra.animate.set_fill(C_DESC),
+        self.cambio(FadeIn(tit, shift=DOWN * 0.3, scale=1.2), barra.animate.set_fill(C_DESC),
                     chispa_on.animate.set_value(1.0))
-        self.play(FadeIn(fr, shift=UP * 0.2), FadeIn(dt), run_time=0.4)
-        self.play(fuga.animate.set_value(1.0), run_time=2.6, rate_func=linear)
-        self.play(FadeIn(etq), FadeIn(ctl, scale=0.9), run_time=0.4)
-        self.wait(0.5)
-        self.pulso(ctl)
-        self.hasta(0, 14.6)
-        self.dejar(tit, fr, dt, etq, ctl)
+        self.entrar_palabras(fr)
+        self.play(FadeIn(dt), run_time=0.3)
+        self.enfocar(punta_ala + LEFT * 0.9 + UP * 0.2, 2.0, run_time=0.9)
+        for k in range(4):
+            self.sonido("chispa", -10)
+            self.play(fuga.animate.set_value((k + 1) / 4), run_time=0.65, rate_func=linear)
+        self.wait(0.4)
+        self.vista_general(run_time=0.8)
+        self.hasta(0, 16.8)
 
         # ---------- 3. Para qué: la radio ----------
-        barra, tit, fr, dt, etq, ctl = self.textos_bloque(
-            2, "Radio", "Sin ellos, ruido en la radio", "las descargas sin control interfieren",
-            "", "", C_RADIO)
+        self.dejar(tit, fr, dt)
+        barra, tit, fr, dt = self.bloque(2, "Radio", "Sin ellos, ruido en la radio", C_RADIO,
+                                         resaltar=["ruido"])
         panel = RoundedRectangle(width=7.4, height=3.9, corner_radius=0.3, fill_color=PANEL,
                                  fill_opacity=0.96, stroke_color=C_RADIO, stroke_width=2,
                                  stroke_opacity=0.5).move_to(DOWN * 0.2).set_z_index(20)
@@ -161,7 +165,8 @@ class Descargadores(ShortBase):
             ys = 0.35 * np.sin(4 * xs - 6 * t)
             if ruidosa:
                 k = int(t * 30) % 300
-                ys = ys + np.clip(0.25 * picos[k:k + 200], -0.4, 0.4) * (np.abs(picos[k + 50:k + 250]) > 1.1)
+                ys = ys + np.clip(0.25 * picos[k:k + 200], -0.4, 0.4) * \
+                    (np.abs(picos[k + 50:k + 250]) > 1.1)
             return VMobject().set_points_smoothly([[x, y + v, 0] for x, v in zip(xs, ys)]) \
                 .set_stroke(C_RADIO if ruidosa else C_CARGA, 4).set_z_index(21)
         o1 = always_redraw(lambda: onda(True, 0.55))
@@ -169,34 +174,32 @@ class Descargadores(ShortBase):
         r1 = T("SIN DESCARGADORES", size=24, color=C_RADIO, weight=HEAVY).move_to([0, 1.45, 0])
         r2 = T("CON DESCARGADORES", size=24, color=C_CARGA, weight=HEAVY).move_to([0, -0.6, 0])
         VGroup(r1, r2).set_z_index(22)
-        self.cambio(FadeIn(tit, shift=DOWN * 0.3, scale=1.15), barra.animate.set_fill(C_RADIO),
-                    FadeIn(panel), FadeIn(r1), FadeIn(o1))
-        self.play(FadeIn(fr, shift=UP * 0.2), FadeIn(dt), run_time=0.4)
+        self.cambio(FadeIn(tit, shift=DOWN * 0.3, scale=1.2), barra.animate.set_fill(C_RADIO),
+                    FadeIn(panel, scale=0.95), FadeIn(r1), FadeIn(o1))
+        self.entrar_palabras(fr)
+        self.sonido("chispa", -12)
         self.wait(1.0)
+        self.sonido("pop", -10)
         self.play(FadeIn(r2), FadeIn(o2), run_time=0.5)
-        self.wait(1.2)
-        txt = T("NO SON PARARRAYOS", size=52, color=C_RADIO, weight=HEAVY, font=F_TIT)
-        marco = RoundedRectangle(width=txt.width + 0.6, height=txt.height + 0.5,
-                                 corner_radius=0.2, stroke_color=C_RADIO, stroke_width=8,
-                                 fill_color=BG, fill_opacity=0.9)
-        sello = VGroup(marco, txt.move_to(marco)).rotate(4 * DEGREES).move_to(DOWN * 3.6)
-        sub = T("el rayo recorre la piel del avión y sale por otro extremo", size=24,
-                color=TEXTO_SEC, weight=MEDIUM).move_to(DOWN * 4.6)
-        VGroup(sello, sub).set_z_index(30)
-        self.play(FadeIn(sello, scale=1.4), rate_func=rate_functions.ease_out_back, run_time=0.35)
-        self.play(FadeIn(sub), run_time=0.3)
         self.wait(1.0)
+        sello = self.sello("NO SON PARARRAYOS", C_RADIO, DOWN * 3.6, size=52)
+        sub = self.hud(T("el rayo recorre la piel del avión y sale por otro extremo", size=24,
+                         color=TEXTO_SEC, weight=MEDIUM).move_to(DOWN * 4.6).set_z_index(30))
+        self.poner_sello(sello)
+        self.play(FadeIn(sub), run_time=0.3)
+        self.wait(0.9)
         self.pulso(sello, 1.08)
-        self.hasta(0, 21.6)
-        self.dejar(tit, fr, dt, panel, r1, r2, o1, o2, sello, sub, self.tema, self.barras)
+        self.hasta(0, 23.6)
 
         # ---------- Cierre (vuelve a la portada) ----------
-        c1 = T("Búscalos en tu próximo vuelo:", size=52, weight=HEAVY, font=F_TIT)
-        c2 = T("¿cuántos cuentas?", size=64, color=C_DESC, weight=HEAVY, font=F_TIT)
-        cierre = VGroup(c1, c2).arrange(DOWN, buff=0.18).move_to(UP * 4.65)
-        self.cambio(FadeIn(cierre, shift=DOWN * 0.3), viento.animate.set_value(0.0),
-                    chispa_on.animate.set_value(0.0), FadeIn(anillo))
-        self.hasta(0, 24.0)
+        self.dejar(tit, fr, panel, r1, r2, o1, o2, sello, sub, self.tema, self.barras)
+        cierre = self.hud(frase_cinetica("Búscalos en tu próximo vuelo: ¿cuántos cuentas?",
+                                         size=54, resaltar=["cuántos", "cuentas?"],
+                                         color_resalte=C_DESC).move_to(UP * 4.65))
+        self.cambio(viento.animate.set_value(0.0), chispa_on.animate.set_value(0.0),
+                    FadeIn(anillo))
+        self.entrar_palabras(cierre)
+        self.hasta(0, 26.0)
         self.dejar(cierre)
         self.cambio(FadeIn(preg), run_time=0.3, desplazar=UP * 0.6)
-        self.wait(0.3)
+        self.wait(0.25)
