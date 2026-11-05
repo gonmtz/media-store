@@ -934,6 +934,92 @@ def freno_partido(punta, s=1, color=C_GUINADA, apertura=1.0):
     return placa
 
 
+# ---------- Matrícula (short 09) ----------
+def matricula_lateral(texto, x=-1.75, y=-0.2, alto=0.2, color=OSCURO):
+    """Matrícula pintada en el fuselaje de `avion_lateral` (parte trasera, bajo las ventanas)."""
+    t = Text(texto, font=F_TIT, weight=HEAVY, color=color)
+    return t.scale_to_fit_height(alto).move_to([x, y, 0])
+
+
+# ---------- Ala que se dobla (short 10) ----------
+RAIZ_FRONTAL, PUNTA_FRONTAL = 0.45, 3.75     # semienvergadura en pantalla: 3,3 unidades
+
+
+def avion_frontal_flexible(flex=0.0, diedro=0.18):
+    """Avión visto de frente con las alas dobladas: la punta sube `flex` unidades respecto
+    al ala recta (flecha de una viga en voladizo, ~ (x/b)²; negativo = cuelga en tierra).
+    Devuelve (grupo, función y(x) del ala) para colocar flechas y cargas encima."""
+    b = PUNTA_FRONTAL - RAIZ_FRONTAL
+
+    def y_ala(x):
+        u = np.clip((abs(x) - RAIZ_FRONTAL) / b, 0, 1)
+        return -0.15 + diedro * u + flex * u ** 2
+
+    def ala(s):
+        xs = np.linspace(RAIZ_FRONTAL, PUNTA_FRONTAL, 24)
+        esp = np.linspace(0.24, 0.09, 24)
+        arriba = [(s * x, y_ala(x) + e / 2) for x, e in zip(xs, esp)]
+        abajo = [(s * x, y_ala(x) - e / 2) for x, e in zip(xs[::-1], esp[::-1])]
+        return poli(arriba + abajo, radio=0.03, fill=(FUS_A, "#CBD5E1"))
+
+    def motor(s):
+        x = 1.45
+        c = np.array([s * x, y_ala(x) - 0.42, 0])
+        anillo = Circle(radius=0.3).move_to(c)
+        anillo.set_fill(color=["#E2E8F0", "#94A3B8"], opacity=1).set_sheen_direction(DOWN)
+        anillo.set_stroke(BORDE, width=1.5)
+        toma = Circle(radius=0.2, fill_color=OSCURO, fill_opacity=1, stroke_width=0).move_to(c)
+        pilon = Rectangle(width=0.12, height=0.2, fill_color="#94A3B8", fill_opacity=1,
+                          stroke_width=0).move_to(c + UP * 0.32)
+        return VGroup(pilon, anillo, toma)
+
+    estab = poli([(-1.6, 0.5), (1.6, 0.5), (1.6, 0.42), (-1.6, 0.38)], radio=0.03,
+                 fill=("#CBD5E1", "#94A3B8"))
+    aleta = poli([(-0.1, 0.55), (-0.05, 2.0), (0.05, 2.0), (0.1, 0.55)], radio=0.04,
+                 fill=(FUS_A, "#CBD5E1"), sheen=RIGHT)
+    fus = Circle(radius=0.6).set_fill(color=[FUS_A, FUS_B], opacity=1)
+    fus.set_sheen_direction(DOWN).set_stroke(BORDE, width=1.5)
+    cabina = VGroup(*[RoundedRectangle(width=0.2, height=0.12, corner_radius=0.04,
+                                       fill_color=OSCURO, fill_opacity=1, stroke_width=0)
+                      .move_to([s * 0.13, 0.22, 0]) for s in (-1, 1)])
+    grupo = VGroup(estab, aleta, ala(-1), ala(1), motor(-1), motor(1), fus, cabina)
+    return grupo, y_ala
+
+
+# ---------- Descargadores de estática (short 11) ----------
+def descargador(base, direccion=DOWN, largo=0.32, color=C_GUINADA, ancho=4):
+    """Varilla fina que sale del borde de salida, con la punta marcada."""
+    d = np.array(direccion, dtype=float)
+    d = d / np.linalg.norm(d)
+    base = np.array(base, dtype=float)
+    punta = base + d * largo
+    return VGroup(Line(base, punta, color=color, stroke_width=ancho),
+                  Dot(punta, radius=0.035, color=color))
+
+
+def puntas_descargadores_superior():
+    """Bases y direcciones de los descargadores sobre `avion_superior` (bordes de salida cerca
+    de las puntas de ala y del estabilizador, y en el timón). Devuelve [(base, dirección)]."""
+    res = []
+    for s in (-1, 1):
+        a, b = np.array([s * 3.45, -1.22, 0]), np.array([s * 0.35, -0.55, 0])   # borde de salida
+        for f in (0.05, 0.16, 0.27):
+            res.append((a + (b - a) * f, np.array([s * 0.25, -1, 0])))
+        res.append((np.array([s * 3.78, -1.15, 0]), np.array([s * 0.8, -1, 0])))  # punta
+        e1, e2 = np.array([s * 1.6, -3.25, 0]), np.array([s * 0.1, -3.05, 0])     # estabilizador
+        for f in (0.08, 0.3):
+            res.append((e1 + (e2 - e1) * f, np.array([s * 0.2, -1, 0])))
+    res.append((np.array([0, -3.62, 0]), DOWN))                                    # timón
+    return res
+
+
+def carga(pos, signo="−", color=C_CABECEO, radio=0.13):
+    """Carga eléctrica dibujada como círculo con signo."""
+    c = Circle(radius=radio, stroke_color=color, stroke_width=3, fill_color=BG, fill_opacity=0.9)
+    t = Text(signo, font=F_TIT, weight=HEAVY, color=color).scale_to_fit_height(radio * 0.9)
+    return VGroup(c, t.move_to(c)).move_to(pos)
+
+
 # ---------- Clase base para cada short ----------
 class ShortBase(Scene):
     """Carga voz.json (junto al archivo de la escena), reproduce la narración completa,

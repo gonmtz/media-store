@@ -12,7 +12,12 @@ Comprueba (ERROR = no publicar; AVISO = mirar y decidir):
     y ningún fotograma vacío (solo fondo) en las transiciones.
   - Bucle: parecido entre el último fotograma y el primero (informativo).
   - publicacion.json, si existe: título de TikTok, pregunta, hashtags y atribución de la
-    música (CC BY). Campos: {"titulo_tiktok", "texto", "musica"}.
+    música (CC BY). Campos: {"titulo_tiktok", "texto", "musica", "formato"}.
+
+Formatos ("formato" en publicacion.json):
+  narrado (por defecto)  voz + animación, 30–45 s, con voz.json
+  texto                  sin voz: texto animado en pantalla + música, 12–30 s
+  ficha                  una imagen fija + música, 3–10 s (no se mira el ritmo)
 """
 import json
 import re
@@ -28,6 +33,7 @@ UMBRAL_CONTENIDO = 0.02                   # como tools/portada.py
 UMBRAL_CAMBIO = 0.004                     # fracción de píxeles que cambian entre muestras
 
 errores, avisos, info = [], [], []
+DURACION = {"narrado": (30, 45), "texto": (12, 30), "ficha": (3, 10)}
 
 
 def ffprobe(video):
@@ -71,13 +77,15 @@ def tramos(mascara, minimo):
     return res
 
 
-def revisar_video(video):
+def revisar_video(video, formato="narrado"):
     w, h, fps, dur = ffprobe(video)
     if (w, h) != (1080, 1920):
         errores.append(f"resolución {w}×{h}; debe ser 1080×1920")
     if abs(fps - 30) > 0.01:
         errores.append(f"{fps:.2f} fps; deben ser 30")
-    (errores if not 30 <= dur <= 45 else info).append(f"duración {dur:.1f} s (30–45 s)")
+    lo, hi = DURACION[formato]
+    (errores if not lo <= dur <= hi else info).append(
+        f"duración {dur:.1f} s ({lo}–{hi} s, formato {formato})")
 
     i = lufs(video)
     if i is None:
@@ -92,6 +100,8 @@ def revisar_video(video):
     for linea in r.stdout.splitlines():
         (errores if linea.startswith("ERROR") else info).append("portada: " + linea)
 
+    if formato == "ficha":
+        return
     F = fotogramas(video)
     c = np.array([contenido(f) for f in F])
     cambio = np.r_[1.0, [float(np.mean(np.abs(F[k] - F[k - 1]) > 25)) for k in range(1, len(F))]]
@@ -152,11 +162,17 @@ def main():
         sys.exit(2)
     carpeta = Path(args[0])
     video = Path(args[args.index("--video") + 1]) if "--video" in args else carpeta / "final.mp4"
+    pub = carpeta / "publicacion.json"
+    formato = json.loads(pub.read_text()).get("formato", "narrado") if pub.exists() else "narrado"
+    if formato not in DURACION:
+        errores.append(f"formato desconocido {formato!r}")
+        formato = "narrado"
     if not video.exists():
         errores.append(f"no existe {video}")
     else:
-        revisar_video(video)
-    revisar_voz(carpeta)
+        revisar_video(video, formato)
+    if formato == "narrado":
+        revisar_voz(carpeta)
     revisar_publicacion(carpeta)
     print(f"== {carpeta}")
     for t, lista in (("OK   ", info), ("AVISO", avisos), ("ERROR", errores)):

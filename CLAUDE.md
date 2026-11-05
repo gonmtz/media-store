@@ -17,7 +17,12 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
 
 ## Formato de cada short
 
-- Vertical 1080×1920, 30 fps, de 30 a 45 s.
+- Tres formatos (campo `formato` de `publicacion.json`; `tools/revisar.py` ajusta sus reglas):
+  **narrado** (voz + animación, 30–45 s; lo de abajo), **texto** (sin voz: texto animado en
+  pantalla + música, 12–30 s; bloques fijados por tiempo con `self.hasta(0, t)`, sin
+  subtítulos; ver `shorts/09_matriculas`) y **ficha** (una imagen fija + música, 3–10 s; ver
+  `shorts/08_ficha_formulas`). Mientras no haya voz nueva, solo texto y ficha.
+- Vertical 1080×1920, 30 fps, de 30 a 45 s (narrado).
 - Estructura: **gancho** (pregunta o dato llamativo, máx. 4 s) → **2-3 bloques** (concepto
   + mecanismo + animación) → **cierre** con resumen y una pregunta a la audiencia.
 - Título grande del bloque, frase intuitiva, dato técnico secundario y pastilla
@@ -84,7 +89,10 @@ marca/                  avatar, banner y branding.py
 6. **Render**: `manim -qh --fps 30 shorts/NN_tema/escena.py Clase`
    (para iterar, `-ql`). Revisar fotogramas: texto dentro del ancho seguro (7,4 unidades),
    sin solapes y con el sentido físico de cada giro correcto.
-7. **Mezcla**: `python tools/postpro.py <render.mp4> musica/<pista>.mp3 shorts/NN_tema/final.mp4`.
+7. **Mezcla**: `python tools/postpro.py <render.mp4> musica/<pista>.mp3 shorts/NN_tema/final.mp4 [inicio_s]`.
+   Si el render no tiene audio (texto y ficha), pone solo la música, sin fundido de entrada (para
+   el bucle) y normaliza en dos pasadas. Una ficha se renderiza con `manim -qh -s` y se
+   convierte en video con `ffmpeg -loop 1 -framerate 30 -i imagen.png -t 3 … render.mp4`.
    Comprobar que la sonoridad integrada quede en -14 ± 1 LUFS.
 8. **Texto y revisión**: escribir `shorts/NN_tema/publicacion.json` con
    `{"titulo_tiktok", "texto", "musica"}` (texto = descripción + pregunta + hashtags + atribución) y
@@ -119,7 +127,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -136,7 +144,11 @@ volver a descargar la pista correcta antes de usarla.
 | 05 | Winglets y vórtices de punta | Down With That | publicado 2026-10-24 20:00 (CDMX) en YT, IG y TikTok (portada vacía: cambiarla a mano) |
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
-| 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | programado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
+| 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | publicado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
+| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 23 s) | Down With That | listo; pendiente de aprobación |
+| 10 | ¿Por qué el ala se dobla en vuelo? (texto, 25 s) | Dreamy Flashback | listo; pendiente de aprobación |
+| 11 | Descargadores de estática: las «antenitas» del ala (texto, 25 s) | Hypnothis (desde 40 s) | listo; pendiente de aprobación |
+| 12 | Ficha: alfabeto aeronáutico (3 s) | Down With That (desde 30 s) | listo; pendiente de aprobación |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
@@ -178,6 +190,13 @@ Alas volantes (boceto 07): `ala_volante_superior` (silueta genérica, devuelve l
 `freno_partido` (freno de punta visto desde arriba, `apertura` 0–1). Voz: escribir las
 siglas en minúsculas ("Naca", "Nasa") o la voz las deletrea. `ShortBase.SUBS_DESDE` omite los
 subtítulos del gancho.
+
+Sin voz (shorts 09–11): `matricula_lateral` (matrícula pintada en `avion_lateral`),
+`avion_frontal_flexible(flex)` (vista de frente con el ala doblada como viga en voladizo; devuelve
+también y(x) del ala), `descargador`, `puntas_descargadores_superior` (posiciones sobre
+`avion_superior`) y `carga` (círculo con signo). Ojo: las capas `always_redraw` pierden el
+`z_index` al redibujarse; para que queden encima, añadirlas después del avión y no darle
+`z_index` al avión.
 
 Estos temas reutilizan las piezas que ya hay en la biblioteca (perfil, vectores y flujo):
 construir y añadir a `lib/porquevuela.py` lo que pueda volver a usarse.
