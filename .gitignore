@@ -4,3 +4,7 @@ __pycache__/
 shorts/*/render.mp4
 mvenv/
 shorts/*/portada.png
+
+# credenciales (nunca al repo)
+*.env
+azure.env
