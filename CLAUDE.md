@@ -106,7 +106,11 @@ marca/                  avatar, banner y branding.py
    (dominio ya permitido) a `shorts/NN_tema/voz.mp3`.
    **En revisión (28-oct-2026):** al dueño no le gusta Brian en español; está escuchando voces
    nativas (Azure es-MX, ElevenLabs con cuenta propia, Google). vidIQ solo tiene voces inglesas.
-   No producir voz nueva hasta que elija.
+   No producir voz nueva hasta que elija. **6-nov:** el dueño creó Azure Speech F0 (gratis,
+   0,5 M caracteres/mes de voces neuronales, sin HD), región `eastus`; dominios
+   `eastus.tts.speech.microsoft.com` y `eastus.api.cognitive.microsoft.com` permitidos. La clave
+   nunca va al repo (es público): pedirla al dueño y guardarla en `~/.config/porquevuela/azure.env`.
+   Siguiente paso: muestras del mismo guion con varias voces es-MX / es-US / es-CO.
 3. **Tiempos**: `python tools/pausas.py shorts/NN_tema/voz.mp3`. Las pausas largas
    (> 0,6 s aprox.) separan párrafos; las cortas, frases. Escribir `voz.json`:
    `{"completo": "voz.mp3", "segmentos": {clave: {"inicio", "duracion"}}, "frases": [[ini, fin, texto], ...]}`.
