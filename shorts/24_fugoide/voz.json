@@ -1,0 +1,83 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.349
+  },
+  "b1": {
+   "inicio": 2.349,
+   "duracion": 8.141
+  },
+  "b2": {
+   "inicio": 10.49,
+   "duracion": 5.372
+  },
+  "b3": {
+   "inicio": 15.862,
+   "duracion": 8.689
+  },
+  "cierre": {
+   "inicio": 24.551,
+   "duracion": 5.569
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.9,
+   "¿Un avión que sube y baja solo?"
+  ],
+  [
+   2.35,
+   3.29,
+   "Es el fugoide."
+  ],
+  [
+   3.29,
+   6.4,
+   "Si el avión acelera, gana sustentación y sube;"
+  ],
+  [
+   6.4,
+   10.04,
+   "al subir, frena, pierde sustentación y vuelve a bajar."
+  ],
+  [
+   10.49,
+   15.41,
+   "Cambia velocidad por altura y altura por velocidad, casi sin cambiar el ángulo de ataque."
+  ],
+  [
+   15.86,
+   16.47,
+   "Es lento:"
+  ],
+  [
+   16.47,
+   20.76,
+   "un ciclo dura decenas de segundos, más cuanto más rápido vuela."
+  ],
+  [
+   20.76,
+   22.13,
+   "Y se amortigua poco:"
+  ],
+  [
+   22.13,
+   24.1,
+   "solo lo frena la resistencia."
+  ],
+  [
+   24.55,
+   29.27,
+   "Tan lento que el piloto, o el piloto automático, lo corrige sin notarlo."
+  ],
+  [
+   29.27,
+   30.12,
+   "¿Lo conocías?"
+  ]
+ ]
+}

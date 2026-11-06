@@ -1,0 +1,83 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.983
+  },
+  "b1": {
+   "inicio": 2.983,
+   "duracion": 7.203
+  },
+  "b2": {
+   "inicio": 10.186,
+   "duracion": 7.676
+  },
+  "b3": {
+   "inicio": 17.862,
+   "duracion": 7.723
+  },
+  "cierre": {
+   "inicio": 25.585,
+   "duracion": 5.904
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.53,
+   "Inclinado y sin tocar nada, ¿qué pasa?"
+  ],
+  [
+   2.98,
+   4.51,
+   "Empieza el modo espiral."
+  ],
+  [
+   4.51,
+   9.74,
+   "Si el avión se queda inclinado, resbala hacia el ala baja, y dos efectos compiten."
+  ],
+  [
+   10.19,
+   12.3,
+   "El diedro tiende a nivelar las alas."
+  ],
+  [
+   12.75,
+   14.45,
+   "La deriva gira el morro hacia el giro:"
+  ],
+  [
+   14.81,
+   17.41,
+   "el ala de fuera va más rápido y lo inclina más."
+  ],
+  [
+   17.86,
+   21.9,
+   "Si gana la deriva, la inclinación crece despacio y el morro baja:"
+  ],
+  [
+   21.9,
+   23.52,
+   "una espiral que se cierra."
+  ],
+  [
+   23.52,
+   25.14,
+   "Tarda decenas de segundos."
+  ],
+  [
+   25.59,
+   30.69,
+   "Es tan lento que se corrige sin esfuerzo, pero sin ver el horizonte es traicionero."
+  ],
+  [
+   30.69,
+   31.49,
+   "¿Lo conocías?"
+  ]
+ ]
+}

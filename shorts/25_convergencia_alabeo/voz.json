@@ -1,0 +1,83 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.208
+  },
+  "b1": {
+   "inicio": 2.208,
+   "duracion": 7.094
+  },
+  "b2": {
+   "inicio": 9.302,
+   "duracion": 6.7
+  },
+  "b3": {
+   "inicio": 16.002,
+   "duracion": 7.568
+  },
+  "cierre": {
+   "inicio": 23.57,
+   "duracion": 6.646
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.76,
+   "¿Por qué el avión no sigue rodando?"
+  ],
+  [
+   2.21,
+   6.34,
+   "Si una ráfaga lo hace rodar, el ala que baja recibe el aire más de frente:"
+  ],
+  [
+   6.34,
+   8.85,
+   "gana ángulo de ataque y sube su sustentación."
+  ],
+  [
+   9.3,
+   11.41,
+   "El ala que sube pierde sustentación."
+  ],
+  [
+   11.91,
+   15.55,
+   "Juntas crean un momento que frena el giro en cerca de un segundo."
+  ],
+  [
+   16.0,
+   18.18,
+   "Es una convergencia, sin oscilar."
+  ],
+  [
+   18.18,
+   21.27,
+   "Frena la velocidad de alabeo, pero no endereza:"
+  ],
+  [
+   21.27,
+   23.12,
+   "el avión se queda inclinado."
+  ],
+  [
+   23.57,
+   27.41,
+   "Por eso los alerones mandan velocidad de alabeo, no ángulo:"
+  ],
+  [
+   27.41,
+   29.5,
+   "para dejar de girar, se centran."
+  ],
+  [
+   29.5,
+   30.22,
+   "¿Lo sabías?"
+  ]
+ ]
+}

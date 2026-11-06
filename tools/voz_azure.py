@@ -55,8 +55,18 @@ def decir(voz, texto, salida, velocidad="0%"):
                  "Content-Type": "application/ssml+xml",
                  "X-Microsoft-OutputFormat": "audio-48khz-192kbitrate-mono-mp3",
                  "User-Agent": "porquevuela-tts"})
+    import time
+    from urllib.error import HTTPError
+    for intento in range(6):          # F0: 20 peticiones por minuto → 429; esperar y reintentar
+        try:
+            datos = urllib.request.urlopen(req, timeout=60).read()
+            break
+        except HTTPError as e:
+            if e.code != 429 or intento == 5:
+                raise
+            time.sleep(15)
     with open(salida, "wb") as f:
-        f.write(urllib.request.urlopen(req, timeout=60).read())
+        f.write(datos)
 
 
 VOZ_CANAL = "es-MX-JorgeMultilingualNeural"   # elegida por el dueño el 6-nov-2026

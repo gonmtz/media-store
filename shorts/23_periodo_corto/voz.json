@@ -1,0 +1,83 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.66
+  },
+  "b1": {
+   "inicio": 2.66,
+   "duracion": 8.109
+  },
+  "b2": {
+   "inicio": 10.769,
+   "duracion": 7.432
+  },
+  "b3": {
+   "inicio": 18.201,
+   "duracion": 7.85
+  },
+  "cierre": {
+   "inicio": 26.052,
+   "duracion": 5.336
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.21,
+   "¿Por qué el morro rebota tras una ráfaga?"
+  ],
+  [
+   2.66,
+   5.55,
+   "Es el periodo corto, el modo rápido del cabeceo:"
+  ],
+  [
+   5.55,
+   10.32,
+   "el morro sube y baja, cambia el ángulo de ataque, y la velocidad casi no varía."
+  ],
+  [
+   10.77,
+   12.87,
+   "La estabilidad estática hace de muelle:"
+  ],
+  [
+   13.23,
+   14.4,
+   "tira del morro de vuelta."
+  ],
+  [
+   14.85,
+   16.37,
+   "La cola hace de amortiguador:"
+  ],
+  [
+   16.76,
+   17.75,
+   "frena cada giro."
+  ],
+  [
+   18.2,
+   22.35,
+   "Por eso dura pocos segundos y se apaga en una o dos oscilaciones."
+  ],
+  [
+   22.35,
+   25.6,
+   "Sin ese amortiguador, sería muy difícil de pilotar."
+  ],
+  [
+   26.05,
+   28.59,
+   "Muelle y amortiguador, como en un coche."
+  ],
+  [
+   28.59,
+   31.39,
+   "¿Lo has sentido en un vuelo con turbulencia?"
+  ]
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.466
+  },
+  "b1": {
+   "inicio": 2.466,
+   "duracion": 7.889
+  },
+  "b2": {
+   "inicio": 10.355,
+   "duracion": 6.104
+  },
+  "b3": {
+   "inicio": 16.459,
+   "duracion": 8.514
+  },
+  "cierre": {
+   "inicio": 24.972,
+   "duracion": 5.316
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.02,
+   "¿Un avión que se mece de lado a lado?"
+  ],
+  [
+   2.47,
+   4.05,
+   "Es el balanceo holandés."
+  ],
+  [
+   4.05,
+   8.32,
+   "Si el morro se desvía, el avión resbala y el ala que avanza sube:"
+  ],
+  [
+   8.32,
+   9.9,
+   "guiña y alabea a la vez."
+  ],
+  [
+   10.35,
+   16.01,
+   "La deriva devuelve el morro, pero se pasa, y el ciclo se repite hacia el otro lado cada pocos segundos."
+  ],
+  [
+   16.46,
+   19.85,
+   "Las alas en flecha lo acentúan, sobre todo a gran altitud."
+  ],
+  [
+   19.85,
+   24.52,
+   "Por eso los reactores llevan un amortiguador de guiñada que mueve el timón solo."
+  ],
+  [
+   24.97,
+   28.97,
+   "La punta del ala dibuja un óvalo, como un patinador sobre hielo."
+  ],
+  [
+   28.97,
+   30.29,
+   "¿Qué modo te faltaba?"
+  ]
+ ]
+}

@@ -164,7 +164,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis, 21 → Down With That, 22 → Dreamy Flashback (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis, 21 → Down With That, 22 → Dreamy Flashback, 23 → Hypnothis, 24 → Down With That, 25 → Dreamy Flashback, 26 → Hypnothis, 27 → Down With That (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -194,8 +194,13 @@ volver a descargar la pista correcta antes de usarla.
 | 18 | ¿Por qué aterriza con el morro arriba? (texto, 25 s, 2D) | Down With That (desde 30 s) | listo (6-nov); pendiente de aprobación |
 | 19 | ¿Y si se apagan todos los motores? Planeo y Gimli 1983 (texto, 26 s, 2D) | Dreamy Flashback | listo (6-nov); pendiente de aprobación |
 | 20 | Diedro: ¿por qué las alas forman una V? (texto, 25 s, 3D de frente) | Hypnothis | listo (6-nov); pendiente de aprobación |
-| 21 | Estabilidad estática: canica, gráfica Cm–α y CG/punto neutro (narrado, 34 s, voz Jorge Multilingual) | Down With That | listo (6-nov); pendiente de aprobación |
-| 22 | Estabilidad dinámica: respuesta en el tiempo, fugoide y balanceo holandés (narrado, 32 s) | Dreamy Flashback | listo (6-nov); pendiente de aprobación |
+| 21 | Estabilidad estática: canica, gráfica Cm–α y CG/punto neutro (narrado, 34 s, voz Jorge Multilingual) | Down With That | programado 2026-11-07 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419245918); voz sintética → marca de IA en IG y TikTok |
+| 22 | Estabilidad dinámica: respuesta en el tiempo, fugoide y balanceo holandés (narrado, 32 s) | Dreamy Flashback | programado 2026-11-08 12:00 (CDMX) (Metricool id 419245962); marca de IA en IG y TikTok |
+| 23 | Modos dinámicos 1: periodo corto (muelle y amortiguador) (narrado, 32 s) | Hypnothis | programado 2026-11-09 12:00 (CDMX) |
+| 24 | Modos dinámicos 2: fugoide (narrado, 30 s) | Down With That | programado 2026-11-10 12:00 (CDMX) |
+| 25 | Modos dinámicos 3: convergencia en alabeo (narrado, 30 s) | Dreamy Flashback | programado 2026-11-11 12:00 (CDMX) |
+| 26 | Modos dinámicos 4: modo espiral (narrado, 32 s) | Hypnothis | programado 2026-11-12 12:00 (CDMX) |
+| 27 | Modos dinámicos 5: balanceo holandés (narrado, 30 s) | Down With That | programado 2026-11-13 12:00 (CDMX) |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
@@ -246,6 +251,8 @@ también y(x) del ala), `descargador`, `puntas_descargadores_superior` (posicion
 `avion_superior`) y `carga` (círculo con signo). Ojo: las capas `always_redraw` pierden el
 `z_index` al redibujarse; para que queden encima, añadirlas después del avión y no darle
 `z_index` al avión.
+
+Modos dinámicos (shorts 23–27): `lib/modos.py` (`ModoBase`: avión arriba + gráfica respuesta–tiempo abajo movidos por un mismo reloj, `lateral`/`frontal`/`superior` con funciones de actitud, `grafica`, `traza`, `avanzar(t_fin, ...)` para animar hasta un instante, `tarjeta`). Convenio de signos de las vistas: de frente, alabeo + baja el ala que queda a la izquierda de la pantalla (ala derecha del avión); desde arriba (morro arriba), guiñada + gira en sentido horario.
 
 Estos temas reutilizan las piezas que ya hay en la biblioteca (perfil, vectores y flujo):
 construir y añadir a `lib/porquevuela.py` lo que pueda volver a usarse.
