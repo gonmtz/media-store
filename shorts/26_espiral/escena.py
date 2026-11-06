@@ -1,10 +1,10 @@
 """
-Short 26 (narrado): modo espiral. Con el avión inclinado, resbala hacia el ala baja; el efecto
-diedro tiende a nivelarlo y la estabilidad direccional (deriva) gira el morro hacia el giro, con
-lo que el ala de fuera va más rápido y genera más sustentación (alabeo por guiñada). Si domina la
-deriva, la inclinación crece despacio (divergencia en espiral, decenas de segundos).
-Vista de frente: el avión viene hacia nosotros (su ala derecha está a la izquierda de la pantalla).
-Curvas ilustrativas.
+Short 26 (narrado): modo espiral, con el avión 3D (render real).
+Con el avión inclinado, resbala hacia el ala baja; el efecto diedro tiende a nivelarlo y la
+estabilidad direccional (deriva) gira el morro hacia el giro, con lo que el ala de fuera va más
+rápido y genera más sustentación (alabeo por guiñada). Si domina la deriva, la inclinación crece
+despacio y el morro baja (divergencia en espiral, decenas de segundos). Curvas ilustrativas.
+Vista desde atrás: alabeo a la derecha = baja el ala de la derecha de la pantalla.
 Render:  manim -qh --fps 60 shorts/26_espiral/escena.py Espiral
 """
 import sys
@@ -13,10 +13,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 from lib.modos import ModoBase, Y_AV, flecha  # noqa: E402
-from lib.avion2d import superior_2d  # noqa: E402
+from lib import avion as A  # noqa: E402
 
 C_ESP, C_DIE, C_DER = C_ALABEO, C_CABECEO, C_GUINADA
 TM = 60.0
+IZQ, DER = A.punto_ala(16.5, s=1, xc=0.3), A.punto_ala(16.5, s=-1, xc=0.3)
 
 
 def phi_ine(t):
@@ -32,16 +33,19 @@ class Espiral(ModoBase):
 
     def base(self, r0):
         r = ValueTracker(r0)
-        av = self.frontal(5.4, (0, Y_AV), alabeo=lambda: 12 + 25 * phi_ine(r.get_value()))
+        cam = {k: ValueTracker(v) for k, v in dict(azimut=180, elevacion=14, guinada=0).items()}
+        av = self.avion3d(centro=(0, Y_AV + 0.1), campo=36, azimut=cam["azimut"],
+                          elevacion=cam["elevacion"], guinada=cam["guinada"],
+                          alabeo=lambda: 14 + 25 * phi_ine(r.get_value()))
         ax, et = self.grafica(TM, y_rango=(-0.1, 1.2), etiqueta_y="inclinación",
                               etiqueta_x="tiempo (s)")
         tr = self.traza(ax, phi_ine, C_ESP, r)
         fondo = brillo([0, Y_AV - 0.4, 0], C_ESP, 3.6, 0.8)
-        return r, av, ax, et, tr, fondo
+        return r, cam, av, ax, et, tr, fondo
 
     def construct(self):
         self.iniciar()
-        r, av, ax, et, tr, fondo = self.base(4.0)
+        r, cam, av, ax, et, tr, fondo = self.base(4.0)
         preg, dest = self.gancho_texto("Inclinado y sin tocar nada…", "¿QUÉ PASA?", C_ESP, 96)
 
         # ---------- Gancho ----------
@@ -56,99 +60,90 @@ class Espiral(ModoBase):
         self.play(self.poner_cabecera("MODOS DINÁMICOS · 4", 3), run_time=0.01)
         self.dejar(preg, sello)
         barra, tit, fr, dt = self.bloque_ajustado(0, "Resbala", "Se va hacia el ala baja",
-                                                  C_ESP, dato="vista de frente: el avión viene hacia ti",
+                                                  C_ESP, dato="visto desde atrás",
                                                   resaltar=["ala", "baja"])
-        res = flecha([0.6, Y_AV - 1.05, 0], [-1.6, Y_AV - 1.05, 0], C_ESP, 10)
-        eres = self.etiqueta("RESBALA", C_ESP, [1.6, Y_AV - 1.05, 0], size=24)
+        res = flecha([-0.3, Y_AV - 1.25, 0], [2.7, Y_AV - 1.25, 0], C_ESP, 11)
+        eres = self.etiqueta("RESBALA", C_ESP, [1.2, Y_AV - 1.62, 0], size=24)
         self.abrir_bloque(barra, C_ESP, tit, fr, dt, r.animate.set_value(15.0))
         self.sonido("whoosh_suave", -12)
         self.play(GrowArrow(res), FadeIn(eres), r.animate.set_value(16.0), run_time=0.5)
+        self.play(res.animate.shift(RIGHT * 0.25), rate_func=there_and_back, run_time=0.6)
         self.avanzar(t0 + d * 0.65, r.animate.set_value(22.0))
         duelo = VGroup(pastilla(T("DIEDRO", size=34, color=C_DIE, weight=HEAVY, font=F_TIT), C_DIE),
                        T("vs", size=30, color=TEXTO_SEC, weight=BOLD),
                        pastilla(T("DERIVA", size=34, color=C_DER, weight=HEAVY, font=F_TIT), C_DER)
-                       ).arrange(RIGHT, buff=0.35).move_to([0.9, 0.15, 0])
+                       ).arrange(RIGHT, buff=0.35).move_to([0.6, -0.75, 0])
         self.sonido("golpe", -12)
         self.play(FadeIn(duelo, scale=1.3), r.animate.set_value(23.0), run_time=0.4,
                   rate_func=rate_functions.ease_out_back)
         self.avanzar(t0 + d - 0.15, r.animate.set_value(26.0))
 
-        # ---------- 2. Los dos efectos ----------
+        # ---------- 2. Los dos efectos, en el mismo avión ----------
         t0, d = self.voz("b2")
         tr.clear_updaters()
-        self.dejar(tit, fr, dt, res, eres, duelo, av, ax, et, tr)
+        self.dejar(tit, fr, dt, res, eres, duelo, ax, et, tr)
         barra, tit, fr, dt = self.bloque_ajustado(1, "Dos efectos", "El diedro nivela; la deriva lo inclina más",
-                                                  C_DER, dato="izquierda: de frente · derecha: desde arriba",
+                                                  C_DER, dato="la cámara sube para ver la guiñada",
                                                   resaltar=["nivela", "más"])
-        Y2 = 0.7
-        g1 = ValueTracker(28.0)     # alabeo en la vista de frente
-        avf = self.frontal(3.7, (-2.3, Y2), alabeo=lambda: g1.get_value())
-        g2 = ValueTracker(0.0)      # guiñada en la vista desde arriba
-        avs = self.superior(2.3, (2.3, Y2 + 0.2), guinada=lambda: g2.get_value())
-        sep = DashedLine([0, Y2 + 1.7, 0], [0, Y2 - 1.7, 0], color="#334155", stroke_width=3)
-        die = always_redraw(lambda: flecha_giro([-2.3, Y2, 0], 1.55, PI + 0.35, -0.9, C_DIE))
-        edie = VGroup(T("DIEDRO", size=32, color=C_DIE, weight=HEAVY, font=F_TIT),
-                      T("tiende a nivelar", size=24, color=TEXTO_SEC, weight=MEDIUM)
-                      ).arrange(DOWN, buff=0.06).move_to([-2.3, Y2 - 1.85, 0])
-        eder = VGroup(T("DERIVA", size=32, color=C_DER, weight=HEAVY, font=F_TIT),
-                      T("morro hacia el giro", size=24, color=TEXTO_SEC, weight=MEDIUM)
-                      ).arrange(DOWN, buff=0.06).move_to([2.3, Y2 - 1.85, 0])
-        self.abrir_bloque(barra, C_DER, tit, fr, dt, FadeIn(avf), FadeIn(sep))
+        g = ValueTracker(28.0)
+        av2 = self.avion3d(centro=(0, 0.45), campo=64, alto_px=1000, azimut=cam["azimut"],
+                           elevacion=cam["elevacion"], guinada=cam["guinada"],
+                           alabeo=lambda: g.get_value())
+        die = always_redraw(lambda: flecha_giro([0, 0.45, 0], 2.1, -0.25, 0.9, C_DIE))
+        edie = self.etiqueta("DIEDRO: TIENDE A NIVELAR", C_DIE, [2.2, -1.25, 0], size=22)
+        self.abrir_bloque(barra, C_DER, tit, fr, dt, FadeOut(av), FadeIn(av2),
+                          r.animate.set_value(26.0))
         self.add(die)
-        self.play(FadeIn(edie, shift=UP * 0.2), g1.animate.set_value(22.0), run_time=0.5)
-        self.avanzar(t0 + d * 0.33, g1.animate.set_value(16.0))
-        # «La deriva gira el morro hacia el giro»
-        self.sonido("pop", -9)
-        self.play(FadeIn(avs), FadeIn(eder, shift=UP * 0.2), run_time=0.4)
-        self.avanzar(t0 + d * 0.58, g2.animate.set_value(22.0))
+        self.play(FadeIn(edie, shift=UP * 0.2), g.animate.set_value(24.0), run_time=0.5)
+        self.avanzar(t0 + d * 0.33, g.animate.set_value(18.0))
+        # «La deriva gira el morro hacia el giro»: la cámara sube y el morro gira a la derecha
+        eder = self.etiqueta("DERIVA: MORRO HACIA EL GIRO", C_DER, [-1.9, -1.6, 0], size=22)
+        self.sonido("whoosh_suave", -10)
+        self.play(FadeOut(die), FadeOut(edie), cam["elevacion"].animate.set_value(48),
+                  cam["azimut"].animate.set_value(200), run_time=1.0,
+                  rate_func=rate_functions.ease_in_out_cubic)
+        self.play(FadeIn(eder), cam["guinada"].animate.set_value(22), run_time=0.9)
         # «el ala de fuera va más rápido y lo inclina más»
-        ang = -22 * DEGREES
-
-        def velocidades():
-            c = np.array([2.3, Y2, 0])
-            ex = np.array([np.cos(ang), np.sin(ang), 0])      # eje de las alas (girado)
-            ey = np.array([-np.sin(ang), np.cos(ang), 0])     # hacia el morro
-            c = c + UP * 0.2
-            fuera, dentro = c - ex * 1.0, c + ex * 1.0      # ala izquierda = fuera del giro a la derecha
-            return VGroup(flecha(fuera, fuera + ey * 1.0, C_DER, 9),
-                          flecha(dentro, dentro + ey * 0.45, C_DER, 9))
-        vel = velocidades()
-        efu = self.etiqueta("MÁS RÁPIDA", C_DER, [1.25, Y2 + 1.45, 0], size=20)
+        vel = VGroup(self.flecha3d(av2, IZQ, np.array([9.0, 0, 0]), C_DER, 10),
+                     self.flecha3d(av2, DER, np.array([4.0, 0, 0]), C_DER, 10))
+        def _efu():
+            q = av2.a_pantalla([IZQ + np.array([9.0, 0, 0])])[0]
+            q[1] = min(q[1] + 0.35, 2.45)
+            return self.etiqueta("ALA DE FUERA: MÁS RÁPIDA", C_DER, q, size=20)
+        efu = always_redraw(_efu)
         self.sonido("pop", -9)
-        self.play(FadeIn(vel), FadeIn(efu), FadeOut(die), g1.animate.set_value(30.0), run_time=0.5)
-        self.avanzar(t0 + d - 0.15, g1.animate.set_value(38.0))
+        self.add(vel)
+        self.play(FadeIn(efu), g.animate.set_value(26.0), run_time=0.5)
+        self.avanzar(t0 + d - 0.15, g.animate.set_value(36.0))
 
         # ---------- 3. La espiral ----------
         t0, d = self.voz("b3")
-        self.dejar(tit, fr, dt, avf, avs, sep, edie, eder, vel, efu)
+        efu.clear_updaters()
+        self.dejar(tit, fr, dt, av2, eder, vel, efu)
         barra, tit, fr, dt = self.bloque_ajustado(2, "La espiral", "Si gana la deriva, se cierra poco a poco",
                                                   C_ESP, dato="muchos aviones son un poco inestables en espiral",
                                                   resaltar=["deriva", "cierra"])
-        # trayectoria vista desde arriba (espiral que se cierra) y gráfica
-        CS = np.array([0.0, Y_AV - 0.05, 0])
+        # trayectoria vista desde arriba: giro a la derecha = sentido horario
+        CS = np.array([0.0, 1.55, 0])
+        s3 = ValueTracker(0.0)
 
         def punto(th):
-            rr = 1.55 * np.exp(-0.1 * th)
-            return CS + np.array([rr * np.cos(th), 0.62 * rr * np.sin(th), 0])
+            rr = 1.7 * np.exp(-0.1 * th)
+            return CS + np.array([-rr * np.cos(th), 0.62 * rr * np.sin(th), 0])
         ths = np.linspace(0, 4 * PI, 300)
         camino = VMobject().set_points_smoothly([punto(t) for t in ths]).set_stroke(C_ESP, 3, opacity=0.45)
-        s3 = ValueTracker(0.0)
-        mini = superior_2d(1.0, (0, 0))
-
-        def avion_esp():
-            th = s3.get_value()
-            p0, p1 = punto(th), punto(th + 0.05)
-            dirc = np.arctan2(p1[1] - p0[1], p1[0] - p0[0])
-            return mini.copy().rotate(dirc - PI / 2, about_point=ORIGIN).move_to(p0)
-        ave = always_redraw(avion_esp)
+        av3 = self.avion3d(centro=lambda: tuple(punto(s3.get_value())[:2]), campo=130, azimut=180,
+                           elevacion=60, guinada=lambda: np.degrees(s3.get_value()),
+                           alabeo=lambda: 28 + 3 * s3.get_value(),
+                           cabeceo=lambda: -1.2 * s3.get_value())
         r2 = ValueTracker(0.5)
         ax2, et2 = self.grafica(TM, y_rango=(-0.1, 1.2), etiqueta_y="inclinación", etiqueta_x="tiempo (s)")
         ti = self.traza(ax2, phi_ine, C_ESP, r2)
         te = self.traza(ax2, phi_est, C_DIE, r2, ancho=5)
         marcas_t = VGroup(*[self.etiqueta(f"{s} s", TEXTO_SEC, ax2.c2p(s, -0.04), size=18) for s in (20, 40)])
-        self.abrir_bloque(barra, C_ESP, tit, fr, dt, FadeIn(camino), FadeIn(ax2), FadeIn(et2),
-                          FadeIn(marcas_t))
-        self.add(ave, ti, te)
+        self.abrir_bloque(barra, C_ESP, tit, fr, dt, FadeIn(camino), FadeIn(av3), FadeIn(ax2),
+                          FadeIn(et2), FadeIn(marcas_t))
+        self.add(ti, te)
         l1 = self.etiqueta("GANA LA DERIVA: CRECE", C_ESP, ax2.c2p(30, 1.05), size=22)
         l2 = self.etiqueta("GANA EL DIEDRO: SE NIVELA", C_DIE, ax2.c2p(30, 0.32), size=22)
         self.avanzar(t0 + d * 0.3, s3.animate.set_value(1.5 * PI), r2.animate.set_value(22))
@@ -158,9 +153,9 @@ class Espiral(ModoBase):
 
         # ---------- Cierre ----------
         t0, d = self.voz("cierre")
-        for m in (ti, te, ave):
+        for m in (ti, te):
             m.clear_updaters()
-        self.dejar(tit, fr, dt, camino, ave, ax2, et2, marcas_t, ti, te, l1, l2, self.tema, self.barras)
+        self.dejar(tit, fr, dt, camino, av3, ax2, et2, marcas_t, ti, te, l1, l2, self.tema, self.barras)
         tj = VGroup(self.tarjeta("Lento: se corrige sin esfuerzo", C_DIE),
                     self.tarjeta("Sin ver el horizonte, traicionero", C_ESP)).arrange(DOWN, buff=0.3).move_to([0, 2.2, 0])
         preg2 = self.hud(frase_cinetica("¿Lo conocías?", size=76, resaltar=["conocías?"],
@@ -174,7 +169,7 @@ class Espiral(ModoBase):
         self.hasta(t0, d * 0.85)
         self.pulso(preg2, 1.08)
         self.hasta(t0, d - 0.7)
-        r, av, ax, et, tr, fondo = self.base(4.0)
+        r, cam, av, ax, et, tr, fondo = self.base(4.0)
         preg, _ = self.gancho_texto("Inclinado y sin tocar nada…", "¿QUÉ PASA?", C_ESP, 96)
         self.dejar(tj, preg2)
         self.cambio(*[FadeIn(m) for m in (fondo, ax, et, tr, av, preg)], run_time=0.45,
