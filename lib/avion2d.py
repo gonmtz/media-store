@@ -362,12 +362,17 @@ def _parche_manim_imagenes():
 def capa_3d(render, ancho_pantalla=9.0, centro=(0, 0), **params):
     """Capa que redibuja el render 3D en cada fotograma. Cada parámetro de
     `Avion3DReal.imagen` puede ser un número, un ValueTracker (p. ej. azimut=ValueTracker(0))
-    o una función sin argumentos (p. ej. mirar=lambda: (x.get_value(), 0, 0)).
+    o una función sin argumentos (p. ej. mirar=lambda: (x.get_value(), 0, 0)). `centro` también
+    puede ser una función (el avión se desplaza por la pantalla).
     Si no cambia ningún parámetro, reutiliza la última imagen."""
     from manim import ImageMobject, always_redraw, ValueTracker, RESAMPLING_ALGORITHMS, config
     config.disable_caching = True     # el hash de Manim no sabe serializar el renderizador
     _parche_manim_imagenes()
     cache = {}
+
+    def _centro():
+        """`centro` puede ser una tupla o una función sin argumentos (avión que se desplaza)."""
+        return centro() if callable(centro) else centro
 
     def valores():
         return {k: (v.get_value() if isinstance(v, ValueTracker) else v() if callable(v) else v)
@@ -380,7 +385,8 @@ def capa_3d(render, ancho_pantalla=9.0, centro=(0, 0), **params):
             cache["clave"], cache["img"] = clave, render.imagen(**val)
         im = ImageMobject(cache["img"])
         im.set_resampling_algorithm(RESAMPLING_ALGORITHMS["bilinear"])
-        return im.scale_to_fit_width(ancho_pantalla).move_to([centro[0], centro[1], 0])
+        c = _centro()
+        return im.scale_to_fit_width(ancho_pantalla).move_to([c[0], c[1], 0])
     capa = always_redraw(dibujar)
 
     def a_pantalla(puntos, en_ala=False):
@@ -388,8 +394,9 @@ def capa_3d(render, ancho_pantalla=9.0, centro=(0, 0), **params):
         parámetros actuales: para poner flechas, halos o rótulos sobre el render."""
         px = render.proyectar(puntos, en_ala=en_ala, **valores())
         k = ancho_pantalla / render.ancho
-        x = (px[:, 0] - render.ancho / 2) * k + centro[0]
-        y = (render.alto / 2 - px[:, 1]) * k + centro[1]
+        c = _centro()
+        x = (px[:, 0] - render.ancho / 2) * k + c[0]
+        y = (render.alto / 2 - px[:, 1]) * k + c[1]
         return np.column_stack([x, y, np.zeros(len(x))])
     capa.a_pantalla = a_pantalla
     capa.valores = valores

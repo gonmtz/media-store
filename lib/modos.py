@@ -10,7 +10,8 @@ from manim import (VGroup, ValueTracker, Axes, Dot, Line, Arrow, DashedLine, Rou
 
 from lib.porquevuela import (ShortBase, T, F_TIT, HEAVY, BOLD, MEDIUM, BG, TEXTO, TEXTO_SEC,
                              brillo, frase_cinetica)
-from lib.avion2d import lateral_2d, superior_2d, frontal_2d
+from lib.avion2d import lateral_2d, superior_2d, frontal_2d, capa_3d
+from lib import avion as A
 
 Y_AV, Y_GR = 1.75, -0.8
 
@@ -47,6 +48,33 @@ class ModoBase(ShortBase):
         c = np.array([*centro, 0.0])
         # visto desde arriba con el morro hacia arriba: guiñada a la derecha (+) = giro horario
         return always_redraw(lambda: base.copy().rotate(-guinada() * DEGREES, about_point=ORIGIN).shift(c))
+
+    # ---------- avión 3D (render real, lib/avion.py) ----------
+    def avion3d(self, centro=(0.0, Y_AV), campo=40.0, ancho_pantalla=9.0, alto_px=720, **params):
+        """Capa 3D (1080 px de ancho, transparente). Cada parámetro de `imagen` puede ser un
+        número, un ValueTracker o una función; `centro` también puede ser una función.
+        Convenio del 3D: alabeo + = ala derecha abajo; guiñada + = morro a la derecha;
+        cabeceo + = morro arriba; azimut 0 = de frente, 180 = desde atrás, −90 = de lado
+        con el morro a la derecha."""
+        if not hasattr(self, "_r3d"):
+            self._r3d = {}
+        clave = (alto_px, campo)
+        if clave not in self._r3d:
+            self._r3d[clave] = A.Avion3DReal(1080, alto_px, 2, campo=campo, colores_mando=True)
+        return capa_3d(self._r3d[clave], ancho_pantalla, centro, **params)
+
+    @staticmethod
+    def flecha3d(capa, p0, v, color, ancho=9, en_ala=False, minimo=0.08):
+        """Flecha en pantalla desde el punto p0 del avión (m, ejes del avión) con el vector v
+        (m, ejes del avión; p0 y v pueden ser funciones)."""
+        def dib():
+            a = np.asarray(p0() if callable(p0) else p0, float)
+            b = a + np.asarray(v() if callable(v) else v, float)
+            q = capa.a_pantalla([a, b], en_ala=en_ala)
+            if np.linalg.norm(q[1] - q[0]) < minimo:
+                return VGroup()
+            return VGroup(flecha(q[0], q[1], color, ancho))
+        return always_redraw(dib)
 
     # ---------- gráfica ----------
     def grafica(self, t_max, y_rango=(-1.2, 1.2), etiqueta_y="perturbación", etiqueta_x="tiempo",
