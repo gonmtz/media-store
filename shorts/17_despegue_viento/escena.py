@@ -1,5 +1,5 @@
 """
-Short 17 (texto, sin voz): ¿por qué los aviones despegan contra el viento?
+Short 17 (texto, sin voz): ¿por qué los aviones despegan contra el viento? Avión 3D de lado.
 - Al ala solo le importa la velocidad respecto al aire. Ejemplo: necesita unos 270 km/h de
   aire para despegar (orden de magnitud de un bimotor de pasillo único; no es un dato oficial).
 - Con 36 km/h de viento de frente basta con 234 km/h respecto al suelo; con viento de cola hacen
@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 from lib import avion as A  # noqa: E402
-from lib.avion2d import lateral_2d  # noqa: E402
+from lib.avion2d import capa_3d  # noqa: E402
 
 V_DESP = 270.0           # km/h de aire para despegar (ejemplo)
 VIENTO = 36.0            # km/h
@@ -26,11 +26,23 @@ rng = np.random.default_rng(11)
 RAFAGAS = [(rng.uniform(0, 1), rng.uniform(-0.9, 2.9), rng.uniform(0.7, 1.3)) for _ in range(26)]
 
 
-def avion_base():
-    v = lateral_2d(3.6, (0, 0), tren=True)
-    contacto = v.a_pantalla(A.TREN["x_principal"], 0, A.Z_SUELO)
-    v.shift(-contacto)            # el punto de apoyo de las ruedas principales queda en el origen
-    return v
+RENDER = None
+CONTACTO = A.a_cuerpo(A.TREN["x_principal"], 0, A.Z_SUELO)   # apoyo de las ruedas principales
+
+
+def avion_3d(punto, cabeceo):
+    """Avión 3D de lado (morro a la derecha, tren fuera). `punto()` es dónde va en pantalla el
+    apoyo de las ruedas principales; `cabeceo()` en grados."""
+    global RENDER
+    if RENDER is None:
+        RENDER = A.Avion3DReal(1080, 720, 2, campo=63, colores_mando=False)
+    ref = capa_3d(RENDER, 9.0, (0, 0), azimut=-90, elevacion=4, tren=True)
+    off = ref.a_pantalla([CONTACTO])[0]          # posición del apoyo con el centro en (0, 0)
+
+    def centro():
+        p = punto()
+        return (p[0] - off[0], p[1] - off[1])
+    return capa_3d(RENDER, 9.0, centro, azimut=-90, elevacion=4, tren=True, cabeceo=cabeceo)
 
 
 class Despegue(ShortBase):
@@ -39,7 +51,6 @@ class Despegue(ShortBase):
         reloj = ValueTracker(0.0)
         reloj.add_updater(lambda m, dt: m.increment_value(dt))
         self.add(reloj)
-        base = avion_base()
         pos = ValueTracker(0.0)          # 0–1 de la carrera de este caso
         cabeceo = ValueTracker(0.0)
         subida = ValueTracker(0.0)
@@ -47,12 +58,9 @@ class Despegue(ShortBase):
         viento = ValueTracker(0.0)       # km/h; > 0 de frente, < 0 de cola
         v_suelo_fin = ValueTracker(V_DESP)
 
-        def avion():
-            g = base.copy()
-            g.rotate(cabeceo.get_value() * DEGREES, about_point=ORIGIN)
-            return g.shift([X_INI + largo.get_value() * pos.get_value(),
-                            Y_PISTA + subida.get_value(), 0])
-        av = always_redraw(avion)
+        av = avion_3d(lambda: (X_INI + largo.get_value() * pos.get_value(),
+                               Y_PISTA + subida.get_value()),
+                      lambda: cabeceo.get_value())
 
         pista = VGroup(Line([-4.6, Y_PISTA, 0], [4.6, Y_PISTA, 0], color="#475569", stroke_width=6),
                        DashedLine([-4.6, Y_PISTA - 0.25, 0], [4.6, Y_PISTA - 0.25, 0],
