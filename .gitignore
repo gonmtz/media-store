@@ -8,3 +8,4 @@ shorts/*/portada.png
 # credenciales (nunca al repo)
 *.env
 azure.env
+muestras_voz/
