@@ -1,5 +1,5 @@
 """
-Short 24 (narrado): modo fugoide. Intercambio de velocidad y altura a ángulo de ataque casi
+Short 24 (narrado): modo fugoide, con el avión 3D. Intercambio de velocidad y altura a ángulo de ataque casi
 constante: en lo más bajo de la trayectoria va más rápido, en lo más alto más despacio
 (altura y velocidad en oposición de fase). Periodo de Lanchester T ≈ π·√2·V/g ≈ 0,45·V s.
 Trayectoria con la amplitud vertical exagerada; curvas ilustrativas.
@@ -11,7 +11,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 from lib.modos import ModoBase, Y_AV, Y_GR, flecha  # noqa: E402
-from lib.avion2d import lateral_2d  # noqa: E402
 
 C_ALT, C_VEL, C_FUG = C_CABECEO, C_GUINADA, C_GUINADA
 Y_T, AMP, XT = 1.4, 0.45, 3.1          # trayectoria en pantalla
@@ -30,18 +29,20 @@ class Fugoide(ModoBase):
 
     def trayectoria(self, u):
         """u: fase (ciclos). El avión cruza la pantalla en un ciclo y vuelve a empezar."""
-        base = lateral_2d(2.1, (0, 0))
         tray = DashedVMobject(FunctionGraph(lambda x: Y_T + AMP * altura((x + XT) / (2 * XT)),
                                             x_range=[-XT - 0.8, XT + 0.8], color=C_FUG, stroke_width=3),
                               num_dashes=50).set_stroke(opacity=0.55)
 
-        def av():
+        def pos():
             f = u.get_value() % 1.0
-            x = -XT + 2 * XT * f
+            return (-XT + 2 * XT * f, Y_T + AMP * altura(f) + 0.05)
+
+        def cab():
+            f = u.get_value() % 1.0
             pend = AMP * 2 * PI / (2 * XT) * np.sin(2 * PI * f)
-            return base.copy().rotate(0.6 * np.arctan(pend), about_point=ORIGIN).move_to(
-                [x, Y_T + AMP * altura(f), 0])
-        return tray, always_redraw(av)
+            return 0.6 * np.degrees(np.arctan(pend))
+        av = self.avion3d(centro=pos, campo=82, azimut=-75, elevacion=8, cabeceo=cab)
+        return tray, av
 
     def portada_mobs(self):
         u = ValueTracker(0.22)
