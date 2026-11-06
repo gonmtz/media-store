@@ -181,7 +181,7 @@ volver a descargar la pista correcta antes de usarla.
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
 | 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | publicado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
-| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 24 s) | Down With That | rehecho con el avión refinado 2D (6-nov); pendiente de aprobación |
+| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 24 s) | Down With That | programado 2026-11-06 12:00 (CDMX) en YT, IG y TikTok (Metricool id 418490362); sin voz → sin marca de IA |
 | 10 | ¿Por qué el ala se dobla en vuelo? (texto, 26 s) | Dreamy Flashback | rehecho con el avión 3D y `flexion` (6-nov); pendiente de aprobación |
 | 11 | Descargadores de estática: las «antenitas» del ala (texto, 27 s) | Hypnothis (desde 40 s) | rehecho con el avión refinado 2D (6-nov); pendiente de aprobación |
 | 12 | Ficha: alfabeto aeronáutico (3 s) | Down With That (desde 30 s) | listo; pendiente de aprobación |
@@ -207,7 +207,7 @@ en `marca/portadas/` para cambiarlas a mano.
 6. Reynolds: por qué un insecto no vuela con un ala de avión
 7. Motor a reacción: el motor que se traga la lluvia
 8. ¿Por qué el Concorde bajaba la nariz?
-9. Diedro: por qué las alas forman una V
+9. ~~Diedro: por qué las alas forman una V~~ (hecho: short 20)
 10. Flaps y slats: volar lento sin caer
 
 Hecho fuera del banco: perfiles NACA (short 04, a petición del dueño).
