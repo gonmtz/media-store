@@ -163,7 +163,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -181,10 +181,18 @@ volver a descargar la pista correcta antes de usarla.
 | 06 | ¿Por qué las hélices están torcidas? | Dreamy Flashback | publicado 2026-10-27 12:00 (CDMX) en YT, IG y TikTok con la portada vacía; `final.mp4` del repo ya es la versión corregida |
 | 07 | Alas volantes: ¿cómo vuela un avión sin cola? | — | boceto sin voz (a petición del dueño); falta revisión técnica, voz y mezcla |
 | 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | publicado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
-| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 24 s) | Down With That | rehecho con la animación nueva (5-nov); pendiente de aprobación |
-| 10 | ¿Por qué el ala se dobla en vuelo? (texto, 26 s) | Dreamy Flashback | rehecho con la animación nueva (5-nov); pendiente de aprobación |
-| 11 | Descargadores de estática: las «antenitas» del ala (texto, 27 s) | Hypnothis (desde 40 s) | rehecho con la animación nueva (5-nov); pendiente de aprobación |
+| 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 24 s) | Down With That | rehecho con el avión refinado 2D (6-nov); pendiente de aprobación |
+| 10 | ¿Por qué el ala se dobla en vuelo? (texto, 26 s) | Dreamy Flashback | rehecho con el avión 3D y `flexion` (6-nov); pendiente de aprobación |
+| 11 | Descargadores de estática: las «antenitas» del ala (texto, 27 s) | Hypnothis (desde 40 s) | rehecho con el avión refinado 2D (6-nov); pendiente de aprobación |
 | 12 | Ficha: alfabeto aeronáutico (3 s) | Down With That (desde 30 s) | listo; pendiente de aprobación |
+| 13 | Luces de navegación: ¿por qué la roja va a la izquierda? (texto, 27 s, 3D de noche) | Dreamy Flashback (desde 20 s) | listo (6-nov); pendiente de aprobación |
+| 14 | Ficha: las partes de un avión (3 s, 3D con rótulos) | Hypnothis | listo (6-nov); pendiente de aprobación |
+| 15 | ¿Cómo gira un avión? No es con el timón (texto, 26 s, 3D) | Down With That | listo (6-nov); pendiente de aprobación |
+| 16 | ¿Qué hay dentro de un motor? (texto, 26 s, 3D + corte 2D) | Dreamy Flashback | listo (6-nov); pendiente de aprobación |
+| 17 | ¿Por qué despegan contra el viento? (texto, 26 s, 2D) | Hypnothis | listo (6-nov); pendiente de aprobación |
+| 18 | ¿Por qué aterriza con el morro arriba? (texto, 25 s, 2D) | Down With That (desde 30 s) | listo (6-nov); pendiente de aprobación |
+| 19 | ¿Y si se apagan todos los motores? Planeo y Gimli 1983 (texto, 26 s, 2D) | Dreamy Flashback | listo (6-nov); pendiente de aprobación |
+| 20 | Diedro: ¿por qué las alas forman una V? (texto, 25 s, 3D de frente) | Hypnothis | listo (6-nov); pendiente de aprobación |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
@@ -227,7 +235,9 @@ Alas volantes (boceto 07): `ala_volante_superior` (silueta genérica, devuelve l
 siglas en minúsculas ("Naca", "Nasa") o la voz las deletrea. `ShortBase.SUBS_DESDE` omite los
 subtítulos del gancho.
 
-Sin voz (shorts 09–11): `matricula_lateral` (matrícula pintada en `avion_lateral`),
+Avión refinado (shorts 09–20): `lib/avion.py` añade `flexion(y, flex)` (ala doblada, short 10), tren de aterrizaje (`TREN`, `Z_SUELO`, `tren=True` en `imagen` y `lateral_2d`), `punto_ala(yy, s, xc, dz)` y `a_cuerpo(X, Y, Z)` (puntos en ejes del avión), `proyectar(...)` y, en Manim, `capa.a_pantalla(puntos, en_ala)` para poner flechas, halos y rótulos sobre el render 3D (13, 14, 15, 20); `imagen(noche=, baliza=, estrobo=, fan=)` para luces y fan girando (13, 16). Para colocar el avión 2D sobre el suelo: `v.shift(-v.a_pantalla(A.TREN["x_principal"], 0, A.Z_SUELO))` (17, 18). Ojo con el ancho: el avión entero tiene que caber en ±4,5 unidades durante toda la animación.
+
+Sin voz (shorts 09–11, dibujos antiguos): `matricula_lateral` (matrícula pintada en `avion_lateral`),
 `avion_frontal_flexible(flex)` (vista de frente con el ala doblada como viga en voladizo; devuelve
 también y(x) del ala), `descargador`, `puntas_descargadores_superior` (posiciones sobre
 `avion_superior`) y `carga` (círculo con signo). Ojo: las capas `always_redraw` pierden el

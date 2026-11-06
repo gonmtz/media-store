@@ -73,8 +73,9 @@ def _color_mando(n, colores_mando):
 
 
 # ---------------------------------------------------------------- vista lateral
-def lateral_2d(ancho=7.6, centro=(0, 0), colores_mando=False, lado=1):
-    """Vista de lado, morro a la derecha (se ve el lado izquierdo del avión con lado=1)."""
+def lateral_2d(ancho=7.6, centro=(0, 0), colores_mando=False, lado=1, tren=False):
+    """Vista de lado, morro a la derecha (se ve el lado izquierdo del avión con lado=1).
+    `tren=True` dibuja el tren de aterrizaje fuera (ruedas apoyadas en Z = A.Z_SUELO)."""
     k = ancho / A.L
     cx, cy = centro
 
@@ -82,6 +83,15 @@ def lateral_2d(ancho=7.6, centro=(0, 0), colores_mando=False, lado=1):
         return ((A.X_CG - X) * k + cx, Z * k + cy)
     vista = Vista(lambda X, Y, Z: np.array([*P(X, Z), 0.0]))
     Xs = np.concatenate([np.linspace(0, 1.2, 25), np.linspace(1.25, A.L, 120)])
+    if tren:
+        t = A.TREN
+        for X, r, z0 in ((t["x_principal"], t["r_principal"], -1.25), (t["x_morro"], t["r_morro"], -1.6)):
+            ze = A.Z_SUELO + r
+            pata = Line([*P(X, z0), 0], [*P(X, ze), 0], color="#94A3B8", stroke_width=5 * ancho / 7.6)
+            rueda = Circle(radius=r * k).set_fill("#1F2937", 1).set_stroke("#475569", 1.5)
+            llanta = Circle(radius=r * k * 0.5).set_fill("#CBD5E1", 1).set_stroke(width=0)
+            vista.pieza("tren_morro" if X < 10 else "tren_principal",
+                        VGroup(pata, rueda.move_to([*P(X, ze), 0]), llanta.move_to([*P(X, ze), 0])))
 
     def bordes(fz):
         return [P(X, fz(X)) for X in Xs]
@@ -371,4 +381,16 @@ def capa_3d(render, ancho_pantalla=9.0, centro=(0, 0), **params):
         im = ImageMobject(cache["img"])
         im.set_resampling_algorithm(RESAMPLING_ALGORITHMS["bilinear"])
         return im.scale_to_fit_width(ancho_pantalla).move_to([centro[0], centro[1], 0])
-    return always_redraw(dibujar)
+    capa = always_redraw(dibujar)
+
+    def a_pantalla(puntos, en_ala=False):
+        """Coordenadas de Manim de puntos del avión (metros, ejes del avión) con los
+        parámetros actuales: para poner flechas, halos o rótulos sobre el render."""
+        px = render.proyectar(puntos, en_ala=en_ala, **valores())
+        k = ancho_pantalla / render.ancho
+        x = (px[:, 0] - render.ancho / 2) * k + centro[0]
+        y = (render.alto / 2 - px[:, 1]) * k + centro[1]
+        return np.column_stack([x, y, np.zeros(len(x))])
+    capa.a_pantalla = a_pantalla
+    capa.valores = valores
+    return capa

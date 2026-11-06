@@ -468,7 +468,66 @@ def mallas_motor(s):
         f += [[i, j, n + j], [i, n + j, n + i]]
     f += [[0, i, i + 1] for i in range(1, n - 1)] + [[n, n + i + 1, n + i] for i in range(1, n - 1)]
     pilon = Malla(v, f, GRIS_MOTOR, "metal", "pilon")
+    for m in (gondola, labio, fan, cono, tob, esc):
+        m.nombre = "motor"
+    alabes.nombre = "alabes"
+    alabes.eje = c
     return [gondola, labio, fan, cono, alabes, tob, esc, pilon]
+
+
+Z_SUELO = -4.4       # altura del suelo con el tren fuera (avión nivelado)
+TREN = dict(x_principal=19.0, y_principal=3.8, r_principal=0.57, x_morro=4.9, r_morro=0.38)
+
+
+def cilindro(p0, p1, r, n=16, tapas=True):
+    """Cilindro entre p0 y p1 (coordenadas de construcción)."""
+    p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
+    eje = p1 - p0
+    e = eje / np.linalg.norm(eje)
+    a = np.cross(e, [0, 0, 1.0]) if abs(e[2]) < 0.9 else np.cross(e, [1.0, 0, 0])
+    a /= np.linalg.norm(a)
+    b = np.cross(e, a)
+    ths = np.linspace(0, 2 * np.pi, n, endpoint=False)
+    anillo = [np.cos(t) * a + np.sin(t) * b for t in ths]
+    secs = [[p0 + r * u for u in anillo], [p1 + r * u for u in anillo]]
+    return loft(secs, cerrar_ext=tapas)
+
+
+def mallas_tren():
+    t = TREN
+    piezas = []
+    # principal: pata desde el ala y dos ruedas por lado
+    for s in (1, -1):
+        y = s * t["y_principal"]
+        ze = Z_SUELO + t["r_principal"]
+        v, f = cilindro((t["x_principal"], y, -1.25), (t["x_principal"], y, ze), 0.12)
+        piezas.append(Malla(v, f, "#94A3B8", "metal", "tren"))
+        v, f = cilindro((t["x_principal"], y - 0.55, ze), (t["x_principal"], y + 0.55, ze), 0.06)
+        piezas.append(Malla(v, f, "#94A3B8", "metal", "tren"))
+        for dy in (-0.45, 0.45):
+            v, f = cilindro((t["x_principal"], y + dy - 0.17, ze), (t["x_principal"], y + dy + 0.17, ze),
+                            t["r_principal"], 24)
+            piezas.append(Malla(v, f, "#1F2937", "oscuro", "tren"))
+            v, f = cilindro((t["x_principal"], y + dy - 0.18, ze), (t["x_principal"], y + dy + 0.18, ze),
+                            t["r_principal"] * 0.55, 20)
+            piezas.append(Malla(v, f, "#CBD5E1", "metal", "tren"))
+    # morro
+    ze = Z_SUELO + t["r_morro"]
+    v, f = cilindro((t["x_morro"], 0, -1.6), (t["x_morro"], 0, ze), 0.09)
+    piezas.append(Malla(v, f, "#94A3B8", "metal", "tren"))
+    for dy in (-0.24, 0.24):
+        v, f = cilindro((t["x_morro"], dy - 0.12, ze), (t["x_morro"], dy + 0.12, ze), t["r_morro"], 20)
+        piezas.append(Malla(v, f, "#1F2937", "oscuro", "tren"))
+    for m in piezas:
+        m.orient = "volumen"
+    return piezas
+
+
+def flexion(y_abs, flex):
+    """Subida (m) del ala a la distancia |y| para una flecha `flex` en la punta (viga en
+    voladizo: ~ u²)."""
+    u = np.clip((np.asarray(y_abs) - ALA["y_raiz"]) / (ALA["y_punta"] - ALA["y_raiz"]), 0, 1)
+    return flex * u ** 2
 
 
 def malla_carenado():
@@ -538,6 +597,7 @@ def mallas_avion():
                                  (X0, X1, t0, t0 + 1.4), (X0, X1, t1 - 1.4, t1)):
                 piezas.append(parche(a, b, c, d, "#9AA6B6", 0.035, 4, "pintura", s < 0))
     piezas += mallas_deriva()
+    piezas += mallas_tren()
     for m in piezas:
         modo = getattr(m, "orient", None)
         if modo is None:
@@ -579,6 +639,8 @@ class Avion3DReal:
                 pieza["bisagra"] = (p0, p1)
             if m.nombre == "fuselaje":
                 pieza["colores"] = colores_fuselaje(m.v)
+            if m.nombre == "alabes":
+                pieza["eje"] = np.array(m.eje, float)       # (y, z) del eje del motor
             self._base.append(pieza)
         self._fijas = None
 
@@ -622,23 +684,93 @@ class Avion3DReal:
         K = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
         return np.eye(3) + np.sin(ang) * K + (1 - np.cos(ang)) * K @ K
 
+    # --- cámara y giros (compartido por imagen y proyectar)
+    def _poses(self, alabeo, cabeceo, guinada, azimut, elevacion, distancia, campo, mirar):
+        Rz = self._rot(np.array([0, 0, 1.0]), np.radians(-guinada))
+        Ry = self._rot(np.array([0, 1.0, 0]), np.radians(-cabeceo))
+        Rx = self._rot(np.array([1.0, 0, 0]), np.radians(alabeo))
+        R = Rz @ Ry @ Rx
+        az, el = np.radians(azimut), np.radians(elevacion)
+        d = np.array([np.cos(el) * np.cos(az), np.cos(el) * np.sin(az), np.sin(el)])
+        yfov = np.radians(30)
+        campo = campo or self.campo
+        dist = distancia or (campo / 2) / np.tan(yfov / 2)
+        objetivo = R @ np.asarray(mirar, float)
+        pos = objetivo + d * dist
+        f = -d
+        der = np.cross(f, [0, 0, 1.0])
+        der = der / np.linalg.norm(der) if np.linalg.norm(der) > 1e-6 else np.array([0, -1.0, 0])
+        arr = np.cross(der, f)
+        C = np.eye(4)
+        C[:3, 0], C[:3, 1], C[:3, 2], C[:3, 3] = der, arr, -f, pos
+        return R, C, yfov, campo
+
+    def proyectar(self, puntos, alabeo=0, cabeceo=0, guinada=0, azimut=-35, elevacion=18,
+                  distancia=None, campo=None, mirar=(0.0, 0.0, 0.0), flex=0.0, en_ala=False,
+                  ortografica=False, **_):
+        """Píxeles (x, y; origen arriba a la izquierda) de puntos del avión (metros, ejes del
+        avión: x morro, y izquierda, z arriba, desde el CG) con los mismos parámetros que
+        `imagen`. `en_ala=True` aplica la flexión del ala a esos puntos."""
+        R, C, yfov, campo = self._poses(alabeo, cabeceo, guinada, azimut, elevacion, distancia,
+                                        campo, mirar)
+        P = np.atleast_2d(np.asarray(puntos, float)).copy()
+        if en_ala and flex:
+            P[:, 2] += flexion(np.abs(P[:, 1]), flex)
+        W = P @ R.T
+        Ci = np.linalg.inv(C)
+        q = (Ci[:3, :3] @ W.T).T + Ci[:3, 3]
+        asp = self.ancho / self.alto
+        if ortografica:
+            xn = q[:, 0] / (campo / 2 * asp)
+            yn = q[:, 1] / (campo / 2)
+        else:
+            t = np.tan(yfov / 2)
+            xn = q[:, 0] / (-q[:, 2]) / t / asp
+            yn = q[:, 1] / (-q[:, 2]) / t
+        return np.column_stack([(xn + 1) / 2 * self.ancho, (1 - yn) / 2 * self.alto])
+
     def imagen(self, alabeo=0, cabeceo=0, guinada=0, aleron=0, elevador=0, timon=0,
                azimut=-35, elevacion=18, distancia=None, ortografica=False, luces=True,
-               campo=None, mirar=(0.0, 0.0, 0.0)):
+               campo=None, mirar=(0.0, 0.0, 0.0), flex=0.0, tren=False, fan=0.0,
+               baliza=0.0, estrobo=0.0, noche=0.0, motores=True):
         """`campo`: metros que caben en vertical (más pequeño = más cerca); `mirar`: punto del
         avión (x hacia el morro, y izquierda, z arriba; metros desde el CG) al que apunta la
-        cámara, ya girado con el avión."""
+        cámara, ya girado con el avión. `flex`: subida de la punta del ala (m). `tren`: tren de
+        aterrizaje fuera. `fan`: giro de los álabes (grados). `baliza`/`estrobo`: brillo 0–1 de
+        las luces anticolisión (rojas arriba y abajo) y de los destellos blancos de las puntas.
+        `noche`: 0–1 apaga la luz del sol (para ver las luces)."""
         pr = self.pr
-        escena = pr.Scene(bg_color=[0, 0, 0, 0], ambient_light=[0.33, 0.35, 0.4])
+        k = 1 - 0.88 * noche
+        escena = pr.Scene(bg_color=[0, 0, 0, 0],
+                          ambient_light=[0.33 * k + 0.03, 0.35 * k + 0.035, 0.4 * k + 0.05])
         raiz = pr.Node(name="avion")
         escena.add_node(raiz)
+        dz_motor = float(flexion(MOTOR["y"], flex))
         for p in self._base:
+            n = p["nombre"]
+            if n == "tren" and not tren:
+                continue
             v = p["v"]
             color = p["color"]
+            if flex and n in ("ala", "aleron"):
+                v = v.copy()
+                v[:, 2] += flexion(np.abs(v[:, 1]), flex)
+            elif flex and n == "winglet":
+                v = v.copy()
+                v[:, 2] += flex
+            elif flex and n in ("motor", "alabes", "pilon"):
+                v = v.copy()
+                v[:, 2] += dz_motor
+            if n == "alabes" and fan:
+                ey, ez = p["eje"]
+                eje_c = np.array([0.0, ey, ez + dz_motor])
+                v = (v - eje_c) @ self._rot(np.array([1.0, 0, 0]), np.radians(fan)).T + eje_c
             if p["bisagra"] is not None:
-                p0, p1 = p["bisagra"]
+                p0, p1 = [q.copy() for q in p["bisagra"]]
+                if flex and n == "aleron":
+                    p0[2] += flexion(abs(p0[1]), flex)
+                    p1[2] += flexion(abs(p1[1]), flex)
                 eje = p1 - p0
-                n = p["nombre"]
                 # eje orientado hacia +y (alerones, elevador) o +z (timón): con ángulo > 0 el
                 # borde de salida sube (o va a la derecha, en el timón)
                 if n in ("aleron", "elevador") and eje[1] < 0:
@@ -658,45 +790,42 @@ class Avion3DReal:
             escena.add_node(nodo, parent_node=raiz)
         if luces:
             Xp, Zp, _ = geometria_ala_en(ALA["y_punta"], 0.15)
-            for pos, col in (((X_CG - Xp, 17.15, Zp), ROJA), ((X_CG - Xp, -17.15, Zp), VERDE),
-                             ((X_CG - L - 0.05, 0.0, 1.0), "#FFFFFF")):
-                esf = self.tm.creation.icosphere(subdivisions=2, radius=0.16)
+            Xe, Ze, _ = geometria_ala_en(ALA["y_punta"], 0.85)
+            lista = [((X_CG - Xp, 17.15, Zp + flex), ROJA, 1.0, 0.16),
+                     ((X_CG - Xp, -17.15, Zp + flex), VERDE, 1.0, 0.16),
+                     ((X_CG - L - 0.05, 0.0, 1.0), "#FFFFFF", 1.0, 0.16)]
+            if baliza > 0.01:
+                lista += [((X_CG - 15.8, 0.0, R_Z + 0.08), ROJA, baliza, 0.2),
+                          ((X_CG - 17.5, 0.0, -R_Z - 0.1), ROJA, baliza, 0.2)]
+            if estrobo > 0.01:
+                lista += [((X_CG - Xe, 17.2, Ze + flex), "#FFFFFF", estrobo, 0.18),
+                          ((X_CG - Xe, -17.2, Ze + flex), "#FFFFFF", estrobo, 0.18)]
+            for pos, col, brillo_l, r in lista:
+                esf = self.tm.creation.icosphere(subdivisions=2, radius=r)
                 esf.apply_translation(pos)
                 lin = hex_rgb(col) ** 2.2
-                mat = pr.MetallicRoughnessMaterial(baseColorFactor=[*lin, 1], emissiveFactor=list(lin * 4))
-                escena.add_node(pr.Node(mesh=pr.Mesh.from_trimesh(esf, material=mat)), parent_node=raiz)
-        # giros del avión: guiñada, cabeceo, alabeo (x morro, y izquierda, z arriba)
-        Rz = self._rot(np.array([0, 0, 1.0]), np.radians(-guinada))
-        Ry = self._rot(np.array([0, 1.0, 0]), np.radians(-cabeceo))
-        Rx = self._rot(np.array([1.0, 0, 0]), np.radians(alabeo))
+                mat = pr.MetallicRoughnessMaterial(baseColorFactor=[*(lin * brillo_l), 1],
+                                                   emissiveFactor=list(lin * 4 * brillo_l))
+                escena.add_node(pr.Node(mesh=pr.Mesh.from_trimesh(esf, material=mat)),
+                                parent_node=raiz)
+        R, C, yfov, campo = self._poses(alabeo, cabeceo, guinada, azimut, elevacion, distancia,
+                                        campo, mirar)
         M = np.eye(4)
-        M[:3, :3] = Rz @ Ry @ Rx
+        M[:3, :3] = R
         escena.set_pose(raiz, M)
-        # cámara
-        az, el = np.radians(azimut), np.radians(elevacion)
-        d = np.array([np.cos(el) * np.cos(az), np.cos(el) * np.sin(az), np.sin(el)])
-        yfov = np.radians(30)
-        campo = campo or self.campo
-        dist = distancia or (campo / 2) / np.tan(yfov / 2)
-        objetivo = (Rz @ Ry @ Rx) @ np.asarray(mirar, float)
-        pos = objetivo + d * dist
-        f = -d
-        der = np.cross(f, [0, 0, 1.0])
-        der = der / np.linalg.norm(der) if np.linalg.norm(der) > 1e-6 else np.array([0, -1.0, 0])
-        arr = np.cross(der, f)
-        C = np.eye(4)
-        C[:3, 0], C[:3, 1], C[:3, 2], C[:3, 3] = der, arr, -f, pos
         if ortografica:
             cam = pr.OrthographicCamera(xmag=campo / 2 * self.ancho / self.alto,
-                                        ymag=campo / 2, znear=1, zfar=400)
+                                        ymag=campo / 2, znear=0.3, zfar=400)
         else:
             cam = pr.PerspectiveCamera(yfov=yfov, aspectRatio=self.ancho / self.alto,
                                        znear=0.3, zfar=400)
         escena.add(cam, pose=C)
         # luces: clave arriba-izquierda de la cámara, relleno frío desde abajo, contraluz
-        for dir_cam, inten, col in (((-0.5, 0.75, 0.45), 3.4, (1.0, 0.98, 0.95)),
-                                    ((0.6, -0.5, 0.6), 1.1, (0.75, 0.85, 1.0)),
-                                    ((0.2, 0.3, -1.0), 1.6, (0.9, 0.95, 1.0))):
+        for dir_cam, inten, col in (((-0.5, 0.75, 0.45), 3.4 * k, (1.0, 0.98, 0.95)),
+                                    ((0.6, -0.5, 0.6), 1.1 * k + 0.15, (0.75, 0.85, 1.0)),
+                                    ((0.2, 0.3, -1.0), 1.6 * k, (0.9, 0.95, 1.0))):
+            if inten <= 0.01:
+                continue
             dc = np.array(dir_cam, float)
             dw = C[:3, :3] @ (dc / np.linalg.norm(dc))      # hacia dónde mira la luz: −dw
             zl = dw
@@ -716,3 +845,15 @@ class Avion3DReal:
         im = Image.fromarray(img, "RGBA").convert("RGBa")
         im = im.resize((self.ancho, self.alto), Image.LANCZOS).convert("RGBA")
         return np.asarray(im)
+
+
+def punto_ala(yy, s=1, xc=0.4, dz=0.0):
+    """Punto del ala en ejes del avión (x morro, y izquierda, z arriba, desde el CG):
+    distancia `yy` (m) desde el eje, lado s (+1 izquierda, −1 derecha), fracción de cuerda xc."""
+    X, Z, _ = geometria_ala_en(yy, xc)
+    return np.array([X_CG - X, s * yy, Z + dz])
+
+
+def a_cuerpo(X, Y, Z):
+    """De coordenadas de construcción (X desde el morro) a ejes del avión."""
+    return np.array([X_CG - X, Y, Z])

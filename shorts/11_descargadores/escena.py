@@ -16,17 +16,53 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 
+from lib import avion as A  # noqa: E402
+from lib.avion2d import superior_2d  # noqa: E402
+
 C_CARGA, C_DESC, C_RADIO = C_CABECEO, C_GUINADA, C_ALABEO
-ESC, Y_AV = 0.92, -0.35
+Y_AV = -0.5
+VISTA = superior_2d(7.3, (0, Y_AV))
 rng = np.random.default_rng(7)
 PARTICULAS = [(rng.uniform(-4.2, 4.2), rng.uniform(0, 1), rng.uniform(0.7, 1.3)) for _ in range(46)]
-SITIOS = [(-2.6, -0.5), (-1.7, -0.1), (-0.9, 0.3), (0.9, 0.3), (1.7, -0.1), (2.6, -0.5),
-          (0, 2.0), (0, 0.9), (0, -0.6), (0, -1.9), (-1.0, -3.05), (1.0, -3.05),
-          (-3.2, -0.95), (3.2, -0.95), (-2.1, -0.75), (2.1, -0.75)]
 
 
-def en_pantalla(p):
-    return np.array([p[0] * ESC, p[1] * ESC + Y_AV, 0.0])
+def P(X, Y):
+    """Metros (construcción: X desde el morro, Y a la izquierda) → pantalla."""
+    return VISTA.a_pantalla(X, Y, 0.0)
+
+
+def _estab_bs(yy):
+    e = A.ESTAB
+    u = (yy - e["y_raiz"]) / (e["y_punta"] - e["y_raiz"])
+    cu = e["cuerda_raiz"] + (e["cuerda_punta"] - e["cuerda_raiz"]) * u
+    return e["x_ba_raiz"] + (yy - e["y_raiz"]) * np.tan(np.radians(e["flecha"])) + cu
+
+
+def descargadores_m():
+    """(base, dirección) en metros: bordes de salida cerca de las puntas del ala y del
+    estabilizador, y la punta de la deriva. Dirección hacia atrás y un poco hacia fuera."""
+    res = []
+    for s in (1, -1):
+        for yy in (13.4, 14.7, 15.9):
+            res.append(((A.geometria_ala_en(yy, 1.0)[0], s * yy), (1.0, s * 0.25)))
+        res.append(((A.geometria_ala_en(16.9, 0.92)[0], s * 17.05), (1.0, s * 0.6)))
+        for yy in (4.6, 5.8):
+            res.append(((_estab_bs(yy), s * yy), (1.0, s * 0.2)))
+    d = A.DERIVA
+    res.append(((d["x_ba_raiz"] + (d["z_punta"] - d["z_raiz"]) * np.tan(np.radians(d["flecha"]))
+                 + d["cuerda_punta"], 0.0), (1.0, 0.0)))
+    return res
+
+
+LARGO = 1.25    # m
+WICKS = []
+for (X, Y), (dx, dy) in descargadores_m():
+    n = np.hypot(dx, dy)
+    WICKS.append((P(X, Y), P(X + dx / n * LARGO, Y + dy / n * LARGO)))
+SITIOS = [(A.geometria_ala_en(yy, 0.45)[0], s * yy) for s in (1, -1) for yy in (5.0, 9.0, 13.0)]
+SITIOS += [(X, 0.0) for X in (5.5, 11.0, 20.0, 27.0)]
+SITIOS += [(_estab_bs(3.2) - 1.6, s * 3.2) for s in (1, -1)]
+SITIOS += [(A.geometria_ala_en(15.8, 0.55)[0], s * 15.8) for s in (1, -1)]
 
 
 class Descargadores(ShortBase):
@@ -36,11 +72,10 @@ class Descargadores(ShortBase):
         reloj.add_updater(lambda m, dt: m.increment_value(dt))
         self.add(reloj)
 
-        av, _, _ = avion_superior()
-        av.scale(ESC, about_point=ORIGIN).shift(UP * Y_AV)
-        wicks = [(en_pantalla(b), d) for b, d in puntas_descargadores_superior()]
-        varillas = VGroup(*[descargador(b, d, largo=0.3 * ESC) for b, d in wicks]).set_z_index(5)
-        puntas = [b + d / np.linalg.norm(d) * 0.3 * ESC for b, d in wicks]
+        av = superior_2d(7.3, (0, Y_AV))
+        varillas = VGroup(*[VGroup(Line(a, b, color=C_DESC, stroke_width=4),
+                                   Dot(b, radius=0.032, color=C_DESC)) for a, b in WICKS])
+        puntas = [b for _, b in WICKS]
 
         # ---------- capas animadas ----------
         viento = ValueTracker(0.0)      # visibilidad de las partículas (lluvia, hielo, polvo)
@@ -68,7 +103,7 @@ class Descargadores(ShortBase):
             for i, s in enumerate(SITIOS):
                 if i >= k:
                     break
-                p = en_pantalla(s)
+                p = P(*s)
                 q = min(puntas, key=lambda w: np.linalg.norm(w - p))
                 ff = np.clip(f * 1.6 - (i % 5) * 0.12, 0, 1)
                 pos = p + (q - p) * ff
@@ -100,7 +135,7 @@ class Descargadores(ShortBase):
                                 fill_color=C_DESC, fill_opacity=1, stroke_width=0).move_to(pal)
         destacado = VGroup(caja, pal).rotate(-3 * DEGREES)
         preg = self.hud(VGroup(l1, destacado).arrange(DOWN, buff=0.3).move_to(UP * 4.65))
-        punta_ala = en_pantalla((3.45, -1.3))
+        punta_ala = P(A.geometria_ala_en(15.6, 0.95)[0], -15.6)
         anillo = Circle(radius=0.75, stroke_color=C_DESC, stroke_width=6).move_to(punta_ala)
         fondo = brillo(UP * Y_AV, C_CARGA, 4.0, 0.8)
         self.portada(fondo, av, varillas, preg, anillo)

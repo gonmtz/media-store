@@ -10,6 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
+from lib import avion as A  # noqa: E402
+from lib.avion2d import lateral_2d  # noqa: E402
 
 C_PAIS, C_AVION, C_USO = C_CABECEO, C_ALABEO, C_GUINADA
 PREFIJOS = [("N", "EE. UU."), ("C", "Canadá"), ("XA", "México"), ("EC", "España"),
@@ -18,10 +20,12 @@ PREFIJOS = [("N", "EE. UU."), ("C", "Canadá"), ("XA", "México"), ("EC", "Espa�
 
 
 def avion_con_matricula():
-    av, _, _ = avion_lateral()
-    mat = matricula_lateral("XA-ABC")
-    g = VGroup(sombra([0.3, -0.95, 0], 6.4, opacidad=0.45), av, mat)
-    g.scale(1.12).move_to(UP * 0.7)
+    """Avión lateral (lib/avion2d) con la matrícula pintada en la parte trasera del fuselaje."""
+    v = lateral_2d(8.6, (0.15, 0.7))
+    k = 8.6 / A.L
+    mat = Text("XA-ABC", font=F_TIT, weight=HEAVY, color=OSCURO).scale_to_fit_height(0.62 * k)
+    mat.move_to(v.a_pantalla(28.6, 0, 0.9))
+    g = VGroup(sombra([0.3, -0.75, 0], 7.0, opacidad=0.45), v, mat)
     return g, mat
 
 
@@ -51,7 +55,7 @@ class Matriculas(ShortBase):
         # la cámara se acerca a la matrícula pintada en el fuselaje
         self.dejar(placa)
         self.cambio(run_time=0.35)
-        self.enfocar(mat.get_center() + UP * 0.15, 3.2, run_time=1.1)
+        self.enfocar(mat.get_center() + DOWN * 0.05, 4.2, run_time=1.1)
         self.hasta(0, 2.7)
 
         # ---------- 1. La matrícula: país + avión ----------
@@ -64,10 +68,10 @@ class Matriculas(ShortBase):
         self.play(FadeIn(dt), run_time=0.3)
         # colorear la matrícula pintada: país (XA) y avión (ABC)
         c = mat.get_center()
-        e_pais = self.etiqueta("PAÍS", C_PAIS, ORIGIN, size=28).scale(0.3)
-        e_pais.next_to(VGroup(*mat[0:2]), DOWN, buff=0.06)
-        e_avion = self.etiqueta("ESTE AVIÓN", C_AVION, ORIGIN, size=28).scale(0.3)
-        e_avion.next_to(VGroup(*mat[3:6]), DOWN, buff=0.06)
+        e_pais = self.etiqueta("PAÍS", C_PAIS, ORIGIN, size=28).scale(0.2)
+        e_pais.next_to(VGroup(*mat[0:2]), DOWN, buff=0.05).align_to(VGroup(*mat[0:2]), RIGHT)
+        e_avion = self.etiqueta("ESTE AVIÓN", C_AVION, ORIGIN, size=28).scale(0.2)
+        e_avion.next_to(VGroup(*mat[3:6]), DOWN, buff=0.05).align_to(VGroup(*mat[3:6]), LEFT)
         self.sonido("tic", -6)
         self.play(VGroup(*mat[0:2]).animate.set_color(C_PAIS), FadeIn(e_pais, shift=UP * 0.05),
                   run_time=0.4)
