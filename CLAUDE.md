@@ -196,11 +196,11 @@ volver a descargar la pista correcta antes de usarla.
 | 20 | Diedro: ¿por qué las alas forman una V? (texto, 25 s, 3D de frente) | Hypnothis | listo (6-nov); pendiente de aprobación |
 | 21 | Estabilidad estática: canica, gráfica Cm–α y CG/punto neutro (narrado, 34 s, voz Jorge Multilingual) | Down With That | programado 2026-11-07 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419245918); voz sintética → marca de IA en IG y TikTok |
 | 22 | Estabilidad dinámica: respuesta en el tiempo, fugoide y balanceo holandés (narrado, 32 s) | Dreamy Flashback | programado 2026-11-08 12:00 (CDMX) (Metricool id 419245962); marca de IA en IG y TikTok |
-| 23 | Modos dinámicos 1: periodo corto (muelle y amortiguador) (narrado, 32 s) | Hypnothis | programado 2026-11-09 12:00 (CDMX) |
-| 24 | Modos dinámicos 2: fugoide (narrado, 30 s) | Down With That | programado 2026-11-10 12:00 (CDMX) |
-| 25 | Modos dinámicos 3: convergencia en alabeo (narrado, 30 s) | Dreamy Flashback | programado 2026-11-11 12:00 (CDMX) |
-| 26 | Modos dinámicos 4: modo espiral (narrado, 32 s) | Hypnothis | programado 2026-11-12 12:00 (CDMX) |
-| 27 | Modos dinámicos 5: balanceo holandés (narrado, 30 s) | Down With That | programado 2026-11-13 12:00 (CDMX) |
+| 23 | Modos dinámicos 1: periodo corto (muelle y amortiguador) (narrado, 32 s) | Hypnothis | programado 2026-11-09 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419286687); marca de IA en IG y TikTok |
+| 24 | Modos dinámicos 2: fugoide (narrado, 30 s) | Down With That | programado 2026-11-10 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419299152); marca de IA en IG y TikTok |
+| 25 | Modos dinámicos 3: convergencia en alabeo (narrado, 30 s) | Dreamy Flashback | programado 2026-11-11 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419299204); marca de IA en IG y TikTok |
+| 26 | Modos dinámicos 4: modo espiral (narrado, 32 s) | Hypnothis | programado 2026-11-12 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419286712); marca de IA en IG y TikTok |
+| 27 | Modos dinámicos 5: balanceo holandés (narrado, 30 s) | Down With That | programado 2026-11-13 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419299259); marca de IA en IG y TikTok |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
