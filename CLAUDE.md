@@ -184,15 +184,15 @@ volver a descargar la pista correcta antes de usarla.
 | 08 | Ficha: lo que debes saber de ingeniería aeroespacial (6 fórmulas, imagen fija sin voz) | Hypnothis (0–3 s) | publicado 2026-11-03 03:50 (CDMX) en YT, IG y TikTok (a petición del dueño: "súbelo ya"); sin voz → sin marca de IA en las tres redes |
 | 09 | Matrículas: ¿qué significan las letras de un avión? (texto, 24 s) | Down With That | programado 2026-11-06 12:00 (CDMX) en YT, IG y TikTok (Metricool id 418490362); sin voz → sin marca de IA |
 | 10 | ¿Por qué el ala se dobla en vuelo? (texto, 26 s) | Dreamy Flashback | programado 2026-11-16 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419464101); sin voz → sin marca de IA |
-| 11 | Descargadores de estática: las «antenitas» del ala (texto, 27 s) | Hypnothis (desde 40 s) | descartado por el dueño (6-nov) |
+| 11 | Descargadores de estática: las «antenitas» del ala (texto, 27 s) | Hypnothis (desde 40 s) | no aprobado por el dueño (6-nov); no publicar |
 | 12 | Ficha: alfabeto aeronáutico (3 s) | Down With That (desde 30 s) | rehecho con el avión 3D y la matrícula XA-ABC (6-nov); programado 2026-11-15 12:00 (CDMX) (Metricool id 419464076); sin marca de IA |
 | 13 | Luces de navegación: ¿por qué la roja va a la izquierda? (texto, 27 s, 3D de noche) | Dreamy Flashback (desde 20 s) | programado 2026-11-14 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419464050); sin marca de IA |
 | 14 | Ficha: las partes de un avión (3 s, 3D con rótulos) | Hypnothis | programado 2026-11-17 12:00 (CDMX) (Metricool id 419464132); sin marca de IA |
-| 15 | ¿Cómo gira un avión? No es con el timón (texto, 26 s, 3D) | Down With That | descartado por el dueño (6-nov) |
+| 15 | ¿Cómo gira un avión? No es con el timón (texto, 26 s, 3D) | Down With That | no aprobado por el dueño (6-nov); no publicar |
 | 16 | ¿Qué hay dentro de un motor? (texto, 26 s, 3D + corte 2D) | Dreamy Flashback | programado 2026-11-19 12:00 (CDMX) (Metricool id 419464158); sin marca de IA |
 | 17 | ¿Por qué despegan contra el viento? (texto, 26 s, 3D) | Hypnothis | rehecho con el avión 3D de lado (6-nov); programado 2026-11-18 12:00 (CDMX) (Metricool id 419471020); sin marca de IA |
-| 18 | ¿Por qué aterriza con el morro arriba? (texto, 25 s, 2D) | Down With That (desde 30 s) | descartado por el dueño (6-nov) |
-| 19 | ¿Y si se apagan todos los motores? Planeo y Gimli 1983 (texto, 26 s, 2D) | Dreamy Flashback | descartado por el dueño (6-nov) |
+| 18 | ¿Por qué aterriza con el morro arriba? (texto, 25 s, 2D) | Down With That (desde 30 s) | no aprobado por el dueño (6-nov); no publicar |
+| 19 | ¿Y si se apagan todos los motores? Planeo y Gimli 1983 (texto, 26 s, 2D) | Dreamy Flashback | no aprobado por el dueño (6-nov); no publicar |
 | 20 | Diedro: ¿por qué las alas forman una V? (texto, 25 s, 3D de frente) | Hypnothis | programado 2026-11-20 12:00 (CDMX) (Metricool id 419464180); sin marca de IA |
 | 21 | Estabilidad estática: canica, gráfica Cm–α y CG/punto neutro (narrado, 34 s, voz Jorge Multilingual) | Down With That | programado 2026-11-07 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419245918); voz sintética → marca de IA en IG y TikTok |
 | 22 | Estabilidad dinámica: respuesta en el tiempo, fugoide y balanceo holandés (narrado, 32 s) | Dreamy Flashback | programado 2026-11-08 12:00 (CDMX) (Metricool id 419245962); marca de IA en IG y TikTok |
