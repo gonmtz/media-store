@@ -2,7 +2,7 @@
 Short 25 (narrado): convergencia en alabeo (amortiguamiento en alabeo, L_p).
 Tras un impulso de alabeo: p(t) = p0·e^(−t/τ), φ(t) = p0·τ·(1 − e^(−t/τ)). La velocidad de
 alabeo se apaga en ~τ (del orden de 1 s) y la inclinación se queda donde estaba.
-Vista de frente (el avión viene hacia nosotros); curvas ilustrativas.
+Avión 3D visto desde atrás (alabeo a la derecha = baja el ala de la derecha); curvas ilustrativas.
 Render:  manim -qh --fps 60 shorts/25_convergencia_alabeo/escena.py ConvergenciaAlabeo
 """
 import sys
@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 from lib.modos import ModoBase, Y_AV, flecha  # noqa: E402
+from lib import avion as A  # noqa: E402
 
 C_P, C_PHI, C_SUST = C_ALABEO, C_CABECEO, C_CABECEO
 TAU, PHI_F, TM = 0.8, 22.0, 4.0
@@ -35,7 +36,8 @@ class ConvergenciaAlabeo(ModoBase):
 
     def base(self, r0):
         r = ValueTracker(r0)
-        av = self.frontal(ANCHO, (0, Y_AV), alabeo=lambda: PHI_F * phi(r.get_value()))
+        av = self.avion3d(centro=(0, Y_AV + 0.1), campo=34, azimut=180, elevacion=12,
+                          alabeo=lambda: PHI_F * phi(r.get_value()))
         ax, et = self.grafica(TM, y_rango=(-0.2, 1.2), etiqueta_y="alabeo")
         tp = self.traza(ax, p, C_P, r)
         tf = self.traza(ax, phi, C_PHI, r)
@@ -49,7 +51,7 @@ class ConvergenciaAlabeo(ModoBase):
 
     def gancho_mobs(self):
         r, av, ax, et, tp, tf, fondo = self.base(0.35)
-        raf = VGroup(*[flecha([-2.3 + 0.4 * k, Y_AV - 1.2, 0], [-2.3 + 0.4 * k, Y_AV - 0.45, 0],
+        raf = VGroup(*[flecha([2.3 + 0.4 * k, Y_AV - 1.2, 0], [2.3 + 0.4 * k, Y_AV - 0.45, 0],
                               "#CBD5E1", 8) for k in range(3)])
         preg, dest = self.gancho_texto("¿Por qué el avión", "NO SIGUE RODANDO?", C_P, 80)
         return r, av, ax, et, tp, tf, fondo, raf, preg, dest
@@ -73,27 +75,19 @@ class ConvergenciaAlabeo(ModoBase):
                                                   C_SUST, dato="más ángulo de ataque → más sustentación",
                                                   resaltar=["frente"])
 
-        def sustentaciones():
-            t = r.get_value()
-            izq, der, ang = self.puntas(r)
-            n = girar([0, 1, 0], ang)
-            k = 0.55 * p(t)
-            g = VGroup(flecha(izq, izq + n * (0.55 + k), C_SUST, 10),     # ala que baja (izquierda en pantalla)
-                       flecha(der, der + n * max(0.55 - k, 0.1), C_SUST, 10))
-            return g
-        sust = always_redraw(sustentaciones)
-
-        def aire():
-            izq, _, _ = self.puntas(r)
-            a = 0.9 * p(r.get_value())
-            return flecha(izq + DOWN * (0.25 + a), izq + DOWN * 0.25, "#CBD5E1", 7)
-        vien = always_redraw(aire)
+        DER, IZQ = A.punto_ala(16.0, s=-1, xc=0.45), A.punto_ala(16.0, s=1, xc=0.45)
+        # alabeo a la derecha: baja el ala derecha (a la derecha de la pantalla, vista desde atrás)
+        sust = VGroup(
+            self.flecha3d(av, DER, lambda: np.array([0, 0, 2.5 + 4.0 * p(r.get_value())]), C_SUST, 10),
+            self.flecha3d(av, IZQ, lambda: np.array([0, 0, max(2.5 - 2.0 * p(r.get_value()), 0.6)]), C_SUST, 10))
+        vien = self.flecha3d(av, lambda: DER - np.array([0, 0, 2.0 + 6.0 * p(r.get_value())]),
+                             lambda: np.array([0, 0, 1.6 + 5.0 * p(r.get_value())]), "#CBD5E1", 7)
         self.abrir_bloque(barra, C_SUST, tit, fr, dt, r.animate.set_value(0.0))
         self.add(sust, vien)
-        e1 = self.etiqueta("AIRE DESDE ABAJO", "#CBD5E1", [-1.2, Y_AV - 0.8, 0], size=22)
+        e1 = self.etiqueta("AIRE DESDE ABAJO", "#CBD5E1", [2.4, Y_AV - 1.35, 0], size=22)
         self.play(FadeIn(e1), run_time=0.3)
         self.avanzar(t0 + d * 0.55, r.animate.set_value(0.5))
-        e2 = self.etiqueta("MÁS SUSTENTACIÓN", C_SUST, [-1.3, Y_AV + 1.2, 0], size=22)
+        e2 = self.etiqueta("MÁS SUSTENTACIÓN", C_SUST, [2.6, Y_AV + 1.15, 0], size=22)
         self.sonido("pop", -9)
         self.play(FadeIn(e2, scale=1.2), run_time=0.3)
         self.avanzar(t0 + d - 0.15, r.animate.set_value(0.9))
@@ -104,13 +98,13 @@ class ConvergenciaAlabeo(ModoBase):
         barra, tit, fr, dt = self.bloque_ajustado(1, "Frena el giro", "Un momento contrario",
                                                   C_P, dato="en cerca de un segundo",
                                                   resaltar=["contrario"])
-        e3 = self.etiqueta("MENOS", C_SUST, [2.7, Y_AV + 1.0, 0], size=22)
+        e3 = self.etiqueta("MENOS", C_SUST, [-3.0, Y_AV + 1.1, 0], size=22)
 
         def momento():
             k = p(r.get_value())
             if k < 0.05:
                 return VGroup()
-            return flecha_giro([0, Y_AV, 0], 1.55, PI / 2 + 0.6, -1.2 * k, C_P)
+            return flecha_giro([0, Y_AV + 0.1, 0], 1.2, PI / 2 - 0.6, 1.2 * k, C_P)
         mom = always_redraw(momento)
         self.abrir_bloque(barra, C_P, tit, fr, dt, r.animate.set_value(0.0))
         self.play(FadeIn(e3), run_time=0.3)

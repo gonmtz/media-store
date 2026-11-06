@@ -1,5 +1,5 @@
 """
-Short 23 (narrado): modo de periodo corto (cabeceo rápido, bien amortiguado).
+Short 23 (narrado): modo de periodo corto (cabeceo rápido, bien amortiguado), con el avión 3D.
 θ(t) = A·e^(−σt)·cos(ωt), curva ilustrativa (no de un avión concreto). Muelle = estabilidad
 estática (Cm_α); amortiguador = estabilizador horizontal (Cm_q): si el morro sube, la cola baja,
 el aire le llega desde abajo y su fuerza hacia arriba frena el giro.
@@ -11,12 +11,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 from lib.modos import ModoBase, Y_AV, flecha  # noqa: E402
-from lib.avion2d import lateral_2d  # noqa: E402
+from lib import avion as A  # noqa: E402
 
 C_ALFA, C_VEL, C_MUELLE, C_AMORT = C_CABECEO, C_GUINADA, C_CABECEO, C_ALABEO
 W, S, TM = 3.0, 1.0, 4.5          # rad/s, 1/s, duración simulada
 ANCHO_AV = 4.6
-K_ANG = 13.0                       # grados en pantalla por unidad de θ
+K_ANG = 11.0                       # grados en pantalla por unidad de θ
 
 
 def theta(t, s=S):
@@ -36,7 +36,9 @@ class PeriodoCorto(ModoBase):
 
     def escena_base(self, r0):
         r = ValueTracker(r0)
-        av = self.lateral(ANCHO_AV, (0, Y_AV), cabeceo=lambda: K_ANG * theta(r.get_value()))
+        av = self.avion3d(centro=(0, Y_AV + 0.1), campo=34, azimut=-72, elevacion=10,
+                          cabeceo=lambda: K_ANG * theta(r.get_value()))
+        self._av = av
         ax, et = self.grafica(TM, etiqueta_y="ángulo de ataque")
         tr = self.traza(ax, theta, C_ALFA, r)
         fondo = brillo([0, Y_AV - 0.5, 0], C_ALFA, 3.4, 0.9)
@@ -83,33 +85,22 @@ class PeriodoCorto(ModoBase):
         barra, tit, fr, dt = self.bloque_ajustado(1, "Muelle y freno", "La cola frena cada giro",
                                                   C_AMORT, dato="muelle: estabilidad estática · freno: estabilizador horizontal",
                                                   resaltar=["frena"])
-        base = lateral_2d(ANCHO_AV, (0, 0))
-        p_cola = base.a_pantalla(33.2, 0, 1.6)
-        p_morro = base.a_pantalla(4.0, 0, 0.6)
-
-        def girar(p):
-            a = K_ANG * theta(r.get_value()) * DEGREES
-            R = np.array([[np.cos(a), -np.sin(a), 0], [np.sin(a), np.cos(a), 0], [0, 0, 1]])
-            return R @ p + np.array([0, Y_AV, 0])
-
-        def fuerzas():
-            t = r.get_value()
-            g = VGroup()
-            # amortiguador: fuerza en la cola proporcional a q (morro sube → cola baja → fuerza arriba)
-            pc = girar(p_cola)
-            g.add(flecha(pc, pc + UP * 0.4 * q(t), C_AMORT, 10))
-            # muelle: momento que devuelve el morro, proporcional a −θ
-            pm = girar(p_morro)
-            g.add(flecha(pm, pm + DOWN * 1.3 * theta(t), C_MUELLE, 10))
-            return g
-        fz = always_redraw(fuerzas)
+        av = self._av
+        COLA, MORRO = A.a_cuerpo(33.8, 0, 1.6), A.a_cuerpo(3.5, 0, 0.0)
+        # amortiguador: fuerza en la cola proporcional a q (morro sube → cola baja → fuerza arriba)
+        # muelle: fuerza que devuelve el morro, proporcional a −θ
+        fz = VGroup(self.flecha3d(av, COLA, lambda: np.array([0, 0, 3.2 * q(r.get_value())]), C_AMORT, 10),
+                    self.flecha3d(av, MORRO, lambda: np.array([0, 0, -14.0 * theta(r.get_value())]), C_MUELLE, 10))
         em = self.etiqueta("MUELLE", C_MUELLE, [2.9, Y_AV + 1.15, 0], size=24)
         ea = self.etiqueta("AMORTIGUADOR (COLA)", C_AMORT, [-2.2, Y_AV + 1.15, 0], size=24)
-        self.abrir_bloque(barra, C_AMORT, tit, fr, dt, r.animate.set_value(0.25))
+        self.abrir_bloque(barra, C_AMORT, tit, fr, dt, r.animate.set_value(0.05))
         self.add(fz)
         self.sonido("pop", -9)
         self.play(FadeIn(em), FadeIn(ea), run_time=0.3)
-        self.avanzar(t0 + d - 0.2, r.animate.set_value(TM))
+        self.avanzar(t0 + d * 0.58, r.animate.set_value(2.0))
+        r.set_value(0.05)                 # otra ráfaga
+        self.sonido("whoosh_suave", -12)
+        self.avanzar(t0 + d - 0.2, r.animate.set_value(2.2))
 
         # ---------- 3. Pocos segundos ----------
         t0, d = self.voz("b3")
