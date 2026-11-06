@@ -21,7 +21,7 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
   **narrado** (voz + animación, 30–45 s; lo de abajo), **texto** (sin voz: texto animado en
   pantalla + música, 12–30 s; bloques fijados por tiempo con `self.hasta(0, t)`, sin
   subtítulos; ver `shorts/09_matriculas`) y **ficha** (una imagen fija + música, 3–10 s; ver
-  `shorts/08_ficha_formulas`). Mientras no haya voz nueva, solo texto y ficha.
+  `shorts/08_ficha_formulas`). Desde el 6-nov-2026 hay voz (Azure, ver Producción, paso 2): los shorts 21–22 son narrados.
 - Vertical 1080×1920, 30 fps, de 30 a 45 s (narrado).
 - Estructura: **gancho** (pregunta o dato llamativo, máx. 4 s) → **2-3 bloques** (concepto
   + mecanismo + animación) → **cierre** con resumen y una pregunta a la audiencia.
@@ -99,19 +99,16 @@ marca/                  avatar, banner y branding.py
 1. **Guion** en `shorts/NN_tema/guion.md`: un párrafo por segmento (gancho, bloques,
    cierre). Unos 450–550 caracteres, entre 35 y 40 s con la voz de Brian. Revisar
    la exactitud técnica.
-2. **Voz** con vidIQ (`vidiq_voiceover_generate`): voz **Brian**, voiceId
-   `nPczCjzI2devNBz1zQrb`. Generar el guion **completo en una sola llamada**, con los
-   párrafos separados por línea en blanco. Cuesta 14 créditos por cada 1000 caracteres;
-   el plan da 150 al mes. Descargar el MP3 de `ai-voiceovers.s3.us-east-1.amazonaws.com`
-   (dominio ya permitido) a `shorts/NN_tema/voz.mp3`.
-   **En revisión (28-oct-2026):** al dueño no le gusta Brian en español; está escuchando voces
-   nativas (Azure es-MX, ElevenLabs con cuenta propia, Google). vidIQ solo tiene voces inglesas.
-   No producir voz nueva hasta que elija. **6-nov:** el dueño creó Azure Speech F0 (gratis,
-   0,5 M caracteres/mes de voces neuronales, sin HD), región `eastus`; dominios
-   `eastus.tts.speech.microsoft.com` y `eastus.api.cognitive.microsoft.com` permitidos. La clave
-   nunca va al repo (es público): pedirla al dueño y guardarla en `~/.config/porquevuela/azure.env`.
-   Siguiente paso: muestras del mismo guion con varias voces es-MX / es-US / es-CO.
-3. **Tiempos**: `python tools/pausas.py shorts/NN_tema/voz.mp3`. Las pausas largas
+2. **Voz** con Azure Speech (F0 gratis, región `eastus`): voz **es-MX-JorgeMultilingualNeural**
+   (elegida por el dueño el 6-nov-2026 entre 12 muestras). La clave nunca va al repo (es público):
+   pedirla al dueño al empezar la sesión y guardarla en `~/.config/porquevuela/azure.env`
+   (`AZURE_SPEECH_KEY=…`, `AZURE_SPEECH_REGION=eastus`, permisos 600; `*.env` está en `.gitignore`).
+   `python tools/voz_azure.py guion shorts/NN_tema gancho,b1,b2,b3,cierre [velocidad]` lee los
+   párrafos de `## Guion` de `guion.md` (uno por segmento), sintetiza cada uno, los une con 0,45 s
+   de silencio y escribe `voz.mp3` y `voz.json` (segmentos exactos y frases para subtítulos), así
+   que el paso 3 ya no hace falta. Unos 14 caracteres/s: gancho ≤ 40 caracteres (≤ 3 s), bloques
+   ≤ 130 (≤ 10 s). `python tools/voz_azure.py voces` lista las voces. vidIQ (Brian) queda descartado.
+3. **Tiempos** (solo si la voz no sale de `voz_azure.py guion`): `python tools/pausas.py shorts/NN_tema/voz.mp3`. Las pausas largas
    (> 0,6 s aprox.) separan párrafos; las cortas, frases. Escribir `voz.json`:
    `{"completo": "voz.mp3", "segmentos": {clave: {"inicio", "duracion"}}, "frases": [[ini, fin, texto], ...]}`.
    El inicio de cada segmento coincide con el final de la pausa anterior.
@@ -142,8 +139,8 @@ marca/                  avatar, banner y branding.py
    en youtube, instagram y tiktok, solo tras aprobación:
    - youtubeData: type `short`, `madeForKids` false, category `EDUCATION`,
      `isAiGeneratedContent` false (animación no realista).
-   - instagramData: type `REEL`, `isAiGenerated` true (voz sintética).
-   - tiktokData: `isAigc` true y `title` (obligatorio; si falta, Metricool rechaza la publicación).
+   - instagramData: type `REEL`, `isAiGenerated` true si tiene voz sintética (narrado); false sin voz.
+   - tiktokData: `isAigc` true si tiene voz sintética, y `title` (obligatorio; si falta, Metricool rechaza la publicación).
    - Texto: descripción breve + pregunta + hashtags + atribución de la música.
    - No enviar `videoCoverMilliseconds`: el canal de YouTube no está verificado y Metricool
      rechazaría la publicación.
@@ -167,7 +164,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis, 21 → Down With That, 22 → Dreamy Flashback (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -197,6 +194,8 @@ volver a descargar la pista correcta antes de usarla.
 | 18 | ¿Por qué aterriza con el morro arriba? (texto, 25 s, 2D) | Down With That (desde 30 s) | listo (6-nov); pendiente de aprobación |
 | 19 | ¿Y si se apagan todos los motores? Planeo y Gimli 1983 (texto, 26 s, 2D) | Dreamy Flashback | listo (6-nov); pendiente de aprobación |
 | 20 | Diedro: ¿por qué las alas forman una V? (texto, 25 s, 3D de frente) | Hypnothis | listo (6-nov); pendiente de aprobación |
+| 21 | Estabilidad estática: canica, gráfica Cm–α y CG/punto neutro (narrado, 34 s, voz Jorge Multilingual) | Down With That | listo (6-nov); pendiente de aprobación |
+| 22 | Estabilidad dinámica: respuesta en el tiempo, fugoide y balanceo holandés (narrado, 32 s) | Dreamy Flashback | listo (6-nov); pendiente de aprobación |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.

@@ -9,3 +9,4 @@ shorts/*/portada.png
 *.env
 azure.env
 muestras_voz/
+shorts/*/render.mp4

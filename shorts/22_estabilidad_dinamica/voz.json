@@ -1,0 +1,98 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.675
+  },
+  "b1": {
+   "inicio": 2.675,
+   "duracion": 7.77
+  },
+  "b2": {
+   "inicio": 10.444,
+   "duracion": 7.574
+  },
+  "b3": {
+   "inicio": 18.018,
+   "duracion": 7.714
+  },
+  "cierre": {
+   "inicio": 25.733,
+   "duracion": 5.929
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.1,
+   "Volver no basta."
+  ],
+  [
+   1.55,
+   2.22,
+   "¿Cómo vuelve?"
+  ],
+  [
+   2.67,
+   6.18,
+   "La estabilidad dinámica mira la respuesta en el tiempo."
+  ],
+  [
+   6.18,
+   9.99,
+   "Si se apaga, directa o oscilando cada vez menos, es estable."
+  ],
+  [
+   10.44,
+   12.84,
+   "Si oscila siempre igual, es neutra."
+  ],
+  [
+   12.84,
+   17.57,
+   "Si cada vaivén crece, es inestable, aunque sea estable estáticamente."
+  ],
+  [
+   18.02,
+   19.4,
+   "Cada avión tiene sus modos:"
+  ],
+  [
+   19.7,
+   21.89,
+   "el fugoide sube y baja en ciclos lentos;"
+  ],
+  [
+   22.18,
+   25.28,
+   "el balanceo holandés guiña y alabea en pocos segundos."
+  ],
+  [
+   25.73,
+   26.39,
+   "Estática:"
+  ],
+  [
+   26.76,
+   27.57,
+   "hacia dónde va."
+  ],
+  [
+   28.05,
+   28.71,
+   "Dinámica:"
+  ],
+  [
+   29.04,
+   29.65,
+   "cómo llega."
+  ],
+  [
+   30.13,
+   31.66,
+   "¿Qué modo quieres ver en detalle?"
+  ]
+ ]
+}

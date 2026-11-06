@@ -69,9 +69,9 @@ def main(video, musica, salida, inicio="0"):
 
     if narrado:
         cadena_audio = (
-            f"[1:a]atrim=0:{dur},asetpts=N/SR/TB,volume=-18dB,"
+            f"[1:a]atrim={ini}:{ini + dur},asetpts=N/SR/TB,volume=-18dB,"
             f"afade=t=in:d=0.4,afade=t=out:st={dur - 1.8}:d=1.8[mus];"
-            "[0:a]apad,asplit=2[voz][sc];"
+            f"[0:a]apad,atrim=0:{dur},asplit=2[voz][sc];"   # sin atrim, apad no acaba nunca
             "[mus][sc]sidechaincompress=threshold=0.02:ratio=5:attack=20:release=450[duck];"
             "[voz][duck]amix=inputs=2:duration=first:normalize=0[pre]")
     else:
