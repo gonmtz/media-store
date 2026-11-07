@@ -54,7 +54,10 @@ class Vista(VGroup):
 
 
 def _piezas(nombre):
-    return [m for m in A.mallas_avion() if m.nombre == nombre]
+    """Piezas por nombre. «ala» incluye flaps, slats y spoilers; «gondola», el capó trasero."""
+    grupo = {"ala": ("ala", "flap", "slat", "spoiler"), "gondola": ("gondola", "reversa")}
+    nombres = grupo.get(nombre, (nombre,))
+    return [m for m in A.mallas_avion() if m.nombre in nombres]
 
 
 def _union(ms, cols):

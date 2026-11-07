@@ -305,25 +305,78 @@ def geometria_ala_en(yy, xc=0.25, a=ALA):
     return xba + xc * cuerda, z0, cuerda
 
 
+C_SLAT = 0.13                       # cuerda del slat (fracción)
+SLAT_Y = (2.8, 16.6)                # tramo con slats
+FLAP_Y = (1.9, 11.8)                # flaps: de la raíz hasta el alerón
+SPOILERS = [(4.2, 5.6), (6.0, 7.4), (7.6, 9.0), (9.2, 10.4), (10.6, 11.6)]
+SPOILER_C = (0.58, 0.73)
+
+
+def _tramo_ala(s, ys, x0, x1, t_fn, n=40):
+    secs = [_ala_en(s * y, contorno_perfil(0.02, 0.4, t_fn(y), x0, x1, n)) for y in ys]
+    k = min(len(c) for c in secs)
+    return loft([c[:k] for c in secs])
+
+
+def _ys(y0, y1, paso=0.6):
+    return np.linspace(y0, y1, max(3, int(np.ceil((y1 - y0) / paso)) + 1))
+
+
 def mallas_ala(s):
+    """Ala con alerón, flap (Fowler), slat y spoilers como piezas móviles (`imagen(flap=,
+    slat=, spoiler=)`). En reposo forman el mismo perfil que el ala entera."""
     a = ALA
     t_fn = lambda y: a["t_raiz"] + (a["t_punta"] - a["t_raiz"]) * (abs(y) - a["y_raiz"]) / (  # noqa
         a["y_punta"] - a["y_raiz"])
     y0, y1 = a["aleron"]
-    tramos = [(np.linspace(a["y_raiz"], y0, 14), "todo"), (np.linspace(y0, y1, 8), "fijo"),
-              (np.linspace(y1, a["y_punta"], 3), "todo")]
+    cc = a["corte_aleron"]
     res = []
-    for ys, parte in tramos:
-        v, f = malla_superficie(_ala_en, s * ys, 0.02, 0.4, t_fn, a["corte_aleron"], parte)
+    # cajón fijo del ala (por tramos de cuerda)
+    for (ya, yb, xa, xb) in ((a["y_raiz"], SLAT_Y[0], 0.0, cc), (SLAT_Y[0], y1, C_SLAT, cc),
+                             (y1, SLAT_Y[1], C_SLAT, 1.0), (SLAT_Y[1], a["y_punta"], 0.0, 1.0)):
+        v, f = _tramo_ala(s, _ys(ya, yb), xa, xb, t_fn)
         res.append(Malla(v, f, GRIS_ALA, "pintura", "ala"))
-    v, f = malla_superficie(_ala_en, s * np.linspace(y0 + 0.03, y1 - 0.03, 8), 0.02, 0.4, t_fn,
-                            a["corte_aleron"], "mando")
+    # slat (borde de ataque móvil)
+    v, f = _tramo_ala(s, _ys(*SLAT_Y), 0.0, C_SLAT, t_fn, 60)
+    sl = Malla(v, f, GRIS_ALA, "pintura", "slat")
+    sl.bisagra = (_ala_en(s * SLAT_Y[0], np.array([[C_SLAT, 0.0]]))[0],
+                  _ala_en(s * SLAT_Y[1], np.array([[C_SLAT, 0.0]]))[0])
+    sl.lado = s
+    res.append(sl)
+    # flap (borde de salida interior)
+    v, f = _tramo_ala(s, _ys(*FLAP_Y), cc, 1.0, t_fn)
+    fl = Malla(v, f, GRIS_ALA, "pintura", "flap")
+    fl.bisagra = (_ala_en(s * FLAP_Y[0], np.array([[cc, 0.0]]))[0],
+                  _ala_en(s * FLAP_Y[1], np.array([[cc, 0.0]]))[0])
+    fl.lado = s
+    res.append(fl)
+    # alerón
+    v, f = _tramo_ala(s, _ys(y0 + 0.03, y1 - 0.03), cc, 1.0, t_fn)
     ale = Malla(v, f, GRIS_ALA, "pintura", "aleron")
-    p0 = _ala_en(s * y0, np.array([[a["corte_aleron"], 0.0]]))[0]
-    p1 = _ala_en(s * y1, np.array([[a["corte_aleron"], 0.0]]))[0]
-    ale.bisagra = (p0, p1)
+    ale.bisagra = (_ala_en(s * y0, np.array([[cc, 0.0]]))[0],
+                   _ala_en(s * y1, np.array([[cc, 0.0]]))[0])
     ale.lado = s
     res.append(ale)
+    # spoilers: placas finas sobre el extradós, con la bisagra delante
+    for (ya, yb) in SPOILERS:
+        secs = []
+        for y in np.linspace(ya, yb, 4):
+            t = t_fn(y)
+            sup, _ = naca(0.02, 0.4, t, 30)
+            xs = np.linspace(SPOILER_C[0], SPOILER_C[1], 8)
+            zs = np.interp(xs, sup[:, 0], sup[:, 1])
+            c2 = np.vstack([np.column_stack([xs, zs + 0.004]),
+                            np.column_stack([xs[::-1], zs[::-1] - 0.006])])
+            secs.append(_ala_en(s * y, c2))
+        v, f = loft(secs)
+        sp = Malla(v, f, "#C3CBD6", "pintura", "spoiler")
+        sup0 = lambda y: naca(0.02, 0.4, t_fn(y), 30)[0]
+        zA = np.interp(SPOILER_C[0], sup0(ya)[:, 0], sup0(ya)[:, 1])
+        zB = np.interp(SPOILER_C[0], sup0(yb)[:, 0], sup0(yb)[:, 1])
+        sp.bisagra = (_ala_en(s * ya, np.array([[SPOILER_C[0], zA]]))[0],
+                      _ala_en(s * yb, np.array([[SPOILER_C[0], zB]]))[0])
+        sp.lado = s
+        res.append(sp)
     # winglet: perfil simétrico, sube desde la punta con un poco de cant hacia fuera
     w = WINGLET
     Xt, Zt, ct = geometria_ala_en(a["y_punta"], 0.0)
@@ -417,9 +470,19 @@ def mallas_motor(s):
     R = m["radio"]
     ext = [(0.0, 0.84 * R), (0.03, 0.93 * R), (0.12, 0.985 * R), (0.35, R), (1.4, 1.0 * R),
            (2.6, 0.95 * R), (3.6, 0.8 * R), (4.4, 0.6 * R)]
-    v, f = revolucion(ext, X0, c)
+    corte = 2.5                       # el capó trasero se desliza hacia atrás (reversa)
+    ext_del = [p for p in ext if p[0] < corte] + [(corte, 0.965 * R)]
+    ext_tras = [(corte, 0.965 * R)] + [p for p in ext if p[0] > corte]
+    v, f = revolucion(ext_del, X0, c)
     gondola = Malla(v, f, GRIS_MOTOR, "metal", "gondola")
     gondola.orient, gondola.eje = "radial", c
+    v, f = revolucion(ext_tras, X0, c)
+    capo = Malla(v, f, GRIS_MOTOR, "metal", "reversa")
+    capo.orient, capo.eje = "radial", c
+    # cascadas de la reversa (oscuras): quedan tapadas por el capó cuando está cerrado
+    v, f = revolucion([(corte - 0.05, 0.94 * R), (corte + 0.9, 0.86 * R)], X0, c)
+    cascada = Malla(v, f, "#3B4352", "oscuro", "cascada")
+    cascada.orient, cascada.eje = "radial", c
     lab = [(0.0, 0.84 * R), (0.25, 0.8 * R), (0.62, 0.78 * R)]
     v, f = revolucion(lab, X0, c)
     labio = Malla(v, f, "#94A3B8", "metal")
@@ -472,7 +535,7 @@ def mallas_motor(s):
         m.nombre = "motor"
     alabes.nombre = "alabes"
     alabes.eje = c
-    return [gondola, labio, fan, cono, alabes, tob, esc, pilon]
+    return [gondola, capo, cascada, labio, fan, cono, alabes, tob, esc, pilon]
 
 
 Z_SUELO = -4.4       # altura del suelo con el tren fuera (avión nivelado)
@@ -732,13 +795,17 @@ class Avion3DReal:
     def imagen(self, alabeo=0, cabeceo=0, guinada=0, aleron=0, elevador=0, timon=0,
                azimut=-35, elevacion=18, distancia=None, ortografica=False, luces=True,
                campo=None, mirar=(0.0, 0.0, 0.0), flex=0.0, tren=False, fan=0.0,
-               baliza=0.0, estrobo=0.0, noche=0.0, motores=True):
+               baliza=0.0, estrobo=0.0, noche=0.0, motores=True, flap=0.0, slat=0.0,
+               spoiler=0.0, reversa=0.0, resaltar=None):
         """`campo`: metros que caben en vertical (más pequeño = más cerca); `mirar`: punto del
         avión (x hacia el morro, y izquierda, z arriba; metros desde el CG) al que apunta la
         cámara, ya girado con el avión. `flex`: subida de la punta del ala (m). `tren`: tren de
         aterrizaje fuera. `fan`: giro de los álabes (grados). `baliza`/`estrobo`: brillo 0–1 de
         las luces anticolisión (rojas arriba y abajo) y de los destellos blancos de las puntas.
-        `noche`: 0–1 apaga la luz del sol (para ver las luces)."""
+        `noche`: 0–1 apaga la luz del sol (para ver las luces). `flap`: grados (hacia abajo,
+        con desplazamiento Fowler hacia atrás); `slat`: 0–1 (sale hacia delante y abajo);
+        `spoiler`: grados (hacia arriba); `reversa`: 0–1 (el capó trasero se desliza y deja
+        ver las cascadas). `resaltar`: {nombre de pieza: color} para pintar piezas."""
         pr = self.pr
         k = 1 - 0.88 * noche
         escena = pr.Scene(bg_color=[0, 0, 0, 0],
@@ -752,28 +819,31 @@ class Avion3DReal:
                 continue
             v = p["v"]
             color = p["color"]
-            if flex and n in ("ala", "aleron"):
+            if flex and n in ("ala", "aleron", "flap", "slat", "spoiler"):
                 v = v.copy()
                 v[:, 2] += flexion(np.abs(v[:, 1]), flex)
             elif flex and n == "winglet":
                 v = v.copy()
                 v[:, 2] += flex
-            elif flex and n in ("motor", "alabes", "pilon"):
+            elif flex and n in ("motor", "alabes", "pilon", "reversa", "cascada"):
                 v = v.copy()
                 v[:, 2] += dz_motor
             if n == "alabes" and fan:
                 ey, ez = p["eje"]
                 eje_c = np.array([0.0, ey, ez + dz_motor])
                 v = (v - eje_c) @ self._rot(np.array([1.0, 0, 0]), np.radians(fan)).T + eje_c
+            if n == "reversa" and reversa:
+                v = v.copy()
+                v[:, 0] -= 0.95 * reversa
             if p["bisagra"] is not None:
                 p0, p1 = [q.copy() for q in p["bisagra"]]
-                if flex and n == "aleron":
+                if flex and n in ("aleron", "flap", "slat", "spoiler"):
                     p0[2] += flexion(abs(p0[1]), flex)
                     p1[2] += flexion(abs(p1[1]), flex)
                 eje = p1 - p0
                 # eje orientado hacia +y (alerones, elevador) o +z (timón): con ángulo > 0 el
                 # borde de salida sube (o va a la derecha, en el timón)
-                if n in ("aleron", "elevador") and eje[1] < 0:
+                if n in ("aleron", "elevador", "flap", "slat", "spoiler") and eje[1] < 0:
                     eje = -eje
                 if n == "timon" and eje[2] < 0:
                     eje = -eje
@@ -781,11 +851,25 @@ class Avion3DReal:
                     ang = np.radians(aleron) * (1 if p["lado"] < 0 else -1)
                 elif n == "elevador":
                     ang = np.radians(elevador)
+                elif n == "flap":
+                    ang = -np.radians(flap)
+                elif n == "slat":
+                    ang = np.radians(20.0 * slat)
+                elif n == "spoiler":
+                    ang = np.radians(spoiler)
                 else:
                     ang = np.radians(timon)
                 Rb = self._rot(eje, ang)
                 v = (v - p0) @ Rb.T + p0
+                if n == "flap" and flap:        # Fowler: el flap también retrocede y baja
+                    v[:, 0] -= 0.015 * flap
+                    v[:, 2] -= 0.006 * flap
+                if n == "slat" and slat:
+                    v[:, 0] += 0.45 * slat
+                    v[:, 2] -= 0.12 * slat
                 color = self._color_mando(n) or color
+            if resaltar and n in resaltar:
+                color = resaltar[n]
             nodo = pr.Node(mesh=self._malla_pr(v, p["f"], color, p["mat"], p.get("colores")))
             escena.add_node(nodo, parent_node=raiz)
         if luces:
