@@ -185,8 +185,7 @@ class Transpondedor(ModoBase):
                        self.codigo_tarjeta("77", "Socorro", C_77)).arrange(DOWN, buff=0.3).move_to([0, 2.6, 0])
         nota = self.hud(T("regla para recordarlos (no oficial)", size=26, color=TEXTO_SEC, weight=MEDIUM)
                         .next_to(regla, UP, buff=0.3))
-        preg2 = self.hud(frase_cinetica("¿Los conocías?", size=72, resaltar=["conocías?"],
-                                        color_resalte=C_77).move_to(DOWN * 3.6))
+        preg2 = self.cta("¿Qué código marcan en Europa los vuelos visuales?", ["vuelos", "visuales?"], C_77, y=-4.1, size=54, pie="Respóndelo en comentarios 👇")
         self.cambio(LaggedStart(*[FadeIn(x, shift=RIGHT * 0.4) for x in regla], lag_ratio=0.25),
                     FadeIn(nota), FadeIn(preg2, shift=UP * 0.3), run_time=0.8)
         self.hasta(t0, d * 0.22)

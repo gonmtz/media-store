@@ -1,5 +1,5 @@
 """
-Short 31 (narrado): el estampido sónico. Avión 3D de lado a Mach 2; los frentes de onda (círculos
+Short 31 (narrado): el estampido sónico. Supersónico tipo Concorde en 3D (lib/concorde.py), de lado a Mach 2; los frentes de onda (círculos
 que crecen a la velocidad del sonido desde cada punto por donde pasó) forman el cono de Mach,
 sen μ = 1/M (μ = 30° a M = 2). El cono barre el suelo: cada persona oye el estampido cuando le
 llega, mientras el avión siga supersónico. Escala vertical no real (rotulado en pantalla).
@@ -11,6 +11,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from lib.porquevuela import *  # noqa: E402,F401,F403
 from lib.modos import ModoBase, flecha  # noqa: E402
+from lib.concorde import Concorde3D  # noqa: E402
+from lib import concorde as CC  # noqa: E402
+from lib.avion2d import capa_3d  # noqa: E402
 
 C_ONDA, C_CONO, C_BUM = C_CABECEO, C_ALABEO, C_GUINADA
 XP, YP, YS = 3.5, 1.3, -1.85          # avión (fijo en pantalla) y suelo
@@ -19,6 +22,7 @@ MACH = 2.0
 C = U / MACH
 MU = np.arcsin(1 / MACH)
 XG = XP - (YP - YS) / np.tan(MU)      # donde el cono toca el suelo
+CAMPO_C = 72.0                        # el supersónico (61,7 m) ocupa unas 3,6 unidades
 
 
 def persona(color=TEXTO_SEC):
@@ -32,8 +36,14 @@ class Estampido(ModoBase):
 
     def escena(self, s):
         """Ondas, cono y suelo en función del tiempo simulado s (ValueTracker)."""
-        av = self.avion3d(campo=60, alto_px=500, centro=(XP - 1.15, YP), colores_mando=False,
-                          azimut=-90, elevacion=3)
+        from manim import config
+        if not hasattr(self, "_conc"):
+            self._conc = Concorde3D(1080, 500, 2 if config.pixel_height >= 1000 else 1, campo=CAMPO_C)
+        r = self._conc
+        px = r.proyectar([CC.a_cuerpo(0.0, 0.0, 0.0)], azimut=-90, elevacion=10, campo=CAMPO_C)[0]
+        k = 9.0 / r.ancho
+        dx, dy = (px[0] - r.ancho / 2) * k, (r.alto / 2 - px[1]) * k
+        av = capa_3d(r, 9.0, (XP - dx, YP - dy), azimut=-90, elevacion=10)
 
         def ondas():
             g = VGroup()
@@ -62,7 +72,7 @@ class Estampido(ModoBase):
         av, on, cono, suelo = self.escena(s)
         fondo = brillo([0, 0.5, 0], C_ONDA, 4.2, 0.7)
         preg, dest = self.gancho_texto("El estampido sónico…", "¿SUENA UNA VEZ?", C_CONO, 88)
-        sello = self.sello("MACH 2", C_CONO, DOWN * 3.95, size=56)
+        sello = self.sello("CONCORDE · MACH 2", C_CONO, DOWN * 3.95, size=50)
 
         # ---------- Gancho ----------
         self.portada(fondo, suelo, on, cono, av, preg)
@@ -135,8 +145,7 @@ class Estampido(ModoBase):
         ge.clear_updaters()
         self.dejar(tit, fr, dt, ge, alf, self.tema, self.barras)
         tj = self.tarjeta("Vuelos supersónicos civiles sobre tierra: limitados", C_CONO, size=32).move_to([0, 4.0, 0])
-        preg2 = self.hud(frase_cinetica("¿Lo sabías?", size=72, resaltar=["sabías?"],
-                                        color_resalte=C_CONO).move_to(DOWN * 3.3))
+        preg2 = self.cta("¿En qué año dejó de volar el Concorde?", ["año"], C_CONO, y=-3.4)
         self.cambio(FadeIn(tj, shift=DOWN * 0.3), FadeIn(preg2, shift=UP * 0.3), run_time=0.7)
         self.avanzar(t0 + d * 0.5, s.animate.set_value(s.get_value() + d * 0.5))
         self.pulso(preg2, 1.06)

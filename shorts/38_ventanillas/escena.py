@@ -237,8 +237,7 @@ class Ventanillas(ModoBase):
         self.dejar(tit, fr, dt, mrd, tq2, er, self.tema, self.barras)
         ve2 = ventanilla((0, 0.8), rc=0.6)
         tj = self.tarjeta("Curva suave: el esfuerzo se reparte", C_OK, size=36).move_to([0, -1.75, 0])
-        preg2 = self.hud(frase_cinetica("¿Te habías fijado?", size=68, resaltar=["fijado?"],
-                                        color_resalte=C_PRES).move_to(DOWN * 3.6))
+        preg2 = self.cta("¿En qué otra parte del avión se redondean las esquinas?", ["redondean"], C_PRES, y=-3.7, size=54)
         self.cambio(FadeIn(ve2, scale=0.9), FadeIn(tj, shift=UP * 0.2), FadeIn(preg2, shift=UP * 0.3), run_time=0.7)
         self.hasta(t0, d * 0.45)
         self.pulso(ve2, 1.04)

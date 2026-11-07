@@ -10,10 +10,11 @@ Hay tres códigos especiales: 7500, interferencia ilícita; 7600, fallo de radio
 
 Al marcarlos, el avión se resalta en la pantalla del controlador, que le da prioridad.
 
-Para recordarlos: siete cinco, secuestro; siete seis, sin radio; siete siete, socorro. ¿Los conocías?
+Siete cinco, secuestro; siete seis, sin radio; siete siete, socorro. ¿Sabes qué código marcan en Europa los vuelos visuales? Respóndelo en comentarios.
 
 ## Notas técnicas
 
 - Códigos de 4 dígitos octales (0–7): 4096 combinaciones.
 - 7500: interferencia ilícita (secuestro); 7600: fallo de comunicaciones; 7700: emergencia (OACI).
 - Nemotecnia en español (no oficial).
+- Reto del cierre: código de los vuelos VFR en Europa (OACI/EASA): 7000.

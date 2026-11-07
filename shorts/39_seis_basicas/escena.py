@@ -178,9 +178,12 @@ class SeisBasicas(ShortBase):
         tit = T("LAS SEIS BÁSICAS", size=80, weight=HEAVY, font=F_TIT)
         cab = VGroup(sup, tit).arrange(DOWN, buff=0.12).move_to(UP * 5.05)
         nota = T("Dispuestas en «T»: la vista vuelve siempre al horizonte · lecturas de ejemplo",
-                 size=19, color=TEXTO_SEC, weight=MEDIUM).move_to(DOWN * 4.75)
+                 size=19, color=TEXTO_SEC, weight=MEDIUM).move_to(DOWN * 4.4)
         if nota.width > 8.4:
             nota.scale_to_fit_width(8.4)
-        pie = T("@porquevuela · Guárdalo", size=26, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 5.35)
-        self.add(brillo([0, 0, 0], C_CABECEO, 4.6, 0.6), marco, grupo, cab, nota, pie)
+        pie = T("@porquevuela · Guárdalo", size=26, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 5.6)
+        reto = T("¿Cuál te costaría más leer? Escríbelo en comentarios ↓", size=28, color=C_CABECEO, weight=HEAVY).move_to(DOWN * 5.0)
+        if reto.width > 8.4:
+            reto.scale_to_fit_width(8.4)
+        self.add(brillo([0, 0, 0], C_CABECEO, 4.6, 0.6), marco, grupo, cab, nota, reto, pie)
         self.wait(0.1)

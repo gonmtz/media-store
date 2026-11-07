@@ -25,6 +25,12 @@ de almacén de videos (Metricool los descarga por URL) y de memoria del proyecto
 - Vertical 1080×1920, 30 fps, de 30 a 45 s (narrado).
 - Estructura: **gancho** (pregunta o dato llamativo, máx. 4 s) → **2-3 bloques** (concepto
   + mecanismo + animación) → **cierre** con resumen y una pregunta a la audiencia.
+- **Llamada a la acción (desde el 7-nov-2026, petición del dueño):** el cierre termina con un
+  reto que el público contesta en comentarios, **sin dar la respuesta** en el video. Mal: «los
+  ekranoplanos vuelan así. ¿Los conocías?». Bien: «hay vehículos que vuelan siempre pegados al
+  agua. ¿Sabes cómo se llaman? Escríbelo en comentarios». La pregunta va en pantalla (grande) y en
+  la voz, con «Te leo en comentarios» / «Escríbelo en comentarios»; en `publicacion.json`, la
+  misma pregunta. Las fichas (sin voz) la llevan en la imagen.
 - Título grande del bloque, frase intuitiva, dato técnico secundario y pastilla
   "SE CONTROLA CON / …" (o equivalente).
 - **Nunca empezar con el fondo vacío.** El primer fotograma es la portada en el perfil de
@@ -201,20 +207,20 @@ volver a descargar la pista correcta antes de usarla.
 | 25 | Modos dinámicos 3: convergencia en alabeo (narrado, 30 s, avión 3D) | Dreamy Flashback | programado 2026-11-11 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419429225); marca de IA en IG y TikTok |
 | 26 | Modos dinámicos 4: modo espiral (narrado, 32 s, avión 3D) | Hypnothis | programado 2026-11-12 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419443313); marca de IA en IG y TikTok |
 | 27 | Modos dinámicos 5: balanceo holandés (narrado, 30 s, avión 3D) | Down With That | programado 2026-11-13 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419420385); marca de IA en IG y TikTok |
-| 28 | Flaps y slats: volar lento sin caer (narrado, 31 s, 3D + perfil 2D) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 29 | ¿Cómo frena un avión? Spoilers, frenos y reversas (narrado, 31 s, 3D) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 30 | Flecha y Mach crítico: ¿por qué las alas van hacia atrás? (narrado, 31 s, 3D + perfil) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 31 | Estampido sónico: el cono de Mach que barre el suelo (narrado, 33 s) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 32 | Reynolds: ¿un mosquito vuela como un avión? (narrado, 31 s) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 33 | Efecto suelo: ¿por qué flota antes de tocar la pista? (narrado, 31 s, 3D) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 34 | Transpondedor: 7500, 7600 y 7700 (narrado, 35 s, radar 2D) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 35 | V1, VR y V2 (narrado, 32 s, 3D en la pista) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 36 | Números de pista: ¿por qué se llama 27? (narrado, 33 s, 3D desde arriba) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 37 | Estela turbulenta (narrado, 30 s, 3D desde atrás) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 38 | ¿Por qué las ventanillas son redondas? (narrado, 31 s, mapas de tensión) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 39 | Ficha: las seis básicas (instrumentos, 5 s) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 40 | Ficha: las luces de la torre (OACI, 5 s) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
-| 41 | Ficha: unidades de la aviación (5 s, 3D) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 28 | Flaps y slats: volar lento sin caer (narrado, 31 s, 3D + perfil 2D) | Dreamy Flashback | aprobado (7-nov); cierre con reto (CTA) |
+| 29 | ¿Cómo frena un avión? Spoilers, frenos y reversas (narrado, 31 s, 3D) | Hypnothis | en revisión: el dueño mandará notas; no publicar |
+| 30 | Flecha y Mach crítico: ¿por qué las alas van hacia atrás? (narrado, 31 s, 3D + perfil) | Down With That | en revisión: el dueño mandará notas; no publicar |
+| 31 | Estampido sónico: el cono de Mach que barre el suelo (narrado, 33 s) | Dreamy Flashback | rehecho con el Concorde 3D (`lib/concorde.py`) y CTA (7-nov); pendiente de aprobación: no publicar |
+| 32 | Reynolds: ¿un mosquito vuela como un avión? (narrado, 31 s) | Hypnothis | aprobado (7-nov); CTA |
+| 33 | Efecto suelo: ¿por qué flota antes de tocar la pista? (narrado, 31 s, 3D) | Down With That | vórtices simétricos y CTA (7-nov); pendiente de aprobación: no publicar |
+| 34 | Transpondedor: 7500, 7600 y 7700 (narrado, 35 s, radar 2D) | Dreamy Flashback | aprobado (7-nov); CTA |
+| 35 | V1, VR y V2 (narrado, 32 s, 3D en la pista) | Hypnothis | aprobado (7-nov); CTA |
+| 36 | Números de pista: ¿por qué se llama 27? (narrado, 33 s, 3D desde arriba) | Down With That | aprobado (7-nov); CTA |
+| 37 | Estela turbulenta (narrado, 30 s, 3D desde atrás) | Dreamy Flashback | aprobado (7-nov); CTA |
+| 38 | ¿Por qué las ventanillas son redondas? (narrado, 31 s, mapas de tensión) | Hypnothis | aprobado (7-nov); CTA |
+| 39 | Ficha: las seis básicas (instrumentos, 5 s) | Down With That | aprobado (7-nov); CTA en la imagen |
+| 40 | Ficha: las luces de la torre (OACI, 5 s) | Dreamy Flashback | aprobado (7-nov); CTA en la imagen |
+| 41 | Ficha: unidades de la aviación (5 s, 3D) | Hypnothis | aprobado (7-nov); CTA en la imagen |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
@@ -225,7 +231,7 @@ en `marca/portadas/` para cambiarlas a mano.
 2. ~~Pérdida (stall): caer con los motores funcionando~~ (hecho: short 03)
 3. ~~Winglets y vórtices de punta~~ (hecho: short 05)
 4. ~~¿Por qué las hélices están torcidas?~~ (hecho: short 06)
-5. ~~Mach y el estampido sónico que se arrastra~~ (hecho: short 31)
+5. ~~Mach y el estampido sónico que se arrastra~~ (hecho: short 31, con el Concorde)
 6. ~~Reynolds: por qué un insecto no vuela con un ala de avión~~ (hecho: short 32)
 7. Motor a reacción: el motor que se traga la lluvia
 8. ¿Por qué el Concorde bajaba la nariz?
@@ -272,3 +278,5 @@ Estos temas reutilizan las piezas que ya hay en la biblioteca (perfil, vectores 
 construir y añadir a `lib/porquevuela.py` lo que pueda volver a usarse.
 
 Shorts 28–41 (7-nov): `lib/avion.py` tiene flaps Fowler (`flap` en grados), slats (`slat` 0–1), spoilers (`spoiler` en grados), reversas de cascadas (`reversa` 0–1) y `resaltar={pieza: color}` en `imagen`; `capa_3d` acepta `centro` como función. Patrones reutilizables: pista que se desplaza (29, 35), cinta de velocidad vertical (35), radar con barrido (34), vórtices sobre las puntas con `a_pantalla` (33, 37), mapas de tensión de Kirsch (38), pista vista desde arriba con brújula (36). Para rotar alrededor de las ruedas (35): recalcular el centro con `render.proyectar([CONTACTO], cabeceo=...)` en cada fotograma.
+
+Concorde (7-nov, short 31): `lib/concorde.py` (`Concorde3D`, hereda de `Avion3DReal`; ala en ojiva, deriva, dos góndolas, sin librea ni logos; `a_cuerpo` con su propio CG). Útil para «¿Por qué el Concorde bajaba la nariz?» (falta el morro abatible).

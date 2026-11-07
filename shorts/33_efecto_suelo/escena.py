@@ -3,7 +3,8 @@ Short 33 (narrado): efecto suelo. Por debajo de una envergadura (y sobre todo de
 frena el flujo descendente y los vórtices de punta: menos resistencia inducida y, a igual ángulo
 de ataque, algo más de sustentación. Barra de resistencia inducida con el factor de McCormick
 φ = (16h/b)² / (1 + (16h/b)²) (aproximación). Vórtices y flechas: dibujo cualitativo.
-Vista de frente: el avión viene hacia nosotros (vórtice de la izquierda de la pantalla, horario).
+Vista de frente (azimut 0, simétrica): el avión viene hacia nosotros; el vórtice de la izquierda de
+la pantalla gira en sentido horario y el de la derecha, antihorario (imágenes especulares).
 Render:  manim -qh --fps 60 shorts/33_efecto_suelo/escena.py EfectoSuelo
 """
 import sys
@@ -32,18 +33,25 @@ class EfectoSuelo(ModoBase):
         reloj = ValueTracker(0.0)
         reloj.add_updater(lambda m, dt: m.increment_value(dt))
         av = self.avion3d(campo=38, alto_px=760, centro=lambda: (0, Y_S + 0.55 + h.get_value() * B_PANT),
-                          colores_mando=False, azimut=8, elevacion=4, tren=True)
+                          colores_mando=False, azimut=0, elevacion=4, tren=True)
 
         def flujo():
             hb = h.get_value()
             yw = Y_S + 0.35 + hb * B_PANT
             k = phi(hb)
             g = VGroup()
-            for s, x in ((-1, -B_PANT / 2), (1, B_PANT / 2)):
+            q = av.a_pantalla([A.punto_ala(16.9, 1, 0.9), A.punto_ala(16.9, -1, 0.9)])
+            xm = (q[0][0] + q[1][0]) / 2                      # eje de simetría en pantalla
+            semi = abs(q[0][0] - q[1][0]) / 2
+            yv = (q[0][1] + q[1][1]) / 2
+            for s in (-1, 1):
+                x = xm + s * semi
                 r = 0.18 + 0.4 * k
-                g.add(espiral([x + s * 0.05, yw, 0], r, fase=reloj.get_value() * 4 * (-s), sentido=s,
+                # simétricos respecto al eje: fase del derecho = π − fase del izquierdo
+                f_izq = reloj.get_value() * 4
+                g.add(espiral([x, yv, 0], r, fase=f_izq if s < 0 else PI - f_izq, sentido=s,
                               color=C_VOR, ancho=4, opacidad=0.9))
-            for x in np.linspace(-1.5, 1.5, 5):
+            for x in xm + np.linspace(-1.5, 1.5, 5):
                 largo = min(0.9 * k + 0.1, max(0.1, yw - Y_S - 0.25))
                 g.add(flecha([x, yw - 0.25, 0], [x, yw - 0.25 - largo, 0], C_DOWN, 6))
             return g
@@ -78,13 +86,15 @@ class EfectoSuelo(ModoBase):
         def cotas():
             hb = h.get_value()
             yw = Y_S + 0.35 + hb * B_PANT
-            g = VGroup(DoubleArrow([-B_PANT / 2, yw + 1.25, 0], [B_PANT / 2, yw + 1.25, 0], buff=0,
+            q = av.a_pantalla([A.punto_ala(16.9, 1, 0.9), A.punto_ala(16.9, -1, 0.9)])
+            x0, x1 = sorted([q[0][0], q[1][0]])
+            g = VGroup(DoubleArrow([x0, yw + 1.25, 0], [x1, yw + 1.25, 0], buff=0,
                                    color=TEXTO_SEC, stroke_width=3, tip_length=0.15),
-                       T("b (envergadura)", size=22, color=TEXTO_SEC, weight=BOLD).move_to([0, yw + 1.5, 0]))
+                       T("b (envergadura)", size=22, color=TEXTO_SEC, weight=BOLD).move_to([(x0 + x1) / 2, yw + 1.5, 0]))
             if hb > 0.06:
-                g.add(DoubleArrow([B_PANT / 2 + 0.45, Y_S, 0], [B_PANT / 2 + 0.45, yw, 0], buff=0,
+                g.add(DoubleArrow([x1 + 0.45, Y_S, 0], [x1 + 0.45, yw, 0], buff=0,
                                   color=C_VOR, stroke_width=4, tip_length=0.15),
-                      T("h", size=30, color=C_VOR, weight=HEAVY).move_to([B_PANT / 2 + 0.75, (Y_S + yw) / 2, 0]))
+                      T("h", size=30, color=C_VOR, weight=HEAVY).move_to([x1 + 0.75, (Y_S + yw) / 2, 0]))
             return g
         co = always_redraw(cotas)
         self.abrir_bloque(barra, C_VOR, tit, fr, dt, h.animate.set_value(0.45), run_time=0.8)
@@ -150,9 +160,8 @@ class EfectoSuelo(ModoBase):
         h, reloj2, av, fl, suelo2, fondo2 = self.base(0.1)
         self.add(reloj2)
         self.dejar(tit, fr, dt, tray, av2, ef, self.tema, self.barras)
-        tj = self.tarjeta("Ekranoplanos: siempre en efecto suelo", C_VOR, size=40).move_to([0, 3.4, 0])
-        preg2 = self.hud(frase_cinetica("¿Los conocías?", size=72, resaltar=["conocías?"],
-                                        color_resalte=C_VOR).move_to(DOWN * 3.6))
+        tj = self.tarjeta("Vuelan siempre pegados al agua", C_VOR, size=40).move_to([0, 3.4, 0])
+        preg2 = self.cta("¿Sabes cómo se llaman?", ["llaman?"], C_VOR, y=-3.6, size=66)
         self.cambio(FadeIn(av), FadeIn(fl), FadeIn(tj, shift=DOWN * 0.3), FadeIn(preg2, shift=UP * 0.3),
                     run_time=0.7)
         self.avanzar(t0 + d * 0.5, h.animate.set_value(0.14))

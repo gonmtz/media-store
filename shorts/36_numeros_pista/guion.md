@@ -10,7 +10,7 @@ Una pista hacia el oeste, a 270 grados, es la 27. Su otro extremo, hacia el este
 
 Si hay pistas paralelas, se añade una letra: ele, ce o erre, por izquierda, centro y derecha en inglés.
 
-Y como el norte magnético se mueve, algunas pistas cambian de número con los años. ¿Cómo se llama la de tu ciudad?
+Como el norte magnético se mueve, algunas pistas cambian de número. ¿Qué número tiene la pista de tu ciudad? Escríbelo en comentarios.
 
 ## Notas técnicas
 

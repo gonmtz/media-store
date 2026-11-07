@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 25.256,
-   "duracion": 4.732
+   "duracion": 7.638
   }
  },
  "frases": [
@@ -56,13 +56,18 @@
   ],
   [
    25.26,
-   29.23,
-   "Los remolinos no se ven, pero pueden durar varios minutos."
+   28.23,
+   "Los remolinos no se ven, pero duran minutos."
   ],
   [
-   29.23,
-   29.99,
-   "¿Lo sabías?"
+   28.23,
+   31.41,
+   "¿Qué avión crees que deja la estela más fuerte?"
+  ],
+  [
+   31.41,
+   32.89,
+   "Te leo en comentarios."
   ]
  ]
 }

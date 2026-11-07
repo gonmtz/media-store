@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 25.701,
-   "duracion": 5.761
+   "duracion": 9.427
   }
  },
  "frases": [
@@ -66,13 +66,18 @@
   ],
   [
    25.7,
-   29.19,
+   29.04,
    "Uve uno, rotación, uve dos, en pocos segundos."
   ],
   [
-   29.19,
-   31.46,
-   "¿Las habías oído en la cabina?"
+   29.04,
+   33.53,
+   "Si falla un motor justo antes de uve uno, ¿qué hace el piloto?"
+  ],
+  [
+   33.53,
+   35.13,
+   "Te leo en comentarios."
   ]
  ]
 }

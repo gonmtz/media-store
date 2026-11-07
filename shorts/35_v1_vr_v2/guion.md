@@ -10,7 +10,7 @@ Uve erre es la de rotación: el piloto tira, el morro sube, el ala gana ángulo 
 
 Uve dos es la velocidad segura de ascenso: la mínima para subir con margen aunque falte un motor, y se alcanza justo después de despegar.
 
-Uve uno, rotación, uve dos, en pocos segundos. ¿Las habías oído en la cabina?
+Uve uno, rotación, uve dos, en pocos segundos. Si falla un motor justo antes de uve uno, ¿qué hace el piloto? Te leo en comentarios.
 
 ## Notas técnicas
 

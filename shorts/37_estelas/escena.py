@@ -153,8 +153,7 @@ class Estelas(ModoBase):
         fondo2 = brillo([0, Y_AV - 0.6, 0], C_VOR, 3.8, 0.8)
         self.dejar(tit, fr, dt, grande, ligero, es, sep, nombres, self.tema, self.barras)
         tj = self.tarjeta("Invisibles y duran minutos", C_VOR, size=40).move_to([0, -1.25, 0])
-        preg2 = self.hud(frase_cinetica("¿Lo sabías?", size=72, resaltar=["sabías?"],
-                                        color_resalte=C_VOR).move_to(DOWN * 3.6))
+        preg2 = self.cta("¿Qué avión crees que deja la estela más fuerte?", ["estela", "fuerte?"], C_VOR, y=-3.7, size=56)
         self.cambio(FadeIn(fondo2), FadeIn(av2), FadeIn(vo2), FadeIn(tj, shift=UP * 0.2), FadeIn(preg2, shift=UP * 0.3),
                     run_time=0.6)
         self.avanzar(t0 + d * 0.5, vis2.animate.set_value(0.2), baja2.animate.set_value(0.8))

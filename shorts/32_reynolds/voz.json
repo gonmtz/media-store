@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 26.224,
-   "duracion": 4.739
+   "duracion": 8.005
   }
  },
  "frases": [
@@ -71,13 +71,23 @@
   ],
   [
    26.22,
-   28.23,
+   28.43,
    "Misma física, distinta escala."
   ],
   [
-   28.23,
-   30.96,
-   "¿Qué otro animal volador te gustaría ver?"
+   28.43,
+   30.92,
+   "¿Quién tiene un Reynolds más alto:"
+  ],
+  [
+   30.92,
+   32.61,
+   "una mosca o un colibrí?"
+  ],
+  [
+   32.61,
+   34.23,
+   "Te leo en comentarios."
   ]
  ]
 }

@@ -142,6 +142,16 @@ class ModoBase(ShortBase):
             return
         self.play(*anims, run_time=rt, rate_func=linear)
 
+    def cta(self, pregunta, resaltar, color, y=-3.6, size=60, pie="Escríbelo en comentarios 👇"):
+        """Reto final para los comentarios (regla del canal: no se da la respuesta)."""
+        fr = frase_cinetica(pregunta, size=size, resaltar=resaltar, color_resalte=color)
+        if fr.width > 7.6:
+            fr.scale_to_fit_width(7.6)
+        p = T(pie.replace(" 👇", ""), size=28, color=TEXTO_SEC, weight=BOLD)
+        flecha_ = T("↓", size=30, color=color, weight=HEAVY)
+        linea = VGroup(p, flecha_).arrange(RIGHT, buff=0.15)
+        return self.hud(VGroup(fr, linea).arrange(DOWN, buff=0.22).move_to(UP * y))
+
     def tarjeta(self, texto, color, ancho=7.4, size=40):
         fondo = RoundedRectangle(width=ancho, height=1.2, corner_radius=0.25, fill_color="#141E31",
                                  fill_opacity=1, stroke_color=color, stroke_width=3)

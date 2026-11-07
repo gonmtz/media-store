@@ -152,15 +152,16 @@ class FlapsSlats(ModoBase):
         reloj.clear_updaters()
         self.dejar(tit, fr, dt, ren, part, curva, sec2, self.tema, self.barras)
         tj = self.tarjeta("Casi un 30 % más lento sin entrar en pérdida", C_FLAP).move_to([0, -1.25, 0])
-        preg2 = self.hud(frase_cinetica("¿Los habías visto desde la ventanilla?", size=56,
-                                        resaltar=["ventanilla?"], color_resalte=C_FLAP).move_to(DOWN * 3.3))
+        preg2 = self.cta("¿Qué otra pieza del ala se levanta al aterrizar?", ["levanta"], C_FLAP, y=-3.5, size=54)
         self.cambio(FadeIn(tj, shift=UP * 0.3), FadeIn(preg2, shift=UP * 0.3),
                     t["mx"].animate.set_value(0), t["my"].animate.set_value(0),
                     t["mz"].animate.set_value(0), t["azimut"].animate.set_value(150),
                     t["elevacion"].animate.set_value(26), t["campo"].animate.set_value(46),
                     t["cy"].animate.set_value(1.25), run_time=0.9)
-        self.avanzar(t0 + d * 0.5, t["azimut"].animate.set_value(155))
+        self.avanzar(t0 + d * 0.32, t["azimut"].animate.set_value(153))
         self.pulso(tj, 1.05)
+        self.avanzar(t0 + d * 0.64, t["azimut"].animate.set_value(156))
+        self.pulso(preg2, 1.05)
         self.avanzar(t0 + d - 0.75, t["azimut"].animate.set_value(150))
         preg, _ = self.gancho_texto("¿Cómo vuela tan lento", "AL ATERRIZAR?", C_FLAP, 88)
         self.dejar(tj, preg2)

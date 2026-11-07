@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 26.085,
-   "duracion": 6.378
+   "duracion": 8.323
   }
  },
  "frases": [
@@ -61,13 +61,18 @@
   ],
   [
    26.08,
-   30.71,
-   "Y como el norte magnético se mueve, algunas pistas cambian de número con los años."
+   30.31,
+   "Como el norte magnético se mueve, algunas pistas cambian de número."
   ],
   [
-   30.71,
-   32.46,
-   "¿Cómo se llama la de tu ciudad?"
+   30.31,
+   32.83,
+   "¿Qué número tiene la pista de tu ciudad?"
+  ],
+  [
+   32.83,
+   34.41,
+   "Escríbelo en comentarios."
   ]
  ]
 }

@@ -10,7 +10,7 @@ En una esquina en ángulo recto, la tensión se concentra y, con cada vuelo, pue
 
 Pasó con el Comet en 1954: la fatiga del metal empezó en la esquina de una abertura del fuselaje. Desde entonces, se redondean.
 
-Una curva suave reparte el esfuerzo y no deja que la grieta empiece. ¿Te habías fijado?
+Una curva suave reparte el esfuerzo. ¿En qué otra parte del avión se redondean las esquinas? Te leo en comentarios.
 
 ## Notas técnicas
 

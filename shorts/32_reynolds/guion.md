@@ -10,7 +10,7 @@ En un avión es de decenas de millones: domina la inercia. En un mosquito, de de
 
 Por eso los insectos baten las alas muy rápido y crean remolinos que los sostienen, en vez de planear como un avión.
 
-Misma física, distinta escala. ¿Qué otro animal volador te gustaría ver?
+Misma física, distinta escala. ¿Quién tiene un Reynolds más alto: una mosca o un colibrí? Te leo en comentarios.
 
 ## Notas técnicas
 

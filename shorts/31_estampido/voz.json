@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 27.208,
-   "duracion": 5.257
+   "duracion": 9.006
   }
  },
  "frases": [
@@ -70,9 +70,14 @@
    "Por eso muchos países limitan los vuelos supersónicos civiles sobre tierra."
   ],
   [
-   31.67,
-   32.47,
-   "¿Lo sabías?"
+   31.65,
+   34.15,
+   "¿Sabes en qué año dejó de volar el Concorde?"
+  ],
+  [
+   34.59,
+   36.21,
+   "Escríbelo en comentarios."
   ]
  ]
 }

@@ -10,7 +10,7 @@ Cuanto más pesado y lento va el avión, más fuertes son. Un avión pequeño qu
 
 Por eso se separan por categorías: tras un avión muy pesado, uno ligero espera unos minutos o varios kilómetros, hasta que los remolinos se debilitan.
 
-Los remolinos no se ven, pero pueden durar varios minutos. ¿Lo sabías?
+Los remolinos no se ven, pero duran minutos. ¿Qué avión crees que deja la estela más fuerte? Te leo en comentarios.
 
 ## Notas técnicas
 

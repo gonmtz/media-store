@@ -91,7 +91,10 @@ class SenalesTorre(ShortBase):
             tit.scale_to_fit_width(8.6)
         cabe = VGroup(sup, tit).arrange(DOWN, buff=0.12).move_to(UP * 5.05)
         nota = T("Señales con pistola de luz · OACI, Anexo 2", size=20, color=TEXTO_SEC,
-                 weight=MEDIUM).move_to(DOWN * 4.75)
-        pie = T("@porquevuela · Guárdalo", size=26, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 5.35)
-        self.add(brillo([0, 0.3, 0], C_GUINADA, 4.6, 0.5), cab, tabla, cabe, nota, pie)
+                 weight=MEDIUM).move_to(DOWN * 4.4)
+        pie = T("@porquevuela · Guárdalo", size=26, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 5.6)
+        reto = T("¿Has visto alguna vez estas luces? Cuéntalo en comentarios ↓", size=28, color=C_GUINADA, weight=HEAVY).move_to(DOWN * 5.0)
+        if reto.width > 8.4:
+            reto.scale_to_fit_width(8.4)
+        self.add(brillo([0, 0.3, 0], C_GUINADA, 4.6, 0.5), cab, tabla, cabe, nota, reto, pie)
         self.wait(0.1)

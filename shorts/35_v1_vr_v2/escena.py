@@ -187,13 +187,12 @@ class Velocidades(ModoBase):
         tj = VGroup(self.tarjeta("V1: decidir (frenar o seguir)", C_V1, size=36),
                     self.tarjeta("VR: rotar", C_VR, size=36),
                     self.tarjeta("V2: subir con margen", C_V2, size=36)).arrange(DOWN, buff=0.25).move_to([0, 1.3, 0])
-        preg2 = self.hud(frase_cinetica("¿Las habías oído en la cabina?", size=56, resaltar=["cabina?"],
-                                        color_resalte=C_VR).move_to(DOWN * 3.6))
+        preg2 = self.cta("Si falla un motor justo antes de V1, ¿qué hace el piloto?", ["antes", "V1,"], C_VR, y=-3.7, size=54)
         self.cambio(LaggedStart(*[FadeIn(x, shift=RIGHT * 0.4) for x in tj], lag_ratio=0.3),
                     FadeIn(preg2, shift=UP * 0.3), run_time=0.8)
-        self.hasta(t0, d * 0.45)
+        self.hasta(t0, d * 0.33)
         self.pulso(tj, 1.03)
-        self.hasta(t0, d * 0.7)
+        self.hasta(t0, d * 0.66)
         self.pulso(preg2, 1.05)
         self.hasta(t0, d - 0.75)
         t2 = {k: ValueTracker(v) for k, v in dict(v=236, dist=0, cab=0, sub=0, zonas=0).items()}

@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 26.529,
-   "duracion": 8.058
+   "duracion": 11.127
   }
  },
  "frases": [
@@ -66,28 +66,28 @@
   ],
   [
    26.53,
-   27.94,
-   "Para recordarlos:"
+   28.27,
+   "Siete cinco, secuestro;"
   ],
   [
-   27.94,
-   29.85,
-   "siete cinco, secuestro;"
-  ],
-  [
-   29.85,
-   31.68,
+   28.27,
+   29.94,
    "siete seis, sin radio;"
   ],
   [
-   31.68,
-   33.42,
+   29.94,
+   31.52,
    "siete siete, socorro."
   ],
   [
-   33.42,
-   34.59,
-   "¿Los conocías?"
+   31.52,
+   35.69,
+   "¿Sabes qué código marcan en Europa los vuelos visuales?"
+  ],
+  [
+   35.69,
+   37.66,
+   "Respóndelo en comentarios."
   ]
  ]
 }

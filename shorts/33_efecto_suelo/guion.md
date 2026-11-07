@@ -10,7 +10,7 @@ El suelo frena los remolinos de las puntas y el aire que el ala empuja hacia aba
 
 Por eso, en la recogida, el avión parece flotar, y si llega rápido puede alargar el aterrizaje.
 
-Algunos vehículos vuelan siempre así, pegados al agua: los ekranoplanos. ¿Los conocías?
+Hay vehículos que vuelan siempre así, pegados al agua. ¿Sabes cómo se llaman? Escríbelo en comentarios.
 
 ## Notas técnicas
 

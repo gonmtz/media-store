@@ -10,7 +10,7 @@ Los flaps bajan y retroceden: el ala gana curvatura y superficie, y sustenta má
 
 Los slats se adelantan y abren una rendija: el aire que pasa por ella se pega al ala y retrasa la pérdida.
 
-Con todo fuera, puede volar cerca de un treinta por ciento más despacio sin entrar en pérdida. ¿Los habías visto desde la ventanilla?
+Con todo fuera, vuela casi un treinta por ciento más lento. ¿Sabes qué otra pieza del ala se levanta al aterrizar? Te leo en comentarios.
 
 ## Notas técnicas
 

@@ -20,7 +20,7 @@
   },
   "cierre": {
    "inicio": 23.57,
-   "duracion": 7.537
+   "duracion": 8.801
   }
  },
  "frases": [
@@ -66,13 +66,18 @@
   ],
   [
    23.57,
-   28.94,
-   "Con todo fuera, puede volar cerca de un treinta por ciento más despacio sin entrar en pérdida."
+   27.42,
+   "Con todo fuera, vuela casi un treinta por ciento más lento."
   ],
   [
-   28.94,
-   31.11,
-   "¿Los habías visto desde la ventanilla?"
+   27.42,
+   30.94,
+   "¿Sabes qué otra pieza del ala se levanta al aterrizar?"
+  ],
+  [
+   30.94,
+   32.37,
+   "Te leo en comentarios."
   ]
  ]
 }

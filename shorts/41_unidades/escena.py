@@ -55,7 +55,10 @@ class Unidades(ShortBase):
                                                                                                 aligned_edge=LEFT)
         cab = VGroup(sup, tit).arrange(DOWN, buff=0.12, aligned_edge=LEFT).move_to([-1.6, 4.55, 0])
         nota = T("La OACI admite estas unidades junto al SI", size=20, color=TEXTO_SEC,
-                 weight=MEDIUM).move_to(DOWN * 4.75)
-        pie = T("@porquevuela · Guárdalo", size=26, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 5.35)
-        self.add(brillo([0, 0.0, 0], C_CABECEO, 4.6, 0.5), filas, im, cab, nota, pie)
+                 weight=MEDIUM).move_to(DOWN * 4.4)
+        pie = T("@porquevuela · Guárdalo", size=26, color=TEXTO_SEC, weight=SEMIBOLD).move_to(DOWN * 5.6)
+        reto = T("¿A cuántos metros vuela un avión en FL390? Comenta ↓", size=28, color=C_CABECEO, weight=HEAVY).move_to(DOWN * 5.0)
+        if reto.width > 8.4:
+            reto.scale_to_fit_width(8.4)
+        self.add(brillo([0, 0.0, 0], C_CABECEO, 4.6, 0.5), filas, im, cab, nota, reto, pie)
         self.wait(0.1)
