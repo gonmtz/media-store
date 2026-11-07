@@ -1,0 +1,73 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.515
+  },
+  "b1": {
+   "inicio": 2.515,
+   "duracion": 7.999
+  },
+  "b2": {
+   "inicio": 10.514,
+   "duracion": 8.404
+  },
+  "b3": {
+   "inicio": 18.918,
+   "duracion": 5.988
+  },
+  "cierre": {
+   "inicio": 24.906,
+   "duracion": 5.938
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.07,
+   "¿Por qué flota antes de tocar la pista?"
+  ],
+  [
+   2.52,
+   7.25,
+   "Cerca del suelo, a menos de una envergadura de altura, el avión entra en efecto suelo:"
+  ],
+  [
+   7.25,
+   10.06,
+   "el aire ya no puede escapar libremente hacia abajo."
+  ],
+  [
+   10.51,
+   14.87,
+   "El suelo frena los remolinos de las puntas y el aire que el ala empuja hacia abajo."
+  ],
+  [
+   15.35,
+   18.47,
+   "La resistencia inducida baja y la sustentación sube."
+  ],
+  [
+   18.92,
+   24.46,
+   "Por eso, en la recogida, el avión parece flotar, y si llega rápido puede alargar el aterrizaje."
+  ],
+  [
+   24.91,
+   28.68,
+   "Algunos vehículos vuelan siempre así, pegados al agua:"
+  ],
+  [
+   28.68,
+   29.87,
+   "los ekranoplanos."
+  ],
+  [
+   29.87,
+   30.84,
+   "¿Los conocías?"
+  ]
+ ]
+}

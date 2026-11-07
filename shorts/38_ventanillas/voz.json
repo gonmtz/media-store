@@ -1,0 +1,73 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.426
+  },
+  "b1": {
+   "inicio": 2.426,
+   "duracion": 7.056
+  },
+  "b2": {
+   "inicio": 9.482,
+   "duracion": 7.026
+  },
+  "b3": {
+   "inicio": 16.508,
+   "duracion": 9.414
+  },
+  "cierre": {
+   "inicio": 25.922,
+   "duracion": 5.14
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.98,
+   "¿Por qué las ventanillas son redondas?"
+  ],
+  [
+   2.43,
+   3.83,
+   "La cabina va presurizada:"
+  ],
+  [
+   3.83,
+   9.03,
+   "en crucero, el aire de dentro empuja hacia fuera con unas cinco toneladas por metro cuadrado."
+  ],
+  [
+   9.48,
+   16.06,
+   "En una esquina en ángulo recto, la tensión se concentra y, con cada vuelo, pueden crecer pequeñas grietas por fatiga."
+  ],
+  [
+   16.51,
+   18.37,
+   "Pasó con el Comet en 1954:"
+  ],
+  [
+   18.37,
+   23.39,
+   "la fatiga del metal empezó en la esquina de una abertura del fuselaje."
+  ],
+  [
+   23.39,
+   25.47,
+   "Desde entonces, se redondean."
+  ],
+  [
+   25.92,
+   29.59,
+   "Una curva suave reparte el esfuerzo y no deja que la grieta empiece."
+  ],
+  [
+   30.04,
+   31.06,
+   "¿Te habías fijado?"
+  ]
+ ]
+}

@@ -1,0 +1,78 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.907
+  },
+  "b1": {
+   "inicio": 2.907,
+   "duracion": 8.131
+  },
+  "b2": {
+   "inicio": 11.038,
+   "duracion": 6.935
+  },
+  "b3": {
+   "inicio": 17.972,
+   "duracion": 7.729
+  },
+  "cierre": {
+   "inicio": 25.701,
+   "duracion": 5.761
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.46,
+   "¿Qué son V1, VR y V2?"
+  ],
+  [
+   2.91,
+   5.09,
+   "Se calculan antes de cada despegue."
+  ],
+  [
+   5.09,
+   6.72,
+   "Uve uno es la de decisión:"
+  ],
+  [
+   6.72,
+   10.59,
+   "pasada esa velocidad, el despegue sigue aunque falle un motor."
+  ],
+  [
+   11.04,
+   12.6,
+   "Uve erre es la de rotación:"
+  ],
+  [
+   12.6,
+   17.52,
+   "el piloto tira, el morro sube, el ala gana ángulo de ataque y el avión deja la pista."
+  ],
+  [
+   17.97,
+   20.22,
+   "Uve dos es la velocidad segura de ascenso:"
+  ],
+  [
+   20.22,
+   25.25,
+   "la mínima para subir con margen aunque falte un motor, y se alcanza justo después de despegar."
+  ],
+  [
+   25.7,
+   29.19,
+   "Uve uno, rotación, uve dos, en pocos segundos."
+  ],
+  [
+   29.19,
+   31.46,
+   "¿Las habías oído en la cabina?"
+  ]
+ ]
+}

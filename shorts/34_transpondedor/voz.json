@@ -1,0 +1,93 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 3.162
+  },
+  "b1": {
+   "inicio": 3.162,
+   "duracion": 8.102
+  },
+  "b2": {
+   "inicio": 11.264,
+   "duracion": 10.066
+  },
+  "b3": {
+   "inicio": 21.33,
+   "duracion": 5.199
+  },
+  "cierre": {
+   "inicio": 26.529,
+   "duracion": 8.058
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.71,
+   "¿Qué significa 7700 en un avión?"
+  ],
+  [
+   3.16,
+   8.59,
+   "El transpondedor del avión responde al radar con un código de cuatro cifras, del cero al siete."
+  ],
+  [
+   8.59,
+   10.81,
+   "Así el controlador sabe quién es quién."
+  ],
+  [
+   11.26,
+   13.9,
+   "Hay tres códigos especiales:"
+  ],
+  [
+   13.9,
+   16.54,
+   "7500, interferencia ilícita;"
+  ],
+  [
+   16.54,
+   18.52,
+   "7600, fallo de radio;"
+  ],
+  [
+   18.52,
+   20.88,
+   "7700, emergencia general."
+  ],
+  [
+   21.33,
+   26.08,
+   "Al marcarlos, el avión se resalta en la pantalla del controlador, que le da prioridad."
+  ],
+  [
+   26.53,
+   27.94,
+   "Para recordarlos:"
+  ],
+  [
+   27.94,
+   29.85,
+   "siete cinco, secuestro;"
+  ],
+  [
+   29.85,
+   31.68,
+   "siete seis, sin radio;"
+  ],
+  [
+   31.68,
+   33.42,
+   "siete siete, socorro."
+  ],
+  [
+   33.42,
+   34.59,
+   "¿Los conocías?"
+  ]
+ ]
+}

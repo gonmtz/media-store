@@ -1,0 +1,73 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.621
+  },
+  "b1": {
+   "inicio": 2.621,
+   "duracion": 5.793
+  },
+  "b2": {
+   "inicio": 8.415,
+   "duracion": 10.264
+  },
+  "b3": {
+   "inicio": 18.678,
+   "duracion": 7.406
+  },
+  "cierre": {
+   "inicio": 26.085,
+   "duracion": 6.378
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   2.17,
+   "¿Por qué esa pista se llama 27?"
+  ],
+  [
+   2.62,
+   7.96,
+   "El número es el rumbo magnético de la pista en grados, redondeado a la decena y sin el último cero."
+  ],
+  [
+   8.41,
+   12.0,
+   "Una pista hacia el oeste, a 270 grados, es la 27."
+  ],
+  [
+   12.0,
+   15.59,
+   "Su otro extremo, hacia el este, es la cero nueve:"
+  ],
+  [
+   15.59,
+   18.23,
+   "siempre se diferencian en dieciocho."
+  ],
+  [
+   18.68,
+   21.68,
+   "Si hay pistas paralelas, se añade una letra:"
+  ],
+  [
+   21.68,
+   25.63,
+   "ele, ce o erre, por izquierda, centro y derecha en inglés."
+  ],
+  [
+   26.08,
+   30.71,
+   "Y como el norte magnético se mueve, algunas pistas cambian de número con los años."
+  ],
+  [
+   30.71,
+   32.46,
+   "¿Cómo se llama la de tu ciudad?"
+  ]
+ ]
+}

@@ -1,0 +1,68 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.383
+  },
+  "b1": {
+   "inicio": 2.383,
+   "duracion": 7.196
+  },
+  "b2": {
+   "inicio": 9.579,
+   "duracion": 7.103
+  },
+  "b3": {
+   "inicio": 16.682,
+   "duracion": 8.574
+  },
+  "cierre": {
+   "inicio": 25.256,
+   "duracion": 4.732
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.93,
+   "¿Por qué esperan tras un avión grande?"
+  ],
+  [
+   2.38,
+   9.13,
+   "Cada ala deja dos remolinos en las puntas que giran en sentidos opuestos y bajan poco a poco, unos dos metros por segundo."
+  ],
+  [
+   9.58,
+   12.71,
+   "Cuanto más pesado y lento va el avión, más fuertes son."
+  ],
+  [
+   12.71,
+   16.23,
+   "Un avión pequeño que entre en ellos puede alabear sin control."
+  ],
+  [
+   16.68,
+   18.54,
+   "Por eso se separan por categorías:"
+  ],
+  [
+   18.54,
+   24.81,
+   "tras un avión muy pesado, uno ligero espera unos minutos o varios kilómetros, hasta que los remolinos se debilitan."
+  ],
+  [
+   25.26,
+   29.23,
+   "Los remolinos no se ven, pero pueden durar varios minutos."
+  ],
+  [
+   29.23,
+   29.99,
+   "¿Lo sabías?"
+  ]
+ ]
+}

@@ -383,7 +383,12 @@ def capa_3d(render, ancho_pantalla=9.0, centro=(0, 0), **params):
 
     def dibujar():
         val = valores()
-        clave = tuple(sorted((k, round(float(np.asarray(v).sum()), 4)) for k, v in val.items()))
+        def _k(v):
+            try:
+                return round(float(np.asarray(v, float).sum()), 4)
+            except (TypeError, ValueError):
+                return str(v)                      # p. ej. resaltar={pieza: color}
+        clave = tuple(sorted((k, _k(v)) for k, v in val.items()))
         if cache.get("clave") != clave:
             cache["clave"], cache["img"] = clave, render.imagen(**val)
         im = ImageMobject(cache["img"])

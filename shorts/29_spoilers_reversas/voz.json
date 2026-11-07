@@ -1,0 +1,78 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.302
+  },
+  "b1": {
+   "inicio": 2.302,
+   "duracion": 6.161
+  },
+  "b2": {
+   "inicio": 8.464,
+   "duracion": 5.818
+  },
+  "b3": {
+   "inicio": 14.281,
+   "duracion": 7.404
+  },
+  "cierre": {
+   "inicio": 21.685,
+   "duracion": 9.155
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.85,
+   "¿Cómo frena un avión al aterrizar?"
+  ],
+  [
+   2.3,
+   4.42,
+   "Al tocar la pista se levantan los spoilers:"
+  ],
+  [
+   4.75,
+   8.01,
+   "rompen la sustentación del ala y el peso pasa a las ruedas."
+  ],
+  [
+   8.46,
+   13.83,
+   "Así los frenos de las ruedas, que hacen la mayor parte del trabajo, agarran de verdad sobre la pista."
+  ],
+  [
+   14.28,
+   17.51,
+   "Las reversas abren el motor y desvían el aire hacia delante."
+  ],
+  [
+   17.98,
+   19.12,
+   "No invierten el giro:"
+  ],
+  [
+   19.42,
+   21.24,
+   "solo cambian la dirección del chorro."
+  ],
+  [
+   21.69,
+   25.32,
+   "Spoilers, frenos y reversas, todo en pocos segundos;"
+  ],
+  [
+   25.32,
+   28.46,
+   "en pista mojada, las reversas ayudan aún más."
+  ],
+  [
+   28.46,
+   30.84,
+   "¿Has oído ese rugido al aterrizar?"
+  ]
+ ]
+}

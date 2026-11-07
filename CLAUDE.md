@@ -164,7 +164,7 @@ Las pistas de `musica/` son de la Biblioteca de audio de YouTube y tienen licenc
 Creative Commons Atribución 4.0 (confirmar en la ficha de cada pista). Hay que incluir
 la atribución en cada publicación, por ejemplo:
 `Música: "Hypnothis" de Kevin MacLeod (incompetech.com), licencia CC BY 4.0 https://creativecommons.org/licenses/by/4.0/`
-Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis, 21 → Down With That, 22 → Dreamy Flashback, 23 → Hypnothis, 24 → Down With That, 25 → Dreamy Flashback, 26 → Hypnothis, 27 → Down With That (repetidas:
+Rotar las pistas entre shorts. Usadas: 01 → Hypnothis, 02 → Down With That, 03 → Dreamy Flashback, 04 → Hypnothis, 05 → Down With That, 06 → Dreamy Flashback, 08 → Hypnothis, 09 → Down With That, 10 → Dreamy Flashback, 11 → Hypnothis, 12 → Down With That, 13 → Dreamy Flashback (desde 20 s), 14 → Hypnothis, 15 → Down With That, 16 → Dreamy Flashback, 17 → Hypnothis, 18 → Down With That (desde 30 s), 19 → Dreamy Flashback, 20 → Hypnothis, 21 → Down With That, 22 → Dreamy Flashback, 23 → Hypnothis, 24 → Down With That, 25 → Dreamy Flashback, 26 → Hypnothis, 27 → Down With That, 28 → Dreamy Flashback, 29 → Hypnothis, 30 → Down With That, 31 → Dreamy Flashback, 32 → Hypnothis, 33 → Down With That, 34 → Dreamy Flashback, 35 → Hypnothis, 36 → Down With That, 37 → Dreamy Flashback, 38 → Hypnothis, 39 → Down With That, 40 → Dreamy Flashback, 41 → Hypnothis (repetidas:
 no quedan pistas sin usar; incompetech.com está bloqueado desde el entorno, así que hay que
 añadir pistas nuevas a mano).
 Ojo: `Darkest_Child_-_Kevin_MacLeod.mp3` es el mismo archivo que Hypnothis (mismo md5); hay que
@@ -201,6 +201,20 @@ volver a descargar la pista correcta antes de usarla.
 | 25 | Modos dinámicos 3: convergencia en alabeo (narrado, 30 s, avión 3D) | Dreamy Flashback | programado 2026-11-11 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419429225); marca de IA en IG y TikTok |
 | 26 | Modos dinámicos 4: modo espiral (narrado, 32 s, avión 3D) | Hypnothis | programado 2026-11-12 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419443313); marca de IA en IG y TikTok |
 | 27 | Modos dinámicos 5: balanceo holandés (narrado, 30 s, avión 3D) | Down With That | programado 2026-11-13 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419420385); marca de IA en IG y TikTok |
+| 28 | Flaps y slats: volar lento sin caer (narrado, 31 s, 3D + perfil 2D) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 29 | ¿Cómo frena un avión? Spoilers, frenos y reversas (narrado, 31 s, 3D) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 30 | Flecha y Mach crítico: ¿por qué las alas van hacia atrás? (narrado, 31 s, 3D + perfil) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 31 | Estampido sónico: el cono de Mach que barre el suelo (narrado, 33 s) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 32 | Reynolds: ¿un mosquito vuela como un avión? (narrado, 31 s) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 33 | Efecto suelo: ¿por qué flota antes de tocar la pista? (narrado, 31 s, 3D) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 34 | Transpondedor: 7500, 7600 y 7700 (narrado, 35 s, radar 2D) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 35 | V1, VR y V2 (narrado, 32 s, 3D en la pista) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 36 | Números de pista: ¿por qué se llama 27? (narrado, 33 s, 3D desde arriba) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 37 | Estela turbulenta (narrado, 30 s, 3D desde atrás) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 38 | ¿Por qué las ventanillas son redondas? (narrado, 31 s, mapas de tensión) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 39 | Ficha: las seis básicas (instrumentos, 5 s) | Down With That | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 40 | Ficha: las luces de la torre (OACI, 5 s) | Dreamy Flashback | listo (7-nov); pendiente de aprobación del dueño: no publicar |
+| 41 | Ficha: unidades de la aviación (5 s, 3D) | Hypnothis | listo (7-nov); pendiente de aprobación del dueño: no publicar |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
@@ -211,12 +225,12 @@ en `marca/portadas/` para cambiarlas a mano.
 2. ~~Pérdida (stall): caer con los motores funcionando~~ (hecho: short 03)
 3. ~~Winglets y vórtices de punta~~ (hecho: short 05)
 4. ~~¿Por qué las hélices están torcidas?~~ (hecho: short 06)
-5. Mach y el estampido sónico que se arrastra
-6. Reynolds: por qué un insecto no vuela con un ala de avión
+5. ~~Mach y el estampido sónico que se arrastra~~ (hecho: short 31)
+6. ~~Reynolds: por qué un insecto no vuela con un ala de avión~~ (hecho: short 32)
 7. Motor a reacción: el motor que se traga la lluvia
 8. ¿Por qué el Concorde bajaba la nariz?
 9. ~~Diedro: por qué las alas forman una V~~ (hecho: short 20)
-10. Flaps y slats: volar lento sin caer
+10. ~~Flaps y slats: volar lento sin caer~~ (hecho: short 28)
 
 Hecho fuera del banco: perfiles NACA (short 04, a petición del dueño).
 
@@ -256,3 +270,5 @@ Modos dinámicos (shorts 23–27): `lib/modos.py` (`ModoBase`: avión arriba + g
 
 Estos temas reutilizan las piezas que ya hay en la biblioteca (perfil, vectores y flujo):
 construir y añadir a `lib/porquevuela.py` lo que pueda volver a usarse.
+
+Shorts 28–41 (7-nov): `lib/avion.py` tiene flaps Fowler (`flap` en grados), slats (`slat` 0–1), spoilers (`spoiler` en grados), reversas de cascadas (`reversa` 0–1) y `resaltar={pieza: color}` en `imagen`; `capa_3d` acepta `centro` como función. Patrones reutilizables: pista que se desplaza (29, 35), cinta de velocidad vertical (35), radar con barrido (34), vórtices sobre las puntas con `a_pantalla` (33, 37), mapas de tensión de Kirsch (38), pista vista desde arriba con brújula (36). Para rotar alrededor de las ruedas (35): recalcular el centro con `render.proyectar([CONTACTO], cabeceo=...)` en cada fotograma.

@@ -1,0 +1,68 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.268
+  },
+  "b1": {
+   "inicio": 2.268,
+   "duracion": 8.227
+  },
+  "b2": {
+   "inicio": 10.495,
+   "duracion": 7.137
+  },
+  "b3": {
+   "inicio": 17.632,
+   "duracion": 7.037
+  },
+  "cierre": {
+   "inicio": 24.669,
+   "duracion": 6.694
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.82,
+   "¿Por qué las alas van hacia atrás?"
+  ],
+  [
+   2.27,
+   10.04,
+   "Cerca de la velocidad del sonido, aunque el avión vaya más despacio, el aire que acelera sobre el ala llega a Mach uno y forma una onda de choque."
+  ],
+  [
+   10.49,
+   12.49,
+   "Esa onda dispara la resistencia."
+  ],
+  [
+   12.49,
+   17.18,
+   "Con flecha, el ala solo nota la parte de la velocidad perpendicular a ella."
+  ],
+  [
+   17.63,
+   21.16,
+   "Con veinticinco grados, esa parte es casi un diez por ciento menor:"
+  ],
+  [
+   21.16,
+   24.22,
+   "el avión vuela más rápido antes de que aparezca el choque."
+  ],
+  [
+   24.67,
+   30.23,
+   "Por eso los reactores, que vuelan rápido, llevan flecha y las avionetas no la necesitan."
+  ],
+  [
+   30.23,
+   31.36,
+   "¿Lo habías notado?"
+  ]
+ ]
+}

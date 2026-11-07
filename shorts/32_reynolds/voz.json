@@ -1,0 +1,83 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.317
+  },
+  "b1": {
+   "inicio": 2.317,
+   "duracion": 9.261
+  },
+  "b2": {
+   "inicio": 11.578,
+   "duracion": 8.156
+  },
+  "b3": {
+   "inicio": 19.733,
+   "duracion": 6.491
+  },
+  "cierre": {
+   "inicio": 26.224,
+   "duracion": 4.739
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.87,
+   "¿Un mosquito vuela como un avión?"
+  ],
+  [
+   2.32,
+   4.42,
+   "Para el aire, importa una cifra:"
+  ],
+  [
+   4.42,
+   5.87,
+   "el número de Reynolds."
+  ],
+  [
+   5.87,
+   11.13,
+   "Compara la inercia del aire con su viscosidad, es decir, con lo pegajoso que es."
+  ],
+  [
+   11.58,
+   14.04,
+   "En un avión es de decenas de millones:"
+  ],
+  [
+   14.04,
+   15.2,
+   "domina la inercia."
+  ],
+  [
+   15.2,
+   17.6,
+   "En un mosquito, de decenas a cientos:"
+  ],
+  [
+   17.6,
+   19.28,
+   "el aire es casi como miel."
+  ],
+  [
+   19.73,
+   25.77,
+   "Por eso los insectos baten las alas muy rápido y crean remolinos que los sostienen, en vez de planear como un avión."
+  ],
+  [
+   26.22,
+   28.23,
+   "Misma física, distinta escala."
+  ],
+  [
+   28.23,
+   30.96,
+   "¿Qué otro animal volador te gustaría ver?"
+  ]
+ ]
+}

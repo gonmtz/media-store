@@ -58,9 +58,15 @@ class ModoBase(ShortBase):
         con el morro a la derecha."""
         if not hasattr(self, "_r3d"):
             self._r3d = {}
-        clave = (alto_px, campo)
+        mandos = params.pop("colores_mando", True)
+        if not isinstance(campo, (int, float)):      # campo animado (ValueTracker o función)
+            params["campo"] = campo
+            campo = 40.0
+        clave = (alto_px, campo, mandos)
         if clave not in self._r3d:
-            self._r3d[clave] = A.Avion3DReal(1080, alto_px, 2, campo=campo, colores_mando=True)
+            from manim import config
+            ss = 2 if config.pixel_height >= 1000 else 1      # al iterar con -ql, sin supermuestreo
+            self._r3d[clave] = A.Avion3DReal(1080, alto_px, ss, campo=campo, colores_mando=mandos)
         return capa_3d(self._r3d[clave], ancho_pantalla, centro, **params)
 
     @staticmethod

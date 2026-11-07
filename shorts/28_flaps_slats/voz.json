@@ -1,0 +1,78 @@
+{
+ "completo": "voz.mp3",
+ "voz": "es-MX-JorgeMultilingualNeural",
+ "segmentos": {
+  "gancho": {
+   "inicio": 0.0,
+   "duracion": 2.316
+  },
+  "b1": {
+   "inicio": 2.316,
+   "duracion": 8.499
+  },
+  "b2": {
+   "inicio": 10.816,
+   "duracion": 6.385
+  },
+  "b3": {
+   "inicio": 17.2,
+   "duracion": 6.37
+  },
+  "cierre": {
+   "inicio": 23.57,
+   "duracion": 7.537
+  }
+ },
+ "frases": [
+  [
+   0.0,
+   1.87,
+   "¿Cómo vuela tan lento al aterrizar?"
+  ],
+  [
+   2.32,
+   5.25,
+   "Para sostenerse, el ala necesita velocidad."
+  ],
+  [
+   5.25,
+   8.46,
+   "Al aterrizar va lenta, así que cambia de forma:"
+  ],
+  [
+   8.46,
+   10.37,
+   "salen los flaps y los slats."
+  ],
+  [
+   10.82,
+   12.52,
+   "Los flaps bajan y retroceden:"
+  ],
+  [
+   12.52,
+   16.75,
+   "el ala gana curvatura y superficie, y sustenta más a la misma velocidad."
+  ],
+  [
+   17.2,
+   19.59,
+   "Los slats se adelantan y abren una rendija:"
+  ],
+  [
+   19.95,
+   23.12,
+   "el aire que pasa por ella se pega al ala y retrasa la pérdida."
+  ],
+  [
+   23.57,
+   28.94,
+   "Con todo fuera, puede volar cerca de un treinta por ciento más despacio sin entrar en pérdida."
+  ],
+  [
+   28.94,
+   31.11,
+   "¿Los habías visto desde la ventanilla?"
+  ]
+ ]
+}
