@@ -207,20 +207,20 @@ volver a descargar la pista correcta antes de usarla.
 | 25 | Modos dinámicos 3: convergencia en alabeo (narrado, 30 s, avión 3D) | Dreamy Flashback | programado 2026-11-11 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419429225); marca de IA en IG y TikTok |
 | 26 | Modos dinámicos 4: modo espiral (narrado, 32 s, avión 3D) | Hypnothis | programado 2026-11-12 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419443313); marca de IA en IG y TikTok |
 | 27 | Modos dinámicos 5: balanceo holandés (narrado, 30 s, avión 3D) | Down With That | programado 2026-11-13 12:00 (CDMX) en YT, IG y TikTok (Metricool id 419420385); marca de IA en IG y TikTok |
-| 28 | Flaps y slats: volar lento sin caer (narrado, 31 s, 3D + perfil 2D) | Dreamy Flashback | aprobado (7-nov); cierre con reto (CTA) |
+| 28 | Flaps y slats: volar lento sin caer (narrado, 31 s, 3D + perfil 2D) | Dreamy Flashback | aprobado (7-nov); programado 2026-11-21 12:00 (CDMX) (Metricool id 420304856); CTA; marca de IA en IG y TikTok |
 | 29 | ¿Cómo frena un avión? Spoilers, frenos y reversas (narrado, 31 s, 3D) | Hypnothis | en revisión: el dueño mandará notas; no publicar |
 | 30 | Flecha y Mach crítico: ¿por qué las alas van hacia atrás? (narrado, 31 s, 3D + perfil) | Down With That | en revisión: el dueño mandará notas; no publicar |
 | 31 | Estampido sónico: el cono de Mach que barre el suelo (narrado, 33 s) | Dreamy Flashback | rehecho con el Concorde 3D (`lib/concorde.py`) y CTA (7-nov); pendiente de aprobación: no publicar |
-| 32 | Reynolds: ¿un mosquito vuela como un avión? (narrado, 31 s) | Hypnothis | aprobado (7-nov); CTA |
+| 32 | Reynolds: ¿un mosquito vuela como un avión? (narrado, 31 s) | Hypnothis | aprobado (7-nov); programado 2026-11-30 12:00 (CDMX) (Metricool id 420305684); CTA; marca de IA en IG y TikTok |
 | 33 | Efecto suelo: ¿por qué flota antes de tocar la pista? (narrado, 31 s, 3D) | Down With That | vórtices simétricos y CTA (7-nov); pendiente de aprobación: no publicar |
-| 34 | Transpondedor: 7500, 7600 y 7700 (narrado, 35 s, radar 2D) | Dreamy Flashback | aprobado (7-nov); CTA |
-| 35 | V1, VR y V2 (narrado, 32 s, 3D en la pista) | Hypnothis | aprobado (7-nov); CTA |
-| 36 | Números de pista: ¿por qué se llama 27? (narrado, 33 s, 3D desde arriba) | Down With That | aprobado (7-nov); CTA |
-| 37 | Estela turbulenta (narrado, 30 s, 3D desde atrás) | Dreamy Flashback | aprobado (7-nov); CTA |
-| 38 | ¿Por qué las ventanillas son redondas? (narrado, 31 s, mapas de tensión) | Hypnothis | aprobado (7-nov); CTA |
-| 39 | Ficha: las seis básicas (instrumentos, 5 s) | Down With That | aprobado (7-nov); CTA en la imagen |
-| 40 | Ficha: las luces de la torre (OACI, 5 s) | Dreamy Flashback | aprobado (7-nov); CTA en la imagen |
-| 41 | Ficha: unidades de la aviación (5 s, 3D) | Hypnothis | aprobado (7-nov); CTA en la imagen |
+| 34 | Transpondedor: 7500, 7600 y 7700 (narrado, 35 s, radar 2D) | Dreamy Flashback | aprobado (7-nov); programado 2026-11-22 12:00 (CDMX) (Metricool id 420305300); CTA; marca de IA en IG y TikTok |
+| 35 | V1, VR y V2 (narrado, 32 s, 3D en la pista) | Hypnothis | aprobado (7-nov); programado 2026-11-24 12:00 (CDMX) (Metricool id 420305364); CTA; marca de IA en IG y TikTok |
+| 36 | Números de pista: ¿por qué se llama 27? (narrado, 33 s, 3D desde arriba) | Down With That | aprobado (7-nov); programado 2026-11-25 12:00 (CDMX) (Metricool id 420305420); CTA; marca de IA en IG y TikTok |
+| 37 | Estela turbulenta (narrado, 30 s, 3D desde atrás) | Dreamy Flashback | aprobado (7-nov); programado 2026-11-27 12:00 (CDMX) (Metricool id 420305465); CTA; marca de IA en IG y TikTok |
+| 38 | ¿Por qué las ventanillas son redondas? (narrado, 31 s, mapas de tensión) | Hypnothis | aprobado (7-nov); programado 2026-11-28 12:00 (CDMX) (Metricool id 420305532); CTA; marca de IA en IG y TikTok |
+| 39 | Ficha: las seis básicas (instrumentos, 5 s) | Down With That | aprobado (7-nov); programado 2026-11-23 12:00 (CDMX) (Metricool id 420305319); CTA; sin marca de IA |
+| 40 | Ficha: las luces de la torre (OACI, 5 s) | Dreamy Flashback | aprobado (7-nov); programado 2026-11-26 12:00 (CDMX) (Metricool id 420305437); CTA; sin marca de IA |
+| 41 | Ficha: unidades de la aviación (5 s, 3D) | Hypnothis | aprobado (7-nov); programado 2026-11-29 12:00 (CDMX) (Metricool id 420305565); CTA; sin marca de IA |
 
 Los shorts 01–06 se publicaron con la portada vacía (fondo oscuro); las portadas correctas están
 en `marca/portadas/` para cambiarlas a mano.
